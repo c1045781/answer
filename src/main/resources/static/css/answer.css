@@ -1,0 +1,17 @@
+.form-div{
+    margin: 0 auto;
+    width: 50%;
+}
+.option-div{
+    display: inline-flex;
+    height: 50px;
+    width: 100%;
+}
+.option-button{
+    height: 35px;
+    width: 50px;
+    margin-left: 5px;
+}
+.correct-label{
+    width: 50px;
+}

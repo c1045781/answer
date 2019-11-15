@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>习题管理</title>
+    <!-- custom-theme -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <!-- //custom-theme -->
+    <link href="/css/bootstrap.css" rel="stylesheet" type="text/css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/css/table-style.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/basictable.css"/>
+    <link href="/css/component.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/style_grid.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <!-- font-awesome-icons -->
+    <link href="/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+<!-- banner -->
+<div class="wthree_agile_admin_info">
+    <div th:insert="~{navigation :: nav}"></div>
+    <div class="clearfix"></div>
+
+    <div class="inner_content">
+        <!-- /inner_content_w3_agile_info-->
+
+        <!-- breadcrumbs -->
+        <div class="w3l_agileits_breadcrumbs">
+            <div class="w3l_agileits_breadcrumbs_inner">
+                <ul>
+                    <li>首页<span>«</span></li>
+                    <li>习题管理<span>«</span></li>
+                    <li>查看习题</li>
+                </ul>
+            </div>
+        </div>
+        <!-- //breadcrumbs -->
+
+        <div class="inner_content_w3_agile_info two_in">
+            <div class="agile-tables">
+                <div class="w3l-table-info agile_info_shadow">
+                    <h3 class="w3_inner_tittle two">习题</h3>
+                    <table id="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>题目类型</th>
+                            <th>题型</th>
+                            <th>题干</th>
+                            <th>创建人</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ExercisesVM:${pagination.dataList}">
+                            <td th:text="${ExercisesVM.exercises.id}"></td>
+                            <td th:text="${ExercisesVM.subject.name}"></td>
+                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '单选题'">单选题</td>
+                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '多选题'">多选题</td>
+                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '判断题'">判断题</td>
+                            <td th:text="${ExercisesVM.exercisesContentVM.title}"></td>
+                            <td th:text="${ExercisesVM.user.username}"></td>
+                            <td th:text="${#dates.format(ExercisesVM.exercises.createTime,'yyyy-MM-dd')}"></td>
+                            <td>
+                                <button th:onclick="deleteExercisesModal([[${ExercisesVM.exercises.id}]]);" type="button" class="btn btn-danger">
+                                    删除
+                                </button>
+                                <button th:onclick="updateExercisesModal([[${ExercisesVM.exercises.id}]]);" type="button" class="btn btn-danger">
+                                    修改
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <nav style="text-align: center;">
+                            <ul class="pagination" th:if="${pagination.totalPage} > 0">
+                                <li th:if="${pagination.currentPage > 4} ">
+                                    <a href="#" aria-label="Previous"
+                                       th:href="@{/user/check(currentPage=1 , search=${search},tag=${tag})}">
+                                        <span aria-hidden="true">&lt;&lt;</span>
+                                    </a>
+                                </li>
+                                <li th:if="${pagination.currentPage != 1} ">
+                                    <a href="#" aria-label="Previous"
+                                       th:href="@{/user/check(currentPage=${pagination.currentPage-1}, search=${search},tag=${tag})}">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                </li>
+
+                                <li th:if="${pagination.totalPage<7}"
+                                    th:each="pageNo : ${#numbers.sequence(1, pagination.totalPage)}"
+                                    th:class="${pagination.currentPage == pageNo}?'active'">
+                                    <a href="#" th:text="${pageNo}"
+                                       th:href="@{/user/check(currentPage=${pageNo}, search=${search},tag=${tag})}"></a>
+                                </li>
+                                <li th:if="${pagination.totalPage>7 && pagination.currentPage<=3}"
+                                    th:each="pageNo : ${#numbers.sequence(1, 7)}"
+                                    th:class="${pagination.currentPage == pageNo}?'active'">
+                                    <a href="#" th:text="${pageNo}"
+                                       th:href="@{/user/check(currentPage=${pageNo}, search=${search},tag=${tag})}"></a>
+                                </li>
+                                <li th:if="${pagination.totalPage>7 && pagination.currentPage>3 && pagination.totalPage-pagination.currentPage>=3}"
+                                    th:each="pageNo : ${#numbers.sequence(pagination.currentPage-3, pagination.currentPage+3)}"
+                                    th:class="${pagination.currentPage == pageNo}?'active'">
+                                    <a href="#" th:text="${pageNo}"
+                                       th:href="@{/user/check(currentPage=${pageNo}, search=${search},tag=${tag})}"></a>
+                                </li>
+
+                                <li th:if="${pagination.totalPage>7 && pagination.currentPage>3 && pagination.totalPage-pagination.currentPage<3}"
+                                    th:each="pageNo : ${#numbers.sequence(pagination.currentPage-3, pagination.totalPage)}"
+                                    th:class="${pagination.currentPage == pageNo}?'active'">
+                                    <a href="#" th:text="${pageNo}"
+                                       th:href="@{/user/check(currentPage=${pageNo}, search=${search},tag=${tag})}"></a>
+                                </li>
+
+
+                                <li th:if="${pagination.currentPage != pagination.totalPage} ">
+                                    <a href="#" aria-label="Next"
+                                       th:href="@{/user/check(currentPage=${pagination.currentPage+1}, search=${search},tag=${tag})}">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li th:if="${pagination.currentPage+3 < pagination.totalPage} ">
+                                    <a href="#" aria-label="Next"
+                                       th:href="@{/user/check(currentPage=${pagination.totalPage}, search=${search},tag=${tag})}">
+                                        <span aria-hidden="true">&gt;&gt;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:insert="~{foot :: foot}"></div>
+    <div class="modal fade" id="deleteExercisesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">确认框</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="hidden" id="deleteId" name="id">
+                            <label class="control-label">确定要删除习题？</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteExercises()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+<script src="/js/modernizr.custom.js"></script>
+
+<script src="/js/classie.js"></script>
+<script src="/js/gnmenu.js"></script>
+<script>
+    new gnMenu(document.getElementById('gn-menu'));
+</script>
+<!-- tables -->
+
+<script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table').basictable();
+
+        $('#table-breakpoint').basictable({
+            breakpoint: 768
+        });
+
+        $('#table-swap-axis').basictable({
+            swapAxis: true
+        });
+
+        $('#table-force-off').basictable({
+            forceResponsive: false
+        });
+
+        $('#table-no-resize').basictable({
+            noResize: true
+        });
+
+        $('#table-two-axis').basictable();
+
+        $('#table-max-height').basictable({
+            tableWrapper: true
+        });
+    });
+</script>
+<!-- //js -->
+<script src="/js/screenfull.js"></script>
+<script src="/js/answer.js"></script>
+<script>
+    $(function () {
+        $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
+
+        if (!screenfull.enabled) {
+            return false;
+        }
+
+
+        $('#toggle').click(function () {
+            screenfull.toggle($('#container')[0]);
+        });
+    });
+</script>
+<script src="/js/jquery.nicescroll.js"></script>
+<script src="/js/scripts.js"></script>
+
+<script type="text/javascript" src="/js/bootstrap-3.1.1.min.js"></script>
+
+
+</body>
+</html>

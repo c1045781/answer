@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.SubjectMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Subject">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="base_subject" jdbcType="VARCHAR" property="baseSubject"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <select id="getSubjectByBase" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from subject
+        <where>
+            <if test="baseSubject != null and baseSubject != ''">
+                and base_subject = #{baseSubject}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBase" resultType="java.lang.String">
+        select distinct base_subject from subject
+    </select>
+    <select id="getSubjectById" resultType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from subject
+        <where>
+           <if test="id != null">
+               and id = #{id}
+           </if>
+        </where>
+    </select>
+
+    <select id="verification" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from subject
+        <where>
+            <if test="subjectName != null and subjectName != ''">
+                and name = #{subjectName}
+            </if>
+            <if test="baseSubject != null and baseSubject != ''">
+                and base_subject = #{baseSubject}
+            </if>
+        </where>
+    </select>
+</mapper>
