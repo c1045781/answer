@@ -3,7 +3,6 @@ package top.qiyoung.answer.controller;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,16 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.qiyoung.answer.mapper.SubjectMapper;
 import top.qiyoung.answer.model.*;
-import top.qiyoung.answer.service.ExercisesService;
+import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.SubjectService;
 import top.qiyoung.answer.utils.DeleteFile;
 import top.qiyoung.answer.utils.FileUpload;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,45 +25,45 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/exercises")
-public class ExercisesController {
+@RequestMapping("/exercise")
+public class ExerciseController {
 
     @Resource
-    private ExercisesService exercisesService;
+    private ExerciseService exerciseService;
 
     @Resource
     private SubjectService subjectService;
 
     @RequestMapping("/toAdd")
     public String toAdd() {
-        return "exercises/add-exercises";
+        return "exercise/add-exercise";
     }
 
     @RequestMapping("/check")
-    public String checkExercises(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+    public String checkexercise(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                                  @RequestParam(value = "size", defaultValue = "10") Integer size,
                                  @RequestParam(value = "search", required = false) String search,
-                                 @RequestParam(value = "exercisesType", required = false) String type,
-                                 @RequestParam(value = "order", defaultValue = "id") String order,
+                                 @RequestParam(value = "exerciseType", required = false) String type,
+                                 @RequestParam(value = "order", defaultValue = "exercise_id") String order,
                                  Model model) {
-        Pagination pagination = exercisesService.getExercisesVMList(currentPage, size, search, type, order);
+        Pagination pagination = exerciseService.getExerciseVMList(currentPage, size, search, type, order);
         model.addAttribute("pagination", pagination);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
-        return "exercises/exercises";
+        return "exercise/exercise";
     }
 
     @RequestMapping("/toUpload")
     public String toUpload() {
-        return "exercises/upload";
+        return "exercise/upload";
     }
 
     @RequestMapping("/uploadFile")
-    public String upload(@RequestParam("exercisesFile") MultipartFile exercisesFile, HttpServletRequest request,
+    public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile, HttpServletRequest request,
                          Model model) throws IOException {
         User user = (User) request.getSession().getAttribute("user");
         FileUpload fileUpload = new FileUpload();
-        String upload = fileUpload.upload(exercisesFile);
+        String upload = fileUpload.upload(exerciseFile);
         upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
@@ -74,13 +71,13 @@ public class ExercisesController {
         HSSFSheet sheet = hssfWorkbook.getSheetAt(0);
         //获得最后一行的行号
         int lastRowNum = sheet.getLastRowNum();
-        List<ExercisesEdit> exercisesEditList = new ArrayList<>();
+        List<ExerciseEdit> exerciseEditList = new ArrayList<>();
         for (int i = 1; i <= lastRowNum; i++) {
-            ExercisesEdit edit = new ExercisesEdit();
+            ExerciseEdit edit = new ExerciseEdit();
             HSSFRow row = sheet.getRow(i);
             String baseSubject = row.getCell(0).getStringCellValue();
             String subjectName = row.getCell(1).getStringCellValue();
-            String exercisestype = row.getCell(2).getStringCellValue();
+            String exercisetype = row.getCell(2).getStringCellValue();
             String title = row.getCell(3).getStringCellValue();
             String answers = row.getCell(4).getStringCellValue();
             String correct = row.getCell(5).getStringCellValue();
@@ -90,13 +87,13 @@ public class ExercisesController {
                 edit.setSubjectId(subject.getId());
             } else {
                 model.addAttribute("messs", "文件格式错误");
-                return "exercises/upload";
+                return "exercise/upload";
             }
-            if (exercisestype.equals("单选题") || exercisestype.equals("判断题") || exercisestype.equals("多选题")) {
-                edit.setExercisesType(exercisestype);
+            if (exercisetype.equals("单选题") || exercisetype.equals("判断题") || exercisetype.equals("多选题")) {
+                edit.setExerciseType(exercisetype);
             } else {
                 model.addAttribute("messs", "文件格式错误");
-                return "exercises/upload";
+                return "exercise/upload";
             }
             edit.setTitle(title);
             edit.setCorrect(correct);
@@ -113,20 +110,20 @@ public class ExercisesController {
                 options.add(option);
             }
             edit.setOptions(options);
-            exercisesEditList.add(edit);
+            exerciseEditList.add(edit);
         }
 
         DeleteFile deleteFile = new DeleteFile();
         deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload);
 
-        for (ExercisesEdit edit : exercisesEditList) {
-            exercisesService.insert(edit, user);
+        for (ExerciseEdit edit : exerciseEditList) {
+            exerciseService.insert(edit, user);
         }
-        return "redirect:/exercises/check";
+        return "redirect:/exercise/check";
     }
 
     @RequestMapping("/addOrUpdate")
-    public String addExercises(ExercisesEdit edit, HttpServletRequest request) {
+    public String addexercise(ExerciseEdit edit, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
@@ -141,23 +138,37 @@ public class ExercisesController {
         }
         edit.setOptions(options);
         if (edit.getId() != null) {
-            exercisesService.update(edit);
+            exerciseService.update(edit);
         } else {
-            exercisesService.insert(edit, user);
+            exerciseService.insert(edit, user);
         }
-        return "redirect:/exercises/check";
+        return "redirect:/exercise/check";
     }
 
     @RequestMapping("/toUpdate")
     public String toUpdate(Integer id, Model model) {
-        ExercisesEdit exercisesEdit = exercisesService.getExercisesEdit(id);
-        model.addAttribute("exercisesEdit", exercisesEdit);
-        return "exercises/add-exercises";
+        ExerciseEdit exerciseEdit = exerciseService.getExerciseEdit(id);
+        model.addAttribute("exerciseEdit", exerciseEdit);
+        return "exercise/add-exercise";
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public void delete(@RequestBody Exercises exercises) {
-        exercisesService.deleteById(exercises.getId());
+    public void delete(@RequestBody Exercise exercise) {
+        exerciseService.deleteById(exercise.getId());
+    }
+
+    @RequestMapping("/getExerciseBySubjectId")
+    @ResponseBody
+    public Pagination<ExerciseVM> getexerciseBySubjectId(Integer subjectId,
+                                                     @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                                     @RequestParam(value = "size", defaultValue = "2") Integer size,
+                                                     @RequestParam(value = "search", required = false) String search,
+                                                     @RequestParam(value = "type", required = false) String type,
+                                                     @RequestParam(value = "order", defaultValue = "exercise_id")String order){
+        if (subjectId == null){
+            return null;
+        }
+        return exerciseService.getExerciseBySubjectId(subjectId,currentPage, size, search, type, order);
     }
 }

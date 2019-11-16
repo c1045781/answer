@@ -61,8 +61,8 @@ public class UserService {
         return pagination;
     }
 
-    public void deleteById(User user){
-        userMapper.deleteById(user);
+    public void deleteById(Integer id){
+        userMapper.deleteById(id);
     }
 
     public User getUserById(Integer id) {

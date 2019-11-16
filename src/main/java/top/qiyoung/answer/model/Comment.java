@@ -5,7 +5,7 @@ import java.util.Date;
 public class Comment{
     private Integer id;
     private Integer userId;
-    private Integer exercisesId;
+    private Integer exerciseId;
     private String content;
     private Date createTime;
 
@@ -25,12 +25,12 @@ public class Comment{
         this.userId = userId;
     }
 
-    public Integer getExercisesId() {
-        return exercisesId;
+    public Integer getExerciseId() {
+        return exerciseId;
     }
 
-    public void setExercisesId(Integer exercisesId) {
-        this.exercisesId = exercisesId;
+    public void setExerciseId(Integer exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
     public String getContent() {

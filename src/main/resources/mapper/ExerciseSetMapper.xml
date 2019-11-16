@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.ExerciseSetMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.ExerciseSet">
+        <id column="exercise_set_id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+        <result column="exercise_count" jdbcType="INTEGER" property="exerciseCount"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+        <collection  property="exerciseList"  ofType="top.qiyoung.answer.model.Exercise">
+            <id column="exercise_id" jdbcType="INTEGER" property="id"/>
+            <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
+            <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+            <result column="correct" jdbcType="VARCHAR" property="correct"/>
+            <result column="exercise_content_id" jdbcType="INTEGER" property="exerciseContentId"/>
+            <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+            <result column="create_time" property="createTime"/>
+            <result column="modify_time" property="modifyTime"/>
+        </collection>
+    </resultMap>
+    <insert id="insert" parameterType="top.qiyoung.answer.model.ExerciseSet">
+        insert into exercise_set (title, subject_id, exercise_count, create_user_id, create_time, modify_time)
+           values(#{title},#{subjectId},#{exerciseCount},#{createUserId},#{createTime},#{modifyTime})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            select LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <select id="getAll" resultMap="BaseResultMap">
+        select e.*,s.* from exercise_set s
+        left outer join exercise_set_mid esm on s.exercise_set_id = esm.exercise_set_id
+        left outer join exercise e on esm.exercise_id = e.exercise_id
+    </select>
+</mapper>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.qiyoung.answer.mapper.ExercisesContentMapper">
-    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.ExercisesContent">
+<mapper namespace="top.qiyoung.answer.mapper.ExerciseContentMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.ExerciseContent">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
-    <insert id="insert"  parameterType="top.qiyoung.answer.model.ExercisesContent">
-        insert into exercisescontent (content,create_time) values (#{content},#{createTime})
+    <insert id="insert"  parameterType="top.qiyoung.answer.model.ExerciseContent">
+        insert into exercise_content (content,create_time) values (#{content},#{createTime})
         <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
           select LAST_INSERT_ID()
         </selectKey>
     </insert>
 
-    <select id="getExercisesContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select * from exercisescontent
+    <select id="getExerciseContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from exercise_content
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -24,7 +24,7 @@
     </select>
 
     <delete id="deleteById" parameterType="java.lang.Integer">
-        delete from exercisescontent
+        delete from exercise_content
         <where>
             <if test="id != null">
                 id = #{id}
@@ -32,8 +32,8 @@
         </where>
     </delete>
 
-    <update id="update" parameterType="top.qiyoung.answer.model.ExercisesContent">
-        update exercisescontent
+    <update id="update" parameterType="top.qiyoung.answer.model.ExerciseContent">
+        update exercise_content
         <set>
             <if test="content != null and content != ''">
                 content = #{content},

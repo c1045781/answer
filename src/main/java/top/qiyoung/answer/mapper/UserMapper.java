@@ -16,7 +16,7 @@ public interface UserMapper {
 
     Integer countUserList(Query query);
 
-    void deleteById(User user);
+    void deleteById(Integer id);
 
     User getUserById(Integer id);
 

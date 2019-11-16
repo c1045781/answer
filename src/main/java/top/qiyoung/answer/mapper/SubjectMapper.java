@@ -9,7 +9,7 @@ public interface SubjectMapper {
     List<Subject> getSubjectByBase(String baseSubject);
     List<String> getBase();
 
-    Subject getSubjectById(Integer exercisesContentId);
+    Subject getSubjectById(Integer exerciseContentId);
 
     Subject verification(@Param("baseSubject") String baseSubject,@Param("subjectName") String subjectName);
 }

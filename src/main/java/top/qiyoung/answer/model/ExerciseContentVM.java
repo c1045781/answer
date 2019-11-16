@@ -2,7 +2,7 @@ package top.qiyoung.answer.model;
 
 import java.util.List;
 
-public class ExercisesContentVM {
+public class ExerciseContentVM {
     private String title;
     private List<Option> options;
     private String correct;

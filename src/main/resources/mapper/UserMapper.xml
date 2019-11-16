@@ -78,10 +78,10 @@
           values (#{account},#{password},#{role},#{username},#{description},#{avatarImgUrl},#{createTime})
     </insert>
 
-    <delete id="deleteById" parameterType="top.qiyoung.answer.model.User">
+    <delete id="deleteById" parameterType="java.lang.Integer">
         delete from user
         <where>
-            <if test="id =! null">
+            <if test="id != null">
                 id = #{id}
             </if>
         </where>

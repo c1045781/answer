@@ -1,15 +1,17 @@
 package top.qiyoung.answer.model;
 
 import java.util.Date;
+import java.util.List;
 
-public class ExercisesSet {
+public class ExerciseSet {
     private Integer id;
     private String title;
     private Integer subjectId;
-    private Integer questionCount;
+    private Integer exerciseCount;
     private Integer createUserId;
     private Date createTime;
     private Date modifyTime;
+    List<Exercise> exerciseList;
 
     public Integer getId() {
         return id;
@@ -35,12 +37,13 @@ public class ExercisesSet {
         this.subjectId = subjectId;
     }
 
-    public Integer getQuestionCount() {
-        return questionCount;
+
+    public Integer getExerciseCount() {
+        return exerciseCount;
     }
 
-    public void setQuestionCount(Integer questionCount) {
-        this.questionCount = questionCount;
+    public void setExerciseCount(Integer exerciseCount) {
+        this.exerciseCount = exerciseCount;
     }
 
     public Integer getCreateUserId() {
@@ -65,5 +68,13 @@ public class ExercisesSet {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public List<Exercise> getExerciseList() {
+        return exerciseList;
+    }
+
+    public void setExerciseList(List<Exercise> exerciseList) {
+        this.exerciseList = exerciseList;
     }
 }

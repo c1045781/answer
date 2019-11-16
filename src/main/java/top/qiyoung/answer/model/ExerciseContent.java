@@ -2,7 +2,7 @@ package top.qiyoung.answer.model;
 
 import java.util.Date;
 
-public class ExercisesContent {
+public class ExerciseContent {
     private Integer id;
     private String content;
     private Date createTime;
@@ -30,5 +30,4 @@ public class ExercisesContent {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
 }

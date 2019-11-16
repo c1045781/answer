@@ -7,11 +7,29 @@ public class Pagination<T> {
     private Integer pageSize;
     private Integer totalPage;
     private Integer totalSize;
+    private String search;
+    private String type;
     private List<T> dataList;
 
     public Pagination(Integer currentPage, Integer pageSize) {
         this.currentPage = currentPage;
         this.pageSize = pageSize;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<T> getDataList() {

@@ -80,6 +80,6 @@ public class UserController {
     @RequestMapping("/delete")
     @ResponseBody
     public void delete(@RequestBody User user) {
-        userService.deleteById(user);
+        userService.deleteById(user.getId());
     }
 }

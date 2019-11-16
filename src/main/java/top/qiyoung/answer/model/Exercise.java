@@ -2,12 +2,12 @@ package top.qiyoung.answer.model;
 
 import java.util.Date;
 
-public class Exercises {
+public class Exercise {
     private Integer id;
-    private String exercisesType;
+    private String exerciseType;
     private Integer subjectId;
     private String correct;
-    private Integer exercisesContentId;
+    private Integer exerciseContentId;
     private Integer createUserId;
     private Integer status;
     private Date createTime;
@@ -21,12 +21,12 @@ public class Exercises {
         this.id = id;
     }
 
-    public String getExercisesType() {
-        return exercisesType;
+    public String getExerciseType() {
+        return exerciseType;
     }
 
-    public void setExercisesType(String exercisesType) {
-        this.exercisesType = exercisesType;
+    public void setExerciseType(String exerciseType) {
+        this.exerciseType = exerciseType;
     }
 
     public Integer getSubjectId() {
@@ -45,12 +45,12 @@ public class Exercises {
         this.correct = correct;
     }
 
-    public Integer getExercisesContentId() {
-        return exercisesContentId;
+    public Integer getExerciseContentId() {
+        return exerciseContentId;
     }
 
-    public void setExercisesContentId(Integer exercisesContentId) {
-        this.exercisesContentId = exercisesContentId;
+    public void setExerciseContentId(Integer exerciseContentId) {
+        this.exerciseContentId = exerciseContentId;
     }
 
     public Integer getCreateUserId() {

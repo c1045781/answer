@@ -61,20 +61,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="ExercisesVM:${pagination.dataList}">
-                            <td th:text="${ExercisesVM.exercises.id}"></td>
-                            <td th:text="${ExercisesVM.subject.name}"></td>
-                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '单选题'">单选题</td>
-                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '多选题'">多选题</td>
-                            <td th:if="${ExercisesVM.exercises.exercisesType} eq '判断题'">判断题</td>
-                            <td th:text="${ExercisesVM.exercisesContentVM.title}"></td>
-                            <td th:text="${ExercisesVM.user.username}"></td>
-                            <td th:text="${#dates.format(ExercisesVM.exercises.createTime,'yyyy-MM-dd')}"></td>
+                        <tr th:each="ExerciseVM:${pagination.dataList}">
+                            <td th:text="${ExerciseVM.exercise.id}"></td>
+                            <td th:text="${ExerciseVM.subject.name}"></td>
+                            <td th:text="${ExerciseVM.exercise.exerciseType}"></td>
+                            <td th:text="${ExerciseVM.exerciseContentVM.title}"></td>
+                            <td th:text="${ExerciseVM.user.username}"></td>
+                            <td th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></td>
                             <td>
-                                <button th:onclick="deleteExercisesModal([[${ExercisesVM.exercises.id}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="deleteExerciseModal([[${ExerciseVM.exercise.id}]]);" type="button" class="btn btn-danger">
                                     删除
                                 </button>
-                                <button th:onclick="updateExercisesModal([[${ExercisesVM.exercises.id}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="updateExerciseModal([[${ExerciseVM.exercise.id}]]);" type="button" class="btn btn-danger">
                                     修改
                                 </button>
                             </td>
@@ -144,7 +142,7 @@
         </div>
     </div>
     <div th:insert="~{foot :: foot}"></div>
-    <div class="modal fade" id="deleteExercisesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal fade" id="deleteExerciseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -162,7 +160,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
-                    <button type="button" class="btn btn-primary" onclick="deleteExercises()">确认</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteExercise()">确认</button>
                 </div>
             </div>
         </div>

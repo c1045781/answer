@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.ExerciseMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Exercise">
+        <id column="exercise_id" jdbcType="INTEGER" property="id"/>
+        <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
+        <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+        <result column="correct" jdbcType="VARCHAR" property="correct"/>
+        <result column="exercise_content_id" jdbcType="INTEGER" property="exerciseContentId"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="top.qiyoung.answer.model.Exercise">
+        insert into exercise (exercise_type, subject_id, correct, exercise_content_id, create_user_id, status, create_time, modify_time)
+           values(#{exerciseType},#{subjectId},#{correct},#{exerciseContentId},#{createUserId},#{status},#{createTime},#{modifyTime})
+    </insert>
+
+    <select id="getExerciseList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+        select * from exercise
+        <if test="order != null and order != ''">
+            order by ${order} asc limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countExerciseList" parameterType="top.qiyoung.answer.model.Query" resultType="Integer">
+        select count(*) from exercise
+    </select>
+
+    <select id="getExerciseById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from exercise where exercise_id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from exercise
+        <where>
+            <if test="id != null">
+                exercise_id = #{id}
+            </if>
+        </where>
+    </delete>
+
+    <update id="update" parameterType="top.qiyoung.answer.model.Exercise">
+        update exercise
+        <set>
+            <if test="exerciseType != null and exerciseType != ''">
+                exercise_type = #{exerciseType},
+            </if>
+            <if test="subjectId != null">
+                subject_id = #{subjectId},
+            </if>
+            <if test="correct != null and correct != ''">
+                correct = #{correct},
+            </if>
+            <if test="exerciseContentId != null">
+                exercise_content_id = #{exerciseContentId},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+        </set>
+        <where>
+            <if test="id != null">
+                and exercise_id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <select id="getExerciseBySubjectId" resultMap="BaseResultMap">
+        select exercise_id,exercise_type,exercise_content_id from exercise
+        <where>
+            <if test="subjectId != null">
+                and subject_id = #{subjectId}
+            </if>
+            <if test="query.type != null and query.type != ''">
+                and exercise_type = #{query.type}
+            </if>
+            <if test="1 == 1">
+                and status = 1
+            </if>
+        </where>
+        <if test="query.order != null and query.order != ''">
+            order by ${query.order} asc
+        </if>
+    </select>
+</mapper>
