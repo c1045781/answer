@@ -1,54 +1,3 @@
-function deleteUserModal(id) {
-    $('#deleteId').val(id);
-    $('#deleteModal').modal();
-}
-
-function deleteExerciseModal(id) {
-    $('#deleteId').val(id);
-    $('#deleteExerciseModal').modal();
-}
-
-function updateUserModal(id) {
-    window.location.href = "/user/toUpdate?id=" + id;
-}
-
-function updateExerciseModal(id) {
-    window.location.href = "/exercise/toUpdate?id=" + id;
-}
-
-function deleteUser() {
-    var id = $('#deleteId').val();
-    $.ajax({
-        url: '/user/delete',
-        type: 'post',
-        data: JSON.stringify({id: id}),
-        contentType: "application/json",
-        success: function () {
-            $('#deleteModal').modal('hide');
-            window.location.href = "/user/check";
-        }
-    });
-}
-
-function deleteExercise() {
-    var id = $('#deleteId').val();
-    $.ajax({
-        url: '/exercise/delete',
-        type: 'post',
-        data: JSON.stringify({id: id}),
-        contentType: "application/json",
-        success: function () {
-            $('#deleteModal').modal('hide');
-            window.location.href = "/exercise/check";
-        }
-    });
-}
-
-
-/*$('#myModal').on('shown.bs.modal', function () {
-    $('#myInput').focus()
-})*/
-
 function changeCorrect(e) {
     console.log(e)
     if (e == "单选题" || e == "判断题") {
@@ -72,9 +21,9 @@ function showSubject(e) {
         contentType: "application/json",
         success: function (data) {
             if (data != null) {
-                $('#subject').html("");
+                $('#subjectId').html("");
                 for (var i = 0; i < data.length; i++) {
-                    $('#subject').append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
+                    $('#subjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
                 }
             }
         }
@@ -102,41 +51,40 @@ function deleteOption() {
 }
 
 function addExercise(e) {
-    if(e == 'button'){
+    if (e == 'button') {
         $("#page").val('');
         $("#totalPage").val('');
     }
     $.ajax({
         url: '/exercise/getExerciseBySubjectId',
         type: 'post',
-        data: {subjectId: $("#subject").val(), type: $("#type option:selected").val()
-            , search: $("#search").val(),currentPage:$("#page").val()},
+        data: {
+            subjectId: $("#subject").val(), type: $("#type option:selected").val()
+            , search: $("#search").val(), currentPage: $("#page").val()
+        },
         dataType: 'json',
         success: function (data) {
             if (data != null) {
                 var list = data.dataList;
                 $("#table-tbody").html("");
                 for (var i = 0; i < list.length; i++) {
-                    $("#table-tbody").append("<tr id='" + list[i].exercise.id + "'><td><input name='exerciseIds' type='checkbox' value='" + list[i].exercise.id + "'></td>\n" +
-                        "<td>" + list[i].exercise.id + "</td>\n" +
+                    $("#table-tbody").append("<tr id='" + list[i].exercise.exerciseId + "'><td><input type='checkbox' value='" + list[i].exercise.exerciseId + "'></td>\n" +
+                        "<td>" + list[i].exercise.exerciseId + "</td>\n" +
                         "<td>" + list[i].exercise.exerciseType + "</td>\n" +
-                        "<td>" + list[i].exerciseContentVM.title + "</td><td></td></tr>");
-                    var vm = list[i].exerciseContentVM;
-                    $.each(vm, function (n, index) {
-                        if (n == 'options') {
-                            $.each(index, function () {
-                                $('#table-tbody').children(':last-child').children(':last-child').append($(this)[0].option + ' : ' + $(this)[0].content + '\t');
-                            })
-                        }
-                    })
+                        "<td>" + list[i].exercise.exerciseTitle + "</td></tr>");
                 }
-                $("#page").val(data.currentPage);
+                if (data.totalPage == 0) {
+                    $("#page").val(data.totalPage);
+                } else {
+                    $("#page").val(data.currentPage);
+                }
                 $("#totalPage").val(data.totalPage);
-                $("#pageA").html($("#page").val() +"/"+ $("#totalPage").val());
+
+                $("#pageA").html($("#page").val() + "/" + $("#totalPage").val());
                 $("#search").val(data.search);
-                $.each($("#type").children(),function(){
-                    if($(this).val() == data.type){
-                        $(this).prop('selected','true');
+                $.each($("#type").children(), function () {
+                    if ($(this).val() == data.type) {
+                        $(this).prop('selected', 'true');
                     }
                 })
             }
@@ -167,6 +115,9 @@ function addExerciseToset() {
                 "<button type='button'onclick='deleteExerciseTbody(" + $(this).parent('td').parent('tr').children(':first-child').find(':input').val() + ")' class='btn btn-primary'> 删除 </button></td></tr>";
             $("#exercise-tbody").append(contents);
             $("#exercise-tbody tr").find("td:eq(0)").find(':input').prop('checked', 'true')
+            $.each($("#exercise-tbody tr").find("td:eq(0)").find(':input'), function (index, e) {
+                $(this).attr("name", "exerciseList[" + index + "].exerciseId");
+            })
         }
     });
     $('#addExercise').modal('hide');
@@ -180,22 +131,57 @@ function deleteExerciseTbody(e) {
     });
 }
 
-function delPage(e){
+function delPage(e) {
     var page = $("#page").val();
     if (parseInt(page) <= 1) {
         $("#page").val(page);
-    }else{
-        $("#page").val(parseInt(page)-1);
+    } else {
+        $("#page").val(parseInt(page) - 1);
     }
     addExercise(e)
 }
-function addPage(e){
+
+function addPage(e) {
     var page = $("#page").val();
     var total = $("#totalPage").val();
     if (parseInt(page) < parseInt(total)) {
-        $("#page").val(parseInt(page)+1);
-    }else{
+        $("#page").val(parseInt(page) + 1);
+    } else {
         $("#page").val(total);
     }
     addExercise(e)
+}
+
+function submitUserFrom(e){
+    var skip = parseInt(e);
+    var type = $("#type").val();
+    var role = $("#role").val();
+    var search = $("#search").val();
+    var total = parseInt($("#totalPage").val());
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/user/check?currentPage=" + skip+"&role="+ role +"&type="+ type+"&search="+search;
+}
+
+function submitExerciseFrom(e){
+    var skip = parseInt(e);
+    var subjectId = parseInt($("#subjectId").val());
+    var type = $("#type").val();
+    var exerciseType = $("#exerciseType").val();
+    var search = $("#search").val();
+    var total = parseInt($("#totalPage").val());
+    if (subjectId == null || isNaN(subjectId)){
+        subjectId = "";
+    }
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType;
 }

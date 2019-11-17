@@ -39,7 +39,7 @@
                 <ul>
                     <li>首页<span>«</span></li>
                     <li>套题管理<span>«</span></li>
-                    <li>添加套题</li>
+                    <li>编辑套题</li>
                 </ul>
             </div>
         </div>
@@ -59,59 +59,55 @@
                                         </div>
                                         <div class="form-body form-body-info">
                                             <form data-toggle="validator" novalidate="true"
-                                                  action="/exerciseSet/addOrUpdate"
-                                                  method="post">
+                                                  action="/exerciseSet/addOrUpdate" method="post">
                                                 <div class="form-group col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">学科：</label>
-                                                    <input id="modelInput" type="hidden"
-                                                           th:value="${exerciseEdit != null?exerciseEdit.subjectList:''}">
-                                                    <input id="id" type="hidden" name="id"
-                                                           th:value="${exerciseEdit != null?exerciseEdit.id:''}">
+                                                    <input id="modelInput" type="hidden" th:value="${exerciseSetVM != null?exerciseSetVM:''}">
+                                                    <input id="id" type="hidden" name="exerciseSetId" th:value="${exerciseSetVM != null?exerciseSetVM.exerciseSetId:''}">
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
-                                                        <select id="base" onchange="showSubject(this.value)"
-                                                                class="form-control" style="height: 50px;"
-                                                                th:if='${exerciseEdit != null}'>
-                                                            <option th:each="base:${exerciseEdit.baseList}"
+                                                        <select id="base" onchange="showSubject(this.value)"  class="form-control" style="height: 50px;"
+                                                                th:if='${exerciseSetVM != null}'>
+                                                            <option th:each="base:${exerciseSetVM.baseList}"
                                                                     th:text="${base}" th:value="${base}"
-                                                                    th:selected='${exerciseEdit.subjectList[0].baseSubject== base}'></option>
+                                                                    th:selected='${exerciseSetVM.subjectList[0].baseSubject== base}'></option>
                                                         </select>
 
                                                         <select id="base" onchange="showSubject(this.value)"
                                                                 class="form-control" style="height: 50px;"
-                                                                th:if='${exerciseEdit == null}'>
+                                                                th:if='${exerciseSetVM == null}'>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group  col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目分类：</label>
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
-                                                        <select id="subject" name="subjectId" class="form-control"
-                                                                style="height: 50px;" th:if='${exerciseEdit != null}'>
-                                                            <option th:each="subject:${exerciseEdit.subjectList}"
+                                                        <select id="subjectId" name="subject.subjectId" class="form-control"
+                                                                style="height: 50px;" th:if='${exerciseSetVM != null}'>
+                                                            <option th:each="subject:${exerciseSetVM.subjectList}"
                                                                     th:text="${subject.name}"
-                                                                    th:value="${exerciseEdit.subjectId}"
-                                                                    th:selected='${subject.id == exerciseEdit.subjectId}'></option>
+                                                                    th:value="${exerciseSetVM.subject.subjectId}"
+                                                                    th:selected='${subject.subjectId == exerciseSetVM.subject.subjectId}'></option>
                                                         </select>
 
-                                                        <select id="subject" name="subjectId" class="form-control"
-                                                                style="height: 50px;" th:if='${exerciseEdit == null}'>
+                                                        <select id="subjectId" name="subject.subjectId" class="form-control"
+                                                                style="height: 50px;" th:if='${exerciseSetVM == null}'>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group  col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">套题标题：</label>
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
-                                                        <input type="text" class="form-control" name="title"
-                                                               required="">
+                                                        <input th:if='${exerciseSetVM == null}' type="text" class="form-control" name="title"  required="">
+                                                        <input th:if='${exerciseSetVM != null}' th:value='${exerciseSetVM.title}' type="text" class="form-control" name="title"  required="">
                                                     </div>
                                                     <button type="button" onclick="addExercise('button')"
                                                             class="btn btn-primary">
                                                         添加题目
                                                     </button>
                                                 </div>
-                                                <div id="exercise-div" class="form-group  col-xs-12 col-md-12 col-sm-12"
-                                                     style="display: none">
+                                                <div id="exercise-div" class="form-group  col-xs-12 col-md-12 col-sm-12" th:style="${exerciseSetVM==null?'display: none':''}" style="display: none">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目：</label>
+                                                    <input type="hidden" id="tableSum" th:value="${exerciseSetVM!=null?exerciseSetVM.exerciseList.size():'0'}">
                                                     <div class="col-xs-10 col-md-10 col-sm-10">
                                                         <div class="table-responsive">
                                                             <table class="table">
@@ -119,20 +115,28 @@
                                                                 <tr>
                                                                     <th></th>
                                                                     <th>ID</th>
-                                                                    <th>题型</th>
+                                                                    <th>题目类型</th>
                                                                     <th>题干</th>
-                                                                    <th>选项</th>
                                                                     <th>操作</th>
                                                                 </tr>
                                                                 </thead>
-                                                                <tbody id="exercise-tbody">
+                                                                <tbody id="exercise-tbody" th:if='${exerciseSetVM == null}'>
+                                                                </tbody>
+                                                                <tbody id="exercise-tbody" th:if='${exerciseSetVM != null}'>
+                                                                    <tr th:each="exercise,status:${exerciseSetVM.exerciseList}">
+                                                                        <td><input th:value="${exercise.exerciseId}" th:name="|exerciseList[${status.index}].exerciseId|" checked type="checkbox"></td>
+                                                                        <td th:text="${exercise.exerciseId}"></td>
+                                                                        <td th:text="${exercise.exerciseType}"></td>
+                                                                        <td th:text="${exercise.exerciseTitle}"></td>
+                                                                        <td><button type="button" th:onclick="|deleteExerciseTbody(${exercise.exerciseId})|"  class="btn btn-primary"> 删除 </button></td>
+                                                                    </tr>
                                                                 </tbody>
                                                             </table>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary">添加</button>
+                                                    <button type="submit" class="btn btn-primary">确定</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -151,8 +155,8 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
                 <h4 class="modal-title" id="exampleModalLabel">习题</h4>
             </div>
             <div class="modal-body">
@@ -174,7 +178,7 @@
                             <th></th>
                             <th>ID</th>
                             <th>题型</th>
-                            <th>题干</th>
+                            <th>题目</th>
                             <th>选项</th>
                         </tr>
                         </thead>
@@ -184,7 +188,7 @@
                     </table>
                 </div>
                 <div>
-                    <nav style="text-align: center;">
+                    <nav id="navPage" style="text-align: center;">
                         <ul class="pagination">
                             <li>
                                 <a onclick="delPage('a')"  href="javascript:void(0)" aria-label="Previous">

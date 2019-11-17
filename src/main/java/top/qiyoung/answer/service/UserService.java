@@ -42,11 +42,12 @@ public class UserService {
         return 1;
     }
 
-    public Pagination<User> getUserList(Integer currentPage, Integer size, String search, String type, String order) {
+    public Pagination<User> getUserList(Integer currentPage, Integer size, String search, String type, String order,Integer role) {
         Pagination<User> pagination = new Pagination<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
         query.setSize(size);
+        query.setRole(role);
         query.setSearch(search);
         query.setType(type);
         query.setOrder(order);
@@ -71,9 +72,9 @@ public class UserService {
 
     public void update(User user, MultipartFile avatarImg) {
         if (!avatarImg.isEmpty()) {
-            User dbUser = userMapper.getUserById(user.getId());
+            User dbUser = userMapper.getUserById(user.getUserId());
             DeleteFile deleteFile = new DeleteFile();
-            deleteFile.delFile(dbUser.getAvatarImgUrl());
+            deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\"+dbUser.getAvatarImgUrl());
             FileUpload fileUpload = new FileUpload();
             String upload = "/upload/default.jpg";
             try {

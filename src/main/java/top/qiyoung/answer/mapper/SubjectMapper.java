@@ -12,4 +12,5 @@ public interface SubjectMapper {
     Subject getSubjectById(Integer exerciseContentId);
 
     Subject verification(@Param("baseSubject") String baseSubject,@Param("subjectName") String subjectName);
+
 }

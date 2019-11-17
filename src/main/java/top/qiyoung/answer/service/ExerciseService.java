@@ -1,10 +1,9 @@
 package top.qiyoung.answer.service;
 
 import com.alibaba.fastjson.JSON;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.mapper.ExerciseContentMapper;
 import top.qiyoung.answer.mapper.ExerciseMapper;
+import top.qiyoung.answer.mapper.MidMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.*;
@@ -21,29 +20,23 @@ public class ExerciseService {
     @Resource
     private ExerciseMapper exerciseMapper;
     @Resource
-    private ExerciseContentMapper exerciseContentMapper;
-    @Resource
     private UserMapper userMapper;
     @Resource
     private SubjectMapper subjectMapper;
+    @Resource
+    private MidMapper midMapper;
 
     public void insert(ExerciseEdit edit, User user) {
-        ExerciseContent exerciseContent = new ExerciseContent();
-        ExerciseContentVM exerciseContentVM = new ExerciseContentVM();
         Exercise exercise = new Exercise();
 
-        BeanUtils.copyProperties(edit, exercise);
-        // 制作content JSON
-        exerciseContentVM.setCorrect(edit.getCorrect());
-        exerciseContentVM.setOptions(edit.getOptions());
-        exerciseContentVM.setTitle(edit.getTitle());
-        exerciseContent.setContent(JSON.toJSONString(exerciseContentVM));
-        exerciseContent.setCreateTime(new Date());
-        exerciseContentMapper.insert(exerciseContent);
-        // 插入的contentId
-        Integer exerciseContentId = exerciseContent.getId();
-        exercise.setExerciseContentId(exerciseContentId);
 
+        // 插入的option
+        exercise.setExerciseType(edit.getExerciseType());
+        exercise.setSubjectId(edit.getSubjectId());
+        exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
+        exercise.setCorrect(edit.getCorrect());
+        exercise.setExerciseTitle(edit.getTitle());
+        exercise.setCreateUserId(user.getUserId());
         exercise.setCreateTime(new Date());
         exercise.setModifyTime(new Date());
         if (user.getRole() == 1) {
@@ -51,67 +44,80 @@ public class ExerciseService {
         } else {
             exercise.setStatus(0);
         }
-        exercise.setCreateUserId(user.getId());
+
+
         exerciseMapper.insert(exercise);
     }
 
     public void update(ExerciseEdit edit) {
-        ExerciseContent exerciseContent = new ExerciseContent();
-        ExerciseContentVM exerciseContentVM = new ExerciseContentVM();
         Exercise exercise = new Exercise();
 
 
         // 制作content JSON
-        exerciseContentVM.setCorrect(edit.getCorrect());
-        exerciseContentVM.setOptions(edit.getOptions());
-        exerciseContentVM.setTitle(edit.getTitle());
-
-        Exercise dbexercise = exerciseMapper.getExerciseById(edit.getId());
-        exerciseContent.setId(dbexercise.getExerciseContentId());
-        exerciseContent.setContent(JSON.toJSONString(exerciseContentVM));
-        exerciseContentMapper.update(exerciseContent);
-
-        BeanUtils.copyProperties(edit, exercise);
-        exercise.setId(edit.getId());
+        exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
+        exercise.setExerciseId(edit.getExerciseEditId());
+        exercise.setExerciseTitle(edit.getTitle());
+        exercise.setExerciseType(edit.getExerciseType());
         exercise.setCorrect(edit.getCorrect());
         exercise.setModifyTime(new Date());
         exerciseMapper.update(exercise);
     }
 
-    public Pagination getExerciseVMList(Integer currentPage, Integer size, String search, String type, String order) {
+    public Pagination<ExerciseVM> getExerciseList(Integer currentPage, Integer size,
+                                                  String search, String type, String order, Integer subjectId,String exerciseType) {
+        List<Exercise> exercises = new ArrayList<>();
+        int count = 0;
         Pagination<ExerciseVM> pagination = new Pagination<>(currentPage, size);
         List<ExerciseVM> VMList = new ArrayList<>();
         Query query = new Query();
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
-        query.setSearch(search);
         query.setType(type);
+        query.setExerciseType(exerciseType);
         query.setOrder(order);
-        List<Exercise> exerciseList = exerciseMapper.getExerciseList(query);
-        for (Exercise exercise : exerciseList) {
+        query.setSubjectId(subjectId);
+        if (type != null && type.equals("createUser")) {
+            List<User> users = userMapper.getUserByUsername(search);
+            for (User dbuser : users) {
+                query.setIndex((currentPage - 1) * size);
+                query.setSize(size);
+                query.setSearch(dbuser.getUserId()+"");
+                List<Exercise> exerciseList = exerciseMapper.getExerciseList(query);
+                for (Exercise exercise : exerciseList) {
+                    exercises.add(exercise);
+                }
+                query.setIndex(null);
+                query.setSize(null);
+                count += exerciseMapper.countExerciseList(query);
+            }
+        } else {
+            query.setSearch(search);
+            exercises = exerciseMapper.getExerciseList(query);
+            query.setIndex(null);
+            query.setSize(null);
+            count = exerciseMapper.countExerciseList(query);
+
+        }
+        for (Exercise exercise : exercises) {
             ExerciseVM exerciseVM = new ExerciseVM();
             User user = userMapper.getUserById(exercise.getCreateUserId());
             Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
-            ExerciseContent exerciseContent = exerciseContentMapper.getExerciseContentById(exercise.getExerciseContentId());
             exerciseVM.setExercise(exercise);
-            exerciseVM.setExerciseContentVM(JSON.parseObject(exerciseContent.getContent(), ExerciseContentVM.class));
+            exerciseVM.setOptions(JSON.parseArray(exercise.getOptionContent(), Option.class));
             exerciseVM.setSubject(subject);
             exerciseVM.setUser(user);
             VMList.add(exerciseVM);
         }
+        pagination.setCurrentPage(currentPage);
+        pagination.setPageSize(size);
         pagination.setDataList(VMList);
-
-        query.setIndex(null);
-        query.setSize(null);
-        int count = exerciseMapper.countExerciseList(query);
         pagination.setTotalSize(count);
         pagination.setTotalPage((int) Math.ceil((double) pagination.getTotalSize() / (double) size));
         return pagination;
     }
 
     public void deleteById(Integer id) {
-        Exercise exercise = exerciseMapper.getExerciseById(id);
-        exerciseContentMapper.deleteById(exercise.getExerciseContentId());
+        midMapper.deleteByExerciseId(id);
         exerciseMapper.deleteById(id);
     }
 
@@ -126,34 +132,27 @@ public class ExerciseService {
     public ExerciseEdit getExerciseEdit(Integer id) {
         ExerciseEdit edit = new ExerciseEdit();
         Exercise exercise = exerciseMapper.getExerciseById(id);
-        edit.setCorrect(exercise.getCorrect());
-        edit.setId(id);
-        edit.setExerciseType(exercise.getExerciseType());
-        edit.setSubjectId(exercise.getSubjectId());
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
         List<String> base = subjectMapper.getBase();
+        List<Option> options = JSON.parseArray(exercise.getOptionContent(), Option.class);
+        List<String> answerList = new ArrayList<>();
+
+        for (Option option : options) {
+            answerList.add(option.getContent());
+
+        }
+        edit.setExerciseEditId(id);
+        edit.setExerciseType(exercise.getExerciseType());
         edit.setBaseList(base);
         edit.setSubjectList(subjectList);
-        ExerciseContent exerciseContent = exerciseContentMapper.getExerciseContentById(exercise.getExerciseContentId());
-        ExerciseContentVM vm = JSON.parseObject(exerciseContent.getContent(), ExerciseContentVM.class);
-        edit.setOptions(vm.getOptions());
-        List<String> answerList = new ArrayList<>();
-        for (Option option : vm.getOptions()) {
-            answerList.add(option.getContent());
-        }
+        edit.setSubjectId(exercise.getSubjectId());
+        edit.setCorrect(exercise.getCorrect());
+        edit.setOptions(options);
+        edit.setTitle(exercise.getExerciseTitle());
         edit.setAnswers(answerList);
-        edit.setTitle(vm.getTitle());
         return edit;
     }
-
-/*    private Exercise exercise;
-    private Subject subject;
-    private User user;
-    private ExerciseContentVM exerciseContentVM;*/
-
-   /* exercise -> type id
-    exerciseCOntent ->title*/
 
     public Pagination<ExerciseVM> getExerciseBySubjectId(Integer subjectId, Integer currentPage, Integer size, String search, String type, String order) {
 
@@ -168,30 +167,24 @@ public class ExerciseService {
         query.setOrder(order);
         List<Exercise> dbexerciseList = exerciseMapper.getExerciseBySubjectId(query, subjectId);
         List<Exercise> exerciseList = new ArrayList<>();
-        List<ExerciseContentVM> contentVMList = new ArrayList<>();
         for (Exercise exercise : dbexerciseList) {
-            ExerciseContent content = exerciseContentMapper.getExerciseContentById(exercise.getExerciseContentId());
-            ExerciseContentVM contentVM = JSON.parseObject(content.getContent(), ExerciseContentVM.class);
-            if (contentVM.getTitle().contains(search)) {
+            if (exercise.getExerciseTitle().contains(search)) {
                 exerciseList.add(exercise);
-                contentVMList.add(contentVM);
             }
         }
         int index = query.getIndex();
+        int length;
         if (exerciseList.size() < (index + size)) {
-            for (int i = index; i < exerciseList.size(); i++) {
-                ExerciseVM exerciseVM = new ExerciseVM();
-                exerciseVM.setExercise(exerciseList.get(i));
-                exerciseVM.setExerciseContentVM(contentVMList.get(i));
-                VMList.add(exerciseVM);
-            }
+            length = exerciseList.size();
         } else {
-            for (int i = index; i < (index + size); i++) {
-                ExerciseVM exerciseVM = new ExerciseVM();
-                exerciseVM.setExercise(exerciseList.get(i));
-                exerciseVM.setExerciseContentVM(contentVMList.get(i));
-                VMList.add(exerciseVM);
-            }
+            length = index + size;
+        }
+        for (int i = index; i < length; i++) {
+            ExerciseVM exerciseVM = new ExerciseVM();
+            exerciseVM.setExercise(exerciseList.get(i));
+            List<Option> options = JSON.parseArray(exerciseList.get(i).getOptionContent(), Option.class);
+            exerciseVM.setOptions(options);
+            VMList.add(exerciseVM);
         }
         pagination.setDataList(VMList);
         pagination.setTotalSize(exerciseList.size());

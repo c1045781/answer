@@ -1,18 +1,18 @@
 package top.qiyoung.answer.model;
 
 public class Message {
-    private Integer id;
+    private Integer messageid;
     private String content;
     private Integer status;
     private Integer userName;
     private Integer createTime;
 
-    public Integer getId() {
-        return id;
+    public Integer getMessageid() {
+        return messageid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setMessageid(Integer messageid) {
+        this.messageid = messageid;
     }
 
     public String getContent() {

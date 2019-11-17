@@ -3,22 +3,23 @@ package top.qiyoung.answer.model;
 import java.util.Date;
 
 public class Exercise {
-    private Integer id;
+    private Integer exerciseId;
     private String exerciseType;
     private Integer subjectId;
     private String correct;
-    private Integer exerciseContentId;
+    private String exerciseTitle;
+    private String optionContent;
     private Integer createUserId;
     private Integer status;
     private Date createTime;
     private Date modifyTime;
 
-    public Integer getId() {
-        return id;
+    public Integer getExerciseId() {
+        return exerciseId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setExerciseId(Integer exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
     public String getExerciseType() {
@@ -45,12 +46,20 @@ public class Exercise {
         this.correct = correct;
     }
 
-    public Integer getExerciseContentId() {
-        return exerciseContentId;
+    public String getExerciseTitle() {
+        return exerciseTitle;
     }
 
-    public void setExerciseContentId(Integer exerciseContentId) {
-        this.exerciseContentId = exerciseContentId;
+    public void setExerciseTitle(String exerciseTitle) {
+        this.exerciseTitle = exerciseTitle;
+    }
+
+    public String getOptionContent() {
+        return optionContent;
+    }
+
+    public void setOptionContent(String optionContent) {
+        this.optionContent = optionContent;
     }
 
     public Integer getCreateUserId() {

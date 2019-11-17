@@ -3,10 +3,9 @@ package top.qiyoung.answer.utils;
 import java.io.File;
 
 public class DeleteFile {
-    public String delFile(String filename) {
+    public String delFile(String filepath) {
         String resultInfo;
-        String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + filename;
-        File file = new File(path);
+        File file = new File(filepath);
         if (file.exists()) {
             if (file.delete()) {
                 resultInfo =  "1-删除成功";

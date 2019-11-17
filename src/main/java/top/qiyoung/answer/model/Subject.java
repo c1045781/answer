@@ -1,16 +1,16 @@
 package top.qiyoung.answer.model;
 
 public class Subject {
-    private Integer id;
+    private Integer subjectId;
     private String baseSubject;
     private String name;
 
-    public Integer getId() {
-        return id;
+    public Integer getSubjectId() {
+        return subjectId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 
     public String getBaseSubject() {

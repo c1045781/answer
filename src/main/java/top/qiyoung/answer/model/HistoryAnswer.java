@@ -1,17 +1,17 @@
 package top.qiyoung.answer.model;
 
 public class HistoryAnswer {
-    private Integer id;
+    private Integer historyAnswerid;
     private Integer historyId;
     private String answer;
     private Integer order;
 
-    public Integer getId() {
-        return id;
+    public Integer getHistoryAnswerid() {
+        return historyAnswerid;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setHistoryAnswerid(Integer historyAnswerid) {
+        this.historyAnswerid = historyAnswerid;
     }
 
     public Integer getHistoryId() {

@@ -41,13 +41,24 @@ public class ExerciseController {
 
     @RequestMapping("/check")
     public String checkexercise(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                                 @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                 @RequestParam(value = "search", required = false) String search,
-                                 @RequestParam(value = "exerciseType", required = false) String type,
-                                 @RequestParam(value = "order", defaultValue = "exercise_id") String order,
-                                 Model model) {
-        Pagination pagination = exerciseService.getExerciseVMList(currentPage, size, search, type, order);
+                                @RequestParam(value = "size", defaultValue = "2") Integer size,
+                                @RequestParam(value = "search", required = false) String search,
+                                @RequestParam(value = "type", required = false) String type,
+                                @RequestParam(value = "exerciseType", required = false) String exerciseType,
+                                @RequestParam(value = "subjectId", required = false) Integer subjectId,
+                                @RequestParam(value = "order", defaultValue = "exercise_id asc") String order,
+                                Model model) {
+        Pagination<ExerciseVM> pagination = exerciseService.getExerciseList(currentPage, size, search, type, order, subjectId,exerciseType);
+        if (subjectId != null) {
+            Subject subject = subjectService.getSubjectById(subjectId);
+            List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
+            List<String> baseList = subjectService.getBase();
+            model.addAttribute("subjectList",subjects);
+            model.addAttribute("baseList",baseList);
+        }
         model.addAttribute("pagination", pagination);
+        model.addAttribute("subjectId", subjectId);
+        model.addAttribute("exerciseType", exerciseType);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
         return "exercise/exercise";
@@ -72,7 +83,7 @@ public class ExerciseController {
         //获得最后一行的行号
         int lastRowNum = sheet.getLastRowNum();
         List<ExerciseEdit> exerciseEditList = new ArrayList<>();
-        for (int i = 1; i <= lastRowNum; i++) {
+        for (int i = 1; i < lastRowNum; i++) {
             ExerciseEdit edit = new ExerciseEdit();
             HSSFRow row = sheet.getRow(i);
             String baseSubject = row.getCell(0).getStringCellValue();
@@ -84,7 +95,7 @@ public class ExerciseController {
 
             Subject subject = subjectService.verification(baseSubject, subjectName);
             if (subject != null) {
-                edit.setSubjectId(subject.getId());
+                edit.setSubjectId(subject.getSubjectId());
             } else {
                 model.addAttribute("messs", "文件格式错误");
                 return "exercise/upload";
@@ -96,7 +107,7 @@ public class ExerciseController {
                 return "exercise/upload";
             }
             edit.setTitle(title);
-            edit.setCorrect(correct);
+            edit.setCorrect(correct.toUpperCase());
             String[] split = answers.split("、");
             List<String> answerList = new ArrayList<>(Arrays.asList(split));
             List<Option> options = new ArrayList<>();
@@ -114,7 +125,8 @@ public class ExerciseController {
         }
 
         DeleteFile deleteFile = new DeleteFile();
-        deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload);
+        String s = deleteFile.delFile(upload);
+        System.out.println(s);
 
         for (ExerciseEdit edit : exerciseEditList) {
             exerciseService.insert(edit, user);
@@ -137,7 +149,7 @@ public class ExerciseController {
             options.add(option);
         }
         edit.setOptions(options);
-        if (edit.getId() != null) {
+        if (edit.getExerciseEditId() != null) {
             exerciseService.update(edit);
         } else {
             exerciseService.insert(edit, user);
@@ -146,29 +158,30 @@ public class ExerciseController {
     }
 
     @RequestMapping("/toUpdate")
-    public String toUpdate(Integer id, Model model) {
-        ExerciseEdit exerciseEdit = exerciseService.getExerciseEdit(id);
+    public String toUpdate(Integer exerciseId, Model model) {
+        ExerciseEdit exerciseEdit = exerciseService.getExerciseEdit(exerciseId);
         model.addAttribute("exerciseEdit", exerciseEdit);
         return "exercise/add-exercise";
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public void delete(@RequestBody Exercise exercise) {
-        exerciseService.deleteById(exercise.getId());
+    public String delete(Integer exerciseId) {
+        exerciseService.deleteById(exerciseId);
+        return "success";
     }
 
     @RequestMapping("/getExerciseBySubjectId")
     @ResponseBody
     public Pagination<ExerciseVM> getexerciseBySubjectId(Integer subjectId,
-                                                     @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                                                     @RequestParam(value = "size", defaultValue = "2") Integer size,
-                                                     @RequestParam(value = "search", required = false) String search,
-                                                     @RequestParam(value = "type", required = false) String type,
-                                                     @RequestParam(value = "order", defaultValue = "exercise_id")String order){
-        if (subjectId == null){
+                                                         @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                                         @RequestParam(value = "size", defaultValue = "2") Integer size,
+                                                         @RequestParam(value = "search", required = false) String search,
+                                                         @RequestParam(value = "type", required = false) String type,
+                                                         @RequestParam(value = "order", defaultValue = "exercise_id asc") String order) {
+        if (subjectId == null) {
             return null;
         }
-        return exerciseService.getExerciseBySubjectId(subjectId,currentPage, size, search, type, order);
+        return exerciseService.getExerciseBySubjectId(subjectId, currentPage, size, search, type, order);
     }
 }

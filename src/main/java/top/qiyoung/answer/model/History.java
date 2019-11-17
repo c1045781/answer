@@ -3,7 +3,7 @@ package top.qiyoung.answer.model;
 import java.util.Date;
 
 public class History {
-    private Integer id;
+    private Integer historyId;
     private Integer userId;
     private Integer examId;
     private Integer subjectId;
@@ -11,12 +11,12 @@ public class History {
     private String title;
     private Date createTime;
 
-    public Integer getId() {
-        return id;
+    public Integer getHistoryId() {
+        return historyId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setHistoryId(Integer historyId) {
+        this.historyId = historyId;
     }
 
     public Integer getUserId() {

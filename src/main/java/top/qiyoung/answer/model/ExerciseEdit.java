@@ -3,7 +3,7 @@ package top.qiyoung.answer.model;
 import java.util.List;
 
 public class ExerciseEdit {
-    private Integer id;
+    private Integer exerciseEditId;
     private String exerciseType;
     private List<String> baseList;
     private Integer subjectId;
@@ -13,12 +13,12 @@ public class ExerciseEdit {
     private String title;
     private List<String> answers;
 
-    public Integer getId() {
-        return id;
+    public Integer getExerciseEditId() {
+        return exerciseEditId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setExerciseEditId(Integer exerciseEditId) {
+        this.exerciseEditId = exerciseEditId;
     }
 
     public String getExerciseType() {

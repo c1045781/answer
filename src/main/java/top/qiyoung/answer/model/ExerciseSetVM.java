@@ -1,28 +1,84 @@
 package top.qiyoung.answer.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class ExerciseSetVM {
-    private Integer id;
-    private Integer subjectId;
+    private Integer exerciseSetId;
+//    private Integer subjectId;
     private String title;
-    private List<Integer> exerciseIds;
+//    private List<Integer> exerciseIds;
+    private Date createTime;
+    private Subject subject;
+    private List<Subject> subjectList;
+    private List<String> baseList;
+    private List<Exercise> exerciseList;
+    private User user;
 
-    public Integer getId() {
-        return id;
+    public List<String> getBaseList() {
+        return baseList;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setBaseList(List<String> baseList) {
+        this.baseList = baseList;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
+    public List<Subject> getSubjectList() {
+        return subjectList;
     }
 
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
+    public void setSubjectList(List<Subject> subjectList) {
+        this.subjectList = subjectList;
     }
+
+    public Integer getExerciseSetId() {
+        return exerciseSetId;
+    }
+
+    public void setExerciseSetId(Integer exerciseSetId) {
+        this.exerciseSetId = exerciseSetId;
+    }
+
+    public List<Exercise> getExerciseList() {
+        return exerciseList;
+    }
+
+    public void setExerciseList(List<Exercise> exerciseList) {
+        this.exerciseList = exerciseList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+
+//    public Integer getSubjectId() {
+//        return subjectId;
+//    }
+//
+//    public void setSubjectId(Integer subjectId) {
+//        this.subjectId = subjectId;
+//    }
 
     public String getTitle() {
         return title;
@@ -32,11 +88,11 @@ public class ExerciseSetVM {
         this.title = title;
     }
 
-    public List<Integer> getExerciseIds() {
-        return exerciseIds;
-    }
-
-    public void setExerciseIds(List<Integer> exerciseIds) {
-        this.exerciseIds = exerciseIds;
-    }
+//    public List<Integer> getExerciseIds() {
+//        return exerciseIds;
+//    }
+//
+//    public void setExerciseIds(List<Integer> exerciseIds) {
+//        this.exerciseIds = exerciseIds;
+//    }
 }

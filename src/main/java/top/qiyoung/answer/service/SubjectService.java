@@ -15,7 +15,10 @@ public class SubjectService {
 
 
     public List<Subject> getSubjectByBase(String baseSubject) {
-        return subjectMapper.getSubjectByBase(baseSubject);
+        if (baseSubject != null || !baseSubject.equals("")) {
+            return subjectMapper.getSubjectByBase(baseSubject);
+        }
+        return null;
     }
 
     public List<String> getBase() {
@@ -24,5 +27,10 @@ public class SubjectService {
 
     public Subject verification(String baseSubject, String subjectName) {
         return subjectMapper.verification(baseSubject, subjectName);
+    }
+
+    public Subject getSubjectById(Integer subjectId) {
+        Subject subject = subjectMapper.getSubjectById(subjectId);
+        return subject;
     }
 }

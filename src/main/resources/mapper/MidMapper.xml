@@ -5,4 +5,20 @@
         insert into exercise_set_mid (exercise_id, exercise_set_id)
            values(#{exerciseId},#{exerciseSetId})
     </insert>
+    <delete id="deleteByExerciseSetId" parameterType="java.lang.Integer">
+        delete from exercise_set_mid
+        <where>
+            <if test="exerciseSetId != null">
+                exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
+        delete from exercise_set_mid
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </delete>
 </mapper>

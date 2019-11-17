@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ExerciseSet {
-    private Integer id;
+    private Integer exerciseSetId;
     private String title;
     private Integer subjectId;
     private Integer exerciseCount;
@@ -13,12 +13,12 @@ public class ExerciseSet {
     private Date modifyTime;
     List<Exercise> exerciseList;
 
-    public Integer getId() {
-        return id;
+    public Integer getExerciseSetId() {
+        return exerciseSetId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setExerciseSetId(Integer exerciseSetId) {
+        this.exerciseSetId = exerciseSetId;
     }
 
     public String getTitle() {

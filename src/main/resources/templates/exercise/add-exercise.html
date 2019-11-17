@@ -63,7 +63,7 @@
                                                 <div class="form-group col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">学科：</label>
                                                     <input id="modelInput" type="hidden" th:value="${exerciseEdit != null?exerciseEdit.subjectList:''}">
-                                                    <input id="id" type="hidden" name="id" th:value="${exerciseEdit != null?exerciseEdit.id:''}">
+                                                    <input id="id" type="hidden" name="id" th:value="${exerciseEdit != null?exerciseEdit.exerciseEditId:''}">
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
                                                         <select id="base" onchange="showSubject(this.value)" class="form-control" style="height: 50px;" th:if='${exerciseEdit != null}'>
                                                             <option th:each="base:${exerciseEdit.baseList}"
@@ -79,15 +79,15 @@
                                                 <div class="form-group  col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目分类：</label>
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
-                                                        <select id="subject" name="subjectId" class="form-control"
+                                                        <select id="subjectId" name="subjectId" class="form-control"
                                                                 style="height: 50px;" th:if='${exerciseEdit != null}'>
                                                             <option th:each="subject:${exerciseEdit.subjectList}"
                                                                     th:text="${subject.name}"
                                                                     th:value="${exerciseEdit.subjectId}"
-                                                                    th:selected='${subject.id == exerciseEdit.subjectId}'></option>
+                                                                    th:selected='${subject.subjectId == exerciseEdit.subjectId}'></option>
                                                         </select>
 
-                                                        <select id="subject" name="subjectId" class="form-control"
+                                                        <select id="subjectId" name="subjectId" class="form-control"
                                                                 style="height: 50px;" th:if='${exerciseEdit == null}'>
                                                         </select>
                                                     </div>
@@ -222,7 +222,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <button type="submit" class="btn btn-primary">添加</button>
+                                                    <button type="submit" class="btn btn-primary">确定</button>
                                                     <button type="button" onclick="addOption()" class="btn btn-primary">
                                                         添加选项
                                                     </button>
@@ -288,97 +288,6 @@
         });
     }
 </script>
-<!--<script>
-    var input = $("#correct").children(":last-child").find(":input").val().charCodeAt();
-
-    window.onload = function () {
-        var type = $("#correct").children(":last-child").find(":input").val();
-        if (type == "单选题" || type == "判断题") {
-            $("#correct > label").each(function () {
-                $(this).find(":input").attr('type','radio');
-                $(this).find(":input").attr('required','');
-            })
-        } else {
-            $("#correct > label").each(function () {
-                $(this).find(":input").attr('type','checkbox');
-                $(this).find(":input").removeAttr('required');
-            })
-        }
-
-        var modelInput = $("#modelInput").val();
-        if (modelInput != null && modelInput != "") {
-            return
-        }
-        $.ajax({
-            url: '/subject/base',
-            type: 'post',
-            contentType: "application/json",
-            success: function (data) {
-                if (data != null) {
-                    $('#base').html("");
-                    for (var i = 0; i < data.length; i++) {
-                        $('#base').append("<option>" + data[i] + "</option>");
-                    }
-                    showSubject(data[0]);
-                }
-            }
-        });
-    }
-
-    function changeCorrect(e) {
-        if (e == "单选题" || e == "判断题") {
-            $("#correct > label").each(function () {
-                $(this).find(":input").attr('type','radio');
-            })
-        } else {
-            $("#correct > label").each(function () {
-                $(this).find(":input").attr('type','checkbox');
-                $(this).find(":input").removeAttr('required');
-            })
-        }
-
-    }
-
-    function showSubject(e) {
-        $.ajax({
-            url: '/subject/subjectByBase',
-            type: 'post',
-            data: JSON.stringify({baseSubject: e}),
-            contentType: "application/json",
-            success: function (data) {
-                if (data != null) {
-                    console.log(data);
-                    $('#subject').html("");
-                    for (var i = 0; i < data.length; i++) {
-                        $('#subject').append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
-                    }
-                }
-            }
-        });
-    }
-
-    function addOption() {
-        console.log(input)
-        var A = $("#" + String.fromCharCode(input));
-        A.children(':last-child').addClass("disabled");
-        $("#opts").append("<div class=\"option-div\" id='" + String.fromCharCode(input + 1) + "'>\n" +
-            "<label class=\"control-label\" style=\"width: 5%;\"> " + String.fromCharCode(input + 1) + "：</label>\n" +
-            "<input type=\"text\" class=\"form-control\" name=\"answers\" required='' >\n" +
-            "<button onclick=\"deleteOption()\" type=\"button\" class=\"btn btn-danger option-button\" >删除</button>" +
-            "</div>\n");
-        $("#correct").append("<label class=\"correct-label\"><input type=\"radio\" name=\"correct\" required=''  value=\"" + String.fromCharCode(input + 1) + "\">" + String.fromCharCode(input + 1) + "</label>");
-        input = input + 1;
-    }
-
-    function deleteOption() {
-        var A = $("#" + String.fromCharCode(input - 1));
-        console.log(A);
-        A.children(':last-child').removeClass("disabled");
-        $("#opts").children(":last-child").remove();
-        $("#correct").children(":last-child").remove();
-        input = input - 1;
-    }
-</script>-->
 <script type="text/javascript">
 
     $(document).ready(function () {

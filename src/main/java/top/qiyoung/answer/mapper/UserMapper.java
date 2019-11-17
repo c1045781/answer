@@ -4,6 +4,8 @@ import com.github.pagehelper.Page;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.User;
 
+import java.util.List;
+
 public interface UserMapper {
 
     User login(User user);
@@ -21,4 +23,7 @@ public interface UserMapper {
     User getUserById(Integer id);
 
     void update(User user);
+
+    List<User> getUserByUsername(String username);
+
 }

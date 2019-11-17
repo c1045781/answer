@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.UserMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.User">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="identity" jdbcType="INTEGER" property="identity"/>
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="role" jdbcType="INTEGER" property="role"/>
         <result column="account" jdbcType="VARCHAR" property="account"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
@@ -28,7 +28,7 @@
         select * from user
         <where>
             <if test="id != null">
-                and id = #{id}
+                and user_id = #{id}
             </if>
         </where>
     </select>
@@ -47,15 +47,23 @@
         <where>
             <if test="search != null and search != ''">
                 <if test="type != null and type != ''">
-                    <if test="type == account">
+                    <if test="type == 'id'">
+                        and user_id like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'account'">
                         and account like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'username'">
+                        and username like "%"#{search}"%"
                     </if>
                 </if>
             </if>
-            and role != 1
+            <if test="role != null">
+                and role = #{role}
+            </if>
         </where>
         <if test="order != null and order != ''">
-            order by ${order} asc limit #{index},#{size}
+            order by ${order} limit #{index},#{size}
         </if>
     </select>
 
@@ -64,12 +72,20 @@
         <where>
             <if test="search != null and search != ''">
                 <if test="type != null and type != ''">
-                    <if test="type == account">
+                    <if test="type == 'id'">
+                        and user_id like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'account'">
                         and account like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'username'">
+                        and username like "%"#{search}"%"
                     </if>
                 </if>
             </if>
-            and role != 1
+            <if test="role != null">
+                and role = #{role}
+            </if>
         </where>
     </select>
 
@@ -82,7 +98,7 @@
         delete from user
         <where>
             <if test="id != null">
-                id = #{id}
+                user_id = #{id}
             </if>
         </where>
     </delete>
@@ -109,6 +125,15 @@
                 avatar_img_url = #{avatarImgUrl},
             </if>
         </set>
-        where id = #{id}
+        where user_id = #{userId}
     </update>
+
+    <select id="getUserByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from user
+        <where>
+            <if test="username != null and username != ''">
+                and username like "%"#{username}"%"
+            </if>
+        </where>
+    </select>
 </mapper>

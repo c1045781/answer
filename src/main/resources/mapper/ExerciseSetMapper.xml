@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.ExerciseSetMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.ExerciseSet">
-        <id column="exercise_set_id" jdbcType="INTEGER" property="id"/>
+        <id column="exercise_set_id" jdbcType="INTEGER" property="exerciseSetId"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
         <result column="exercise_count" jdbcType="INTEGER" property="exerciseCount"/>
@@ -10,27 +10,101 @@
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
         <collection  property="exerciseList"  ofType="top.qiyoung.answer.model.Exercise">
-            <id column="exercise_id" jdbcType="INTEGER" property="id"/>
+            <id column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
             <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
             <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
             <result column="correct" jdbcType="VARCHAR" property="correct"/>
-            <result column="exercise_content_id" jdbcType="INTEGER" property="exerciseContentId"/>
+            <result column="exercise_title" jdbcType="VARCHAR" property="exerciseTitle"/>
+            <result column="option_content" jdbcType="VARCHAR" property="optionContent"/>
             <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
             <result column="status" jdbcType="INTEGER" property="status"/>
             <result column="create_time" property="createTime"/>
             <result column="modify_time" property="modifyTime"/>
         </collection>
     </resultMap>
-    <insert id="insert" parameterType="top.qiyoung.answer.model.ExerciseSet">
-        insert into exercise_set (title, subject_id, exercise_count, create_user_id, create_time, modify_time)
-           values(#{title},#{subjectId},#{exerciseCount},#{createUserId},#{createTime},#{modifyTime})
-        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
-            select LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insert" parameterType="top.qiyoung.answer.model.ExerciseSet" useGeneratedKeys="true" keyProperty="exerciseSetId" keyColumn="exercise_set_id">
+        insert into exercise_set (exercise_set_id,title, subject_id, exercise_count, create_user_id, create_time, modify_time)
+           values(#{exerciseSetId},#{title},#{subjectId},#{exerciseCount},#{createUserId},#{createTime},#{modifyTime})
     </insert>
-    <select id="getAll" resultMap="BaseResultMap">
-        select e.*,s.* from exercise_set s
+
+    <select id="getExerciseSetList" resultMap="BaseResultMap">
+        select * from exercise_set
+        <where>
+           <if test="title != '' and title != null">
+               and title = #{title}
+           </if>
+            <if test="subjectId != '' and subjectId != null">
+                and subject_id = #{subjectId}
+            </if>
+            <if test="userId != '' and userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+        <if test="query.order != null and query.order != ''">
+            order by ${query.order} limit #{query.index},#{query.size}
+        </if>
+    </select>
+
+    <select id="countExerciseSetList" resultType="java.lang.Integer">
+        select count(*) from exercise_set
+        <where>
+            <if test="title != '' and title != null">
+                and title = #{title}
+            </if>
+            <if test="subjectId != '' and subjectId != null">
+                and subject_id = #{subjectId}
+            </if>
+            <if test="userId != '' and userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+        <if test="query.order != null and query.order != ''">
+            order by ${query.order}
+        </if>
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from exercise_set
+        <where>
+            <if test="exerciseSetId != null">
+                exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </delete>
+    <select id="getLastId" resultType="java.lang.Integer">
+        select exercise_set_id from exercise_set order by exercise_set_id desc limit 0,1
+    </select>
+
+    <select id="getExerciseSetById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select e.exercise_id,e.exercise_title,e.exercise_type,s.* from exercise_set s
         left outer join exercise_set_mid esm on s.exercise_set_id = esm.exercise_set_id
         left outer join exercise e on esm.exercise_id = e.exercise_id
+        <where>
+            <if test="exerciseSetId != null">
+                and s.exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
     </select>
+    <update id="update" parameterType="top.qiyoung.answer.model.ExerciseSet" >
+        update  exercise_set
+        <set>
+            <if test="exerciseCount != null">
+                exercise_count = #{exerciseCount},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime},
+            </if>
+            <if test="subjectId != null">
+                subject_id = #{subjectId},
+            </if>
+        </set>
+        <where>
+            <if test="exerciseSetId != null">
+                and exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </update>
 </mapper>

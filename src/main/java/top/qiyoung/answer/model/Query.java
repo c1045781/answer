@@ -4,8 +4,19 @@ public class Query {
     private String search;
     private String order;
     private String type;
+    private Integer role;
     private Integer index;
     private Integer size;
+    private Integer subjectId;
+    private String exerciseType;
+
+    public String getExerciseType() {
+        return exerciseType;
+    }
+
+    public void setExerciseType(String exerciseType) {
+        this.exerciseType = exerciseType;
+    }
 
     public String getSearch() {
         return search;
@@ -31,6 +42,14 @@ public class Query {
         this.type = type;
     }
 
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
+    }
+
     public Integer getIndex() {
         return index;
     }
@@ -45,5 +64,13 @@ public class Query {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 }

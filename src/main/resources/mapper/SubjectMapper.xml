@@ -2,24 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.SubjectMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Subject">
-        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="id" jdbcType="INTEGER" property="subjectId"/>
         <result column="base_subject" jdbcType="VARCHAR" property="baseSubject"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
     <select id="getSubjectByBase" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select * from subject
-        <where>
-            <if test="baseSubject != null and baseSubject != ''">
-                and base_subject = #{baseSubject}
-            </if>
-        </where>
+        select * from subject where base_subject = #{baseSubject}
     </select>
 
     <select id="getBase" resultType="java.lang.String">
         select distinct base_subject from subject
     </select>
-    <select id="getSubjectById" resultType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getSubjectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select * from subject
         <where>
            <if test="id != null">
@@ -36,6 +31,15 @@
             </if>
             <if test="baseSubject != null and baseSubject != ''">
                 and base_subject = #{baseSubject}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBaseByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select base_subject from subject
+        <where>
+            <if test="name != null and name != ''">
+                and name = #{name}
             </if>
         </where>
     </select>

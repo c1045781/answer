@@ -1,11 +1,20 @@
 package top.qiyoung.answer.model;
 
+import java.util.List;
+
 public class ExerciseVM {
     private Exercise exercise;
     private Subject subject;
     private User user;
-    private ExerciseContentVM exerciseContentVM;
+    private List<Option> options;
 
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Option> options) {
+        this.options = options;
+    }
 
     public Exercise getExercise() {
         return exercise;
@@ -31,11 +40,4 @@ public class ExerciseVM {
         this.user = user;
     }
 
-    public ExerciseContentVM getExerciseContentVM() {
-        return exerciseContentVM;
-    }
-
-    public void setExerciseContentVM(ExerciseContentVM exerciseContentVM) {
-        this.exerciseContentVM = exerciseContentVM;
-    }
 }

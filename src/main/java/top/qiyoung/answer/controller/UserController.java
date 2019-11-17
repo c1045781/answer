@@ -25,15 +25,17 @@ public class UserController {
 
     @RequestMapping("/check")
     public String checkUser(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                            @RequestParam(value = "size", defaultValue = "10") Integer size,
+                            @RequestParam(value = "size", defaultValue = "2") Integer size,
                             @RequestParam(value = "search", required = false) String search,
                             @RequestParam(value = "type", required = false) String type,
-                            @RequestParam(value = "order", defaultValue = "id") String order,
+                            @RequestParam(value = "role", required = false) Integer role,
+                            @RequestParam(value = "order", defaultValue = "user_id asc") String order,
                             Model model) {
-        Pagination pagination = userService.getUserList(currentPage, size, search, type, order);
+        Pagination pagination = userService.getUserList(currentPage, size, search, type, order,role);
         model.addAttribute("pagination", pagination);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
+        model.addAttribute("role", role);
         return "user/user";
     }
 
@@ -44,7 +46,7 @@ public class UserController {
 
     @RequestMapping("/addOrUpdate")
     public String addOrUpdate(User user, Model model,
-                              @RequestParam("avatarImg") MultipartFile avatarImg) throws IOException {
+                              @RequestParam(value = "avatarImg", required = false) MultipartFile avatarImg){
         String filename = avatarImg.getOriginalFilename();
         String[] split = filename.split("\\.");
         String suffix = split[split.length - 1];
@@ -53,7 +55,7 @@ public class UserController {
             return "user/add-user";
         }
 
-        if (user.getId() == null) {
+        if (user.getUserId() == null) {
             int insert = userService.insert(user, avatarImg);
             if (insert == 0) {
                 model.addAttribute("massage", "添加失败,账号已存在");
@@ -71,15 +73,16 @@ public class UserController {
     }
 
     @RequestMapping("/toUpdate")
-    public String toUpdate(Integer id, Model model) {
-        User user = userService.getUserById(id);
+    public String toUpdate(Integer userId, Model model) {
+        User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "user/add-user";
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public void delete(@RequestBody User user) {
-        userService.deleteById(user.getId());
+    public String delete(Integer userId) {
+        userService.deleteById(userId);
+        return "success";
     }
 }
