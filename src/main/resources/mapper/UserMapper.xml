@@ -9,6 +9,8 @@
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="avatar_img_url" jdbcType="VARCHAR" property="avatarImgUrl"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
@@ -63,7 +65,10 @@
             </if>
         </where>
         <if test="order != null and order != ''">
-            order by ${order} limit #{index},#{size}
+            order by ${order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
         </if>
     </select>
 
@@ -90,8 +95,8 @@
     </select>
 
     <insert id="insertUser" parameterType="top.qiyoung.answer.model.User">
-        insert into user (account,password,role,username,description,avatar_img_url,create_time)
-          values (#{account},#{password},#{role},#{username},#{description},#{avatarImgUrl},#{createTime})
+        insert into user (account,password,role,username,description,avatar_img_url,create_time,phone,sex)
+          values (#{account},#{password},#{role},#{username},#{description},#{avatarImgUrl},#{createTime},#{phone},#{sex})
     </insert>
 
     <delete id="deleteById" parameterType="java.lang.Integer">
@@ -123,6 +128,12 @@
             </if>
             <if test="avatarImgUrl != null and avatarImgUrl != ''">
                 avatar_img_url = #{avatarImgUrl},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
             </if>
         </set>
         where user_id = #{userId}

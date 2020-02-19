@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
+// 文件上传
 @Controller
 public class FileDownloadController {
     @RequestMapping("/download")

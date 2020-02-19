@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Message">
+        <id column="id" jdbcType="INTEGER" property="messageId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="countMessageList" parameterType="top.qiyoung.answer.model.Query" resultType="java.lang.Integer">
+        select count(*) from message where status = 0;
+    </select>
+
+    <select id="getMessageList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+        select * from message where status = 0
+        <if test="order != null and order != ''">
+            order by #{order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <update id="updateStatus" parameterType="java.lang.Integer">
+        update message
+        <set>
+            status = 1
+        </set>
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+        </where>
+    </update>
+</mapper>

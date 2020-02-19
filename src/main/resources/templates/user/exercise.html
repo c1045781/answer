@@ -1,0 +1,370 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>试题库</title>
+    <!-- Css Plugin -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/themify-icons.css">
+    <link rel="stylesheet" href="/css/owl.carousel.css">
+    <link rel="stylesheet" href="/css/owl.theme.css">
+    <link rel="stylesheet" href="/css/owl.transitions.css">
+    <link rel="stylesheet" href="/css/slick.css">
+    <link rel="stylesheet" href="/css/slider-pro.min.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/woocommerce.css">
+    <link rel="stylesheet" href="/css/woocommerce-layout.css">
+    <link rel="stylesheet" href="/css/woocommerce-smallscreen.css" type="text/css" media="only screen and (max-width: 768px)">
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/index-style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+
+<body class="woocommerce woocommerce-page">
+    <div id="main-container">
+        <header class="kopa-header-02">
+                <div class="top-header">
+                    <div class="container">
+                        <div class="right-top-header" th:if="${session.user == null}">
+                            <a href="/toSignin">登陆</a>
+                            <a href="/toSignup">注册</a>
+                        </div>
+						<div class="right-top-header" th:if="${session.user != null}">
+                            <a href="/signout">退出</a>
+                            <a href="#">个人中心</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom-header style-02">
+                    <div class="container">
+                        <div class="pull-left" style="height: 110px;">
+                        </div>
+                        <div class="pull-right">
+                            <nav class="kopa-main-menu style-02">
+                                <ul>
+									<li><a href="/">首页</a></li>
+									<li><a href="/exercise/check">试题库</a></li>
+									<li><a href="/exerciseSet/check">套题库</a></li>
+									<li><a href="error-book.html">历史答题</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        <div id="main-content">
+            <section class="kopa-area kopa-area-breadcrumb">
+                <div class="container">
+                    <div class="widget kopa-widget-breadcrumb">
+                        <div class="widget-content">
+                            <h3 class="breadcrumb-title">试题库</h3>
+                            <div class="breadcrumb-nav">
+                                <span>
+								<a href="/">
+									<span>首页</span>
+                                </a>
+                                </span>
+                                <span class="current-page">试题库</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+			<section class="kopa-area-nospace">
+				<div class="container">
+					<div class="widget kopa-widget-advanced_search">
+						<div class="widget-content module-advanced_search-01">
+							<div class="custom-bg-0"></div>
+							<div class="custom-bg">
+								<form action="/exercise/check">
+									<p class="arrow-select">
+									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
+									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
+											th:if='${baseList != null}'>
+										<option></option>
+										<option th:each="base:${baseList}"
+												th:text="${base}" th:value="${base}"
+												th:selected='${subjectList[0].baseSubject== base}'></option>
+									</select>
+									<select id="base" onchange="showSubject(this.value)" class="answer-select"
+											th:if='${baseList == null}'>
+									</select>
+									</p>
+									<p class="arrow-select">
+									<select name="subjectId" id="subjectId" class="answer-select"
+											th:if='${subjectList != null}'>
+										<option th:each="subject:${subjectList}"
+												th:text="${subject.name}"
+												th:value="${subject.subjectId}"
+												th:selected='${subject.subjectId == subjectId}'></option>
+									</select>
+
+									<select name="subjectId" class="answer-select" id="subjectId"
+											th:if='${subjectList == null}'>
+
+									</select>
+									</p>
+									<p><input type="text" th:value="${search}" name="search" placeholder="关键字..."></p>
+									<p><button type="submit" class="button-01">搜索</button></p>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+            <section class="kopa-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <div class="shop-content">
+	                            <form class="woocommerce-ordering" method="get">
+	                                <select name="exerciseType" onchange="exerciseTypeChange(this.value)">
+	                                    <option>全部</option>
+	                                    <option value="单选题" th:selected="${exerciseType == '单选题'}">单选题</option>
+	                                    <option value="多选题" th:selected="${exerciseType == '多选题'}">多选题</option>
+	                                    <option value="判断题" th:selected="${exerciseType == '判断题'}">判断题</option>
+	                                </select>
+	                                <input type="hidden" id="hidden_subjectId" th:value="${subjectId}">
+	                                <input type="hidden" id="hidden_search" th:value="${search}">
+									<!--<input type="hidden" id="hidden_currentPage" th:value="${paginationDTO.currentPage}">-->
+	                            </form>
+	                            <ul class="products">
+	                                <li class="product has-post-thumbnail" th:each="ExerciseVM:${paginationDTO.dataList}">
+	                                    <div class="content">
+											<div style="height: 55px;">
+												<h3 style="float: left;width: 75%;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;" th:text="${ExerciseVM.exercise.exerciseTitle}"></h3>
+												<h3 style="float: right" th:text="${ExerciseVM.exercise.exerciseType}"></h3>
+											</div>
+											<div style="height: 50px;">
+	                                        <p style="float: left">创建人：<span th:text="${ExerciseVM.user.username}"></span></p>
+	                                        <p style="float: right">创建时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></span></p>
+											</div>
+											<a href="javascript:void(0)" style="float: right" th:onclick="answer_Exercise([[${ExerciseVM.exercise.exerciseId}]]);" class="button-01">答题</a>
+	                                    </div>
+	                                </li>
+	                            </ul>
+	                            <nav class="woocommerce-pagination">
+
+									<ul class="page-numbers"  th:if="${paginationDTO.totalPage} > 0">
+										<li th:if="${paginationDTO.currentPage != 1} ">
+											<a class="prev page-numbers" href="#"
+											   th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}">
+												<i class="fa fa-angle-left"></i>
+											</a>
+										</li>
+										<!--<li>
+											<a class="prev page-numbers" href="#"><i class="fa fa-angle-left"></i></a>
+										</li>-->
+
+										<!-- 页数小于7，显示所有页数 -->
+										<li th:if="${paginationDTO.totalPage<=7}"
+											th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}">
+											<a class="page-numbers" href="#" th:text="${pageNo}"
+											   th:if="${paginationDTO.currentPage != pageNo}"
+											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
+										</li>
+
+										<!-- 页数大于7，当前页数小于3，显示1-7页-->
+										<li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
+											th:each="pageNo : ${#numbers.sequence(1, 7)}">
+											<a class="page-numbers" href="#" th:text="${pageNo}"
+											   th:if="${paginationDTO.currentPage != pageNo}"
+											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
+										</li>
+
+										<!-- 页数大于7，当前页数大于3，显示当前页±3页-->
+										<li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
+											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}">
+											<a  class="page-numbers" href="#" th:text="${pageNo}"
+												th:if="${paginationDTO.currentPage != pageNo}"
+											   	th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
+										</li>
+
+										<!-- 页数大于7，当前页数大于3，当前页数+3大于总页数，显示当前页-3到总页数-->
+										<li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
+											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}">
+											<a class="page-numbers" href="#" th:text="${pageNo}"
+											   th:if="${paginationDTO.currentPage != pageNo}"
+											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
+										</li>
+
+										<!--<li>
+											<span class="page-numbers current">1</span>
+										</li>
+										<li>
+											<a class="page-numbers" href="#">2</a>
+										</li>
+										<li>
+											<a class="page-numbers" href="#">3</a>
+										</li>-->
+
+										<li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
+											<a href="#" class="next page-numbers"
+											   th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},orderby=${orderby},search=${search})}">
+												<i class="fa fa-angle-right"></i>
+											</a>
+										</li>
+										<!--<li>
+											<a class="next page-numbers" href="#"><i class="fa fa-angle-right"></i></a>
+										</li>-->
+									</ul>
+								</nav>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-xs-12">
+							<aside class="sidebar">
+								<section class="widget kopa-widget-advanced_search">
+									<h2 class="widget-title">ABOUT UNIVERSITY</h2>
+									<div class="widget-content module-advanced_search-03">
+										<form>
+											<p><input type="text" placeholder="Course title"></p>
+											<p><input type="text" placeholder="Course ID"></p>
+											<p class="has-arrow">
+                                                <select name="category" id="category">
+                                                    <option value="1">All category</option>
+                                                    <option value="2">Front - End</option>
+                                                    <option value="3">Back - End</option>
+                                                    <option value="4">Full stack</option>
+                                                </select>                                 
+                                            </p>
+											<p class="has-arrow">
+                                                <select name="speaker" id="speaker">
+                                                    <option value="1">All speakers</option>
+                                                    <option value="2">john Doe</option>
+                                                    <option value="3">Ralph Garcia </option>
+                                                </select>                                 
+                                            </p>
+											<button type="submit">search</button>
+										</form>
+									</div>
+								</section>
+								<section class="widget kopa-widget-testimonials">
+									<h2 class="widget-title">TESTIMONIALS</h2>
+									<div class="widget-content module-testimonials-05 js-carousel">
+										<div class="item-testi">
+											<div class="thumb">
+												<a href="#">
+													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
+												</a>
+											</div>
+											<div class="content">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
+												<a href="#">Ashiful Pappu</a>
+											</div>
+										</div>
+										<div class="item-testi">
+											<div class="thumb">
+												<a href="#">
+													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/4.jpg" alt="">
+												</a>
+											</div>
+											<div class="content">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
+												<a href="#">Ashiful Pappu</a>
+											</div>
+										</div>
+										<div class="item-testi">
+											<div class="thumb">
+												<a href="#">
+													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
+												</a>
+											</div>
+											<div class="content">
+												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
+												<a href="#">Ashiful Pappu</a>
+											</div>
+										</div>
+									</div>
+								</section>
+								<section class="widget widget_categories">
+									<h2 class="widget-title">Categories</h2>		
+									<ul>
+										<li class="cat-item">
+											<a href="#">Biochemistry</a> (21)
+										</li>
+										<li class="cat-item">
+											<a href="#">Computer Science</a> (57)
+										</li>
+										<li class="cat-item">
+											<a href="#">Food Nutritions</a> (13)
+										</li>
+										<li class="cat-item">
+											<a href="#">Fashion Technology</a> (48)
+										</li>
+										<li class="cat-item">
+											<a href="#">Business Studies</a> (91)
+										</li>
+									</ul>
+								</section>
+								<section class="widget kopa-widget-social">
+									<h2 class="widget-title">Share This Course</h2>
+									<ul class="clearfix">
+										<li><a href="#" class="fa fa-twitter"></a></li>
+										<li><a href="#" class="fa fa-facebook"></a></li>
+										<li><a href="#" class="fa fa-dribbble"></a></li>
+										<li><a href="#" class="fa fa-instagram"></a></li>
+										<li><a href="#" class="fa fa-pinterest"></a></li>
+									</ul>
+								</section>
+							</aside>
+						</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+		<footer class="kopa-footer style-01">
+			<div class="container">
+				<p>Copyright &copy; 2019. <a href="/" target="_blank" title="在线答题系统">在线答题系统</a> All Rights Reserved Powered.</p>
+			</div>
+		</footer>
+    </div>
+    <script src="/js/jquery-2.2.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/slick.min.js"></script>
+    <script src="/js/jquery.sliderPro.min.js"></script>
+    <script src="/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/jquery.waypoints.min.js"></script>
+    <script src="/js/jquery.counterup.min.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.js"></script>
+    <script src="/js/masonry.pkgd.min.js"></script>
+    <script src="/js/gmap3.min.js"></script>
+    <script src="/js/viewportchecker.min.js"></script>
+    <script src="/js/custom.js"></script>
+	<script src="/js/answer.js"></script>
+</body>
+
+<script>
+    window.onload = function () {
+        var modelInput = $("#modelInput").val();
+        if (modelInput != null && modelInput != "") {
+            return
+        }
+        $.ajax({
+            url: '/subject/base',
+            type: 'post',
+            contentType: "application/json",
+            success: function (data) {
+                if (data != null) {
+                    $('#base').html("<option></option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $('#base').append("<option>" + data[i] + "</option>");
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+</html>
+

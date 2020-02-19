@@ -18,11 +18,11 @@ public interface UserMapper {
 
     Integer countUserList(Query query);
 
-    void deleteById(Integer id);
+    int deleteById(Integer id);
 
     User getUserById(Integer id);
 
-    void update(User user);
+    int update(User user);
 
     List<User> getUserByUsername(String username);
 

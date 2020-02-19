@@ -7,8 +7,9 @@ public class Query {
     private Integer role;
     private Integer index;
     private Integer size;
-    private Integer subjectId;
+    private Integer id;
     private String exerciseType;
+
 
     public String getExerciseType() {
         return exerciseType;
@@ -66,11 +67,11 @@ public class Query {
         this.size = size;
     }
 
-    public Integer getSubjectId() {
-        return subjectId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setSubjectId(Integer subjectId) {
-        this.subjectId = subjectId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

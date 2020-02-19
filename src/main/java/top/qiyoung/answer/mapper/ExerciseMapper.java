@@ -7,17 +7,28 @@ import top.qiyoung.answer.model.Query;
 import java.util.List;
 
 public interface ExerciseMapper {
-    void insert(Exercise exercise);
+    int insert(Exercise exercise);
 
     List<Exercise> getExerciseList(Query query);
 
     int countExerciseList(Query query);
 
-    void deleteById(Integer id);
+    int deleteById(Integer id);
 
     Exercise getExerciseById(Integer id);
 
-    void update(Exercise exercise);
+    int update(Exercise exercise);
 
     List<Exercise> getExerciseBySubjectId(@Param("query") Query query,@Param("subjectId") Integer subjectId);
+
+
+    List<Exercise> getExerciseListBySubjectId(Integer subjectId);
+
+    int deleteByUserId(Integer userId);
+
+    List<Exercise> getExerciseByReview(Query query);
+
+    int countExerciseByReview(Query query);
+
+    int updateById(@Param("id") Integer id,@Param("status") Integer status);
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="nav">
+    <div class="w3_agileits_top_nav">
+        <ul id="gn-menu" class="gn-menu-main">
+            <!-- /nav_agile_w3l -->
+            <li class="gn-trigger">
+                <a class="gn-icon gn-icon-menu"><i class="fa fa-bars" aria-hidden="true"></i><span>Menu</span></a>
+                <nav class="gn-menu-wrapper">
+                    <div class="gn-scroller scrollbar1">
+                        <ul class="gn-menu agile_menu_drop">
+                            <li>
+                                <a href="/"><i class="fa fa-tachometer" aria-hidden="true"></i>首页</a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-users" aria-hidden="true"></i>用户管理<i
+                                        class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="gn-submenu">
+                                    <li class="mini_list_agile"><a href="/user/toAdd"><i class="fa fa-caret-right"
+                                                                                           aria-hidden="true"></i>添加用户</a>
+                                    </li>
+                                    <li class="mini_list_w3"><a href="/user/check"> <i class="fa fa-caret-right"
+                                                                                      aria-hidden="true"></i>用户查询</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-file-text" aria-hidden="true"></i>习题管理<i
+                                        class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="gn-submenu">
+                                    <li class="mini_list_agile"><a href="/exercise/toAdd"><i class="fa fa-caret-right"
+                                                                                          aria-hidden="true"></i>添加习题</a>
+                                    </li>
+                                    <li class="mini_list_agile"><a href="/exercise/toUpload"><i class="fa fa-caret-right"
+                                                                                          aria-hidden="true"></i>文件添加习题</a>
+                                    </li>
+                                    <li class="mini_list_w3"><a href="/exercise/check"> <i class="fa fa-caret-right"
+                                                                                      aria-hidden="true"></i>习题查询</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-folder-open" aria-hidden="true"></i>套题管理<i
+                                        class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="gn-submenu">
+                                    <li class="mini_list_agile"><a href="/exerciseSet/add"><i class="fa fa-caret-right"
+                                                                                          aria-hidden="true"></i>添加套题</a>
+                                    </li>
+                                    <li class="mini_list_w3"><a href="/exerciseSet/check"> <i class="fa fa-caret-right"
+                                                                                      aria-hidden="true"></i>套题查询</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-tags" aria-hidden="true"></i>题目分类管理<i
+                                        class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="gn-submenu">
+                                    <li class="mini_list_agile"><a href="/subject/toAdd"><i class="fa fa-caret-right"
+                                                                                                aria-hidden="true"></i>添加题目分类</a>
+                                    </li>
+                                    <li class="mini_list_w3"><a href="/subject/check"> <i class="fa fa-caret-right"
+                                                                                                aria-hidden="true"></i>题目分类查询</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="/comment/check"><i class="fa fa-comments" aria-hidden="true"></i>评论管理</a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-warning (alias)" aria-hidden="true"></i>申请管理<i
+                                        class="fa fa-angle-down" aria-hidden="true"></i></a>
+                                <ul class="gn-submenu">
+                                    <li class="mini_list_agile"><a href="/permission/check"><i class="fa fa-caret-right"
+                                                                                          aria-hidden="true"></i>权限申请</a>
+                                    </li>
+                                    <li class="mini_list_w3"><a href="/exercise/review"> <i class="fa fa-caret-right"
+                                                                                      aria-hidden="true"></i>习题申请</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a href="/signout"> <i class="fa fa-tachometer"></i>退出</a></li>
+                        </ul>
+                    </div><!-- /gn-scroller -->
+                </nav>
+            </li>
+            <!-- //nav_agile_w3l -->
+            <li class="second logo admin"><h1><a href="/"><i class="fa fa-graduation-cap" aria-hidden="true"></i>在线答题系统-后台管理
+            </a></h1></li>
+
+            </li>
+        </ul>
+        <!-- //nav -->
+    </div>
+</div>
+
+</body>
+
+</html>

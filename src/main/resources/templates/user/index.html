@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title>Home</title>
+		
+		<!-- Css Plugin -->
+		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/css/themify-icons.css">
+		<link rel="stylesheet" href="/css/owl.carousel.css">
+		<link rel="stylesheet" href="/css/owl.theme.css">
+		<link rel="stylesheet" href="/css/owl.transitions.css">
+		<link rel="stylesheet" href="/css/slick.css">
+		<link rel="stylesheet" href="/css/slider-pro.min.css">
+		<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+		<link rel="stylesheet" href="/css/animate.css">
+		<link rel="stylesheet" href="/css/index-style.css">
+		
+		<!-- View Responsive -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+		
+	</head>
+	<body>
+		<div id="main-container">
+			<header class="kopa-header-01">
+				<div class="container">
+					<div class="top-header" th:if="${session.user == null}">
+						<div class="kopa-login">
+							<a href="/toSignin">
+								<i class="fa fa-sign-in"></i>
+								登录
+							</a>
+						</div>
+						<div class="kopa-register">
+							<a href="/toSignup">
+								<i class="fa fa-unlock"></i>
+								注册
+							</a>
+						</div>
+						<!--<ul>
+							<li><a href="#"><i class="fa fa-facebook-square"></i></a></li>
+							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
+							<li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+							<li><a href="#"><i class="fa fa-instagram"></i></a></li>
+							<li><a href="#"><i class="fa fa-skype"></i></a></li>
+						</ul>-->
+					</div>
+					<div class="top-header" th:if="${session.user != null}">
+						<div class="kopa-login">
+							<a href="/signout">
+								<i class="fa fa-sign-in"></i>
+								退出
+							</a>
+						</div>
+						<div class="kopa-login">
+							<a href="/">
+								<i class="fa fa-user"></i>
+								个人中心
+							</a>
+						</div>
+					</div>
+
+					<div class="bottom-header style-01">
+						<div class="clearfix">
+							<div class="pull-left" style="height:75px;">
+								<h1 class="kopa-logo">
+								</h1>
+							</div>
+							<div class="pull-right">
+								<nav class="kopa-main-menu style-01">
+									<ul>
+										<li><a href="/">首页</a></li>
+										<li><a href="/exercise/check">试题库</a></li>
+										<li><a href="/exerciseSet/check">套题库</a></li>
+										<li><a href="shop.html">历史答题</a></li>
+									</ul>
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+			</header>
+			<!--<div id="kopa-menu-scroll">
+		        <div class="kopa-close-menu-scroll">
+		            <span>close x</span>
+		        </div>
+		        <div class="top-menu-scroll">
+		        	<div class="kopa-social-links style-03">
+					    <ul class="clearfix">
+					        <li><span>Social</span></li>
+					        <li><a href="#" class="fa fa-twitter"></a></li>
+					        <li><a href="#" class="fa fa-google-plus"></a></li>
+					        <li><a href="#" class="fa fa-rss"></a></li>
+					    </ul>
+					</div>
+			        <ul class="kopa-menu-click">
+			            <li><a href="index.html">Home</a></li>
+						<li><a href="about.html">About</a></li>
+						<li><a href="shop.html">Shop</a></li>
+						<li><a href="single-shop.html">Single-shop</a></li>
+						<li><a href="blog.html">Blog</a></li>
+						<li><a href="single-blog.html">Single-blog</a></li>
+			        </ul>
+		        </div>
+		        <form>
+		        	<button type="submit" class="btn"><i class="fa fa-search"></i></button>
+		            <input type="text" placeholder="Search courses">
+		        </form>
+		        <div class="widget kopa-widget-banner">
+		        	<div class="widget-content module-banner-01">
+		        		<ul class="kopa-banner">
+				        	<li>
+				        		<span>100%</span>
+				        		<div>
+				        			<h4>MONEY BACK GUARANTEE</h4>
+				        			<p>No hassles, no question asked!</p>
+				        		</div>
+				        	</li>
+				        	<li>
+				        		<h4>EARN UP TO <span>35%</span></h4>
+				        		<p>Sign up our affiliate program</p>
+				        	</li>
+				        </ul>
+		        	</div>
+		        </div>
+		    </div>-->
+			<div id="main-content">
+				<section class="kopa-area-nospace">
+					<div class="widget kopa-widget-slider">
+						<div class="widget-content module-slider-01">
+							<div class="container">
+								<img src="images/main-slider/1.png" alt="">
+								<div class="content">
+									<h2>在线答题系统</h2>
+									<p>一款致力于免费分享，共同发展的在线答题系统</p>
+									<a href="/toSignup" class="button-01">加入我们</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="kopa-area-nospace">
+					<div class="container">
+						<div class="widget kopa-widget-advanced_search">
+							<div class="widget-content module-advanced_search-01">
+								<div class="custom-bg-0"></div>
+								<div class="custom-bg">
+									<form>
+										<p class="arrow-select">
+											<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
+											<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
+													th:if='${baseList != null}'>
+												<option></option>
+												<option th:each="base:${baseList}"
+														th:text="${base}" th:value="${base}"
+														th:selected='${subjectList[0].baseSubject== base}'></option>
+											</select>
+											<select id="base" onchange="showSubject(this.value)" class="answer-select"
+													th:if='${baseList == null}'>
+											</select>
+										</p>
+										<p class="arrow-select">
+											<select name="subjectId" id="subjectId" class="answer-select"
+													th:if='${subjectList != null}'>
+												<option th:each="subject:${subjectList}"
+														th:text="${subject.name}"
+														th:value="${subject.subjectId}"
+														th:selected='${subject.subjectId == subjectId}'></option>
+											</select>
+
+											<select name="subjectId" class="answer-select" id="subjectId"
+													th:if='${subjectList == null}'>
+
+											</select>
+										</p>
+										<p><input type="text" placeholder="关键字..."></p>
+										<p><button type="submit" class="button-01">搜索</button></p>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="kopa-area kopa-area-01">
+					<div class="container">
+						<div class="widget kopa-widget-features">
+							<header class="widget-header style-01">
+								<img src="img/icon/icon-header-1.png" alt="">
+								<h3 class="widget-title">我们的特色</h3>
+								<h4>为 广 大 用 户 提 供 便 捷 的 答 题 环 境</h4>
+							</header>
+							<div class="widget-content module-features-01">
+								<div class="row">
+									<div class="col-md-3 col-sm-6 col-xs-12">
+										<article class="entry-item">
+											<div class="custom">
+												<div class="entry-thumb">
+													<img src="img/icon/2.png" alt="">
+												</div>
+												<div class="entry-content">
+													<h4 class="entry-title">
+														<a href="#">习题多样性</a>
+													</h4>
+													<p>我们的系统收藏了各种类型的习题，满足用户不同需求</p>
+													<!--<a href="#" class="button-01">view detail</a>-->
+												</div>
+											</div>
+										</article>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-12">
+										<article class="entry-item">
+											<div class="entry-thumb">
+												<img src="img/icon/3.png" alt="">
+											</div>
+											<div class="entry-content">
+												<h4 class="entry-title">
+													<a href="#">习题分享</a>
+												</h4>
+												<p>加入我们将优秀习题分享给广大用户</p>
+												<!--<a href="#" class="button-01">view detail</a>-->
+											</div>
+										</article>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-12">
+										<article class="entry-item">
+											<div class="entry-thumb">
+												<img src="img/icon/4.png" alt="">
+											</div>
+											<div class="entry-content">
+												<h4 class="entry-title">
+													<a href="#">错题记录</a>
+												</h4>
+												<p>系统记录错误的题目方便用户复习回顾</p>
+												<!--<a href="#" class="button-01">view detail</a>-->
+											</div>
+										</article>
+									</div>
+									<div class="col-md-3 col-sm-6 col-xs-12">
+										<article class="entry-item">
+											<div class="entry-thumb">
+												<img src="img/icon/5.png" alt="">
+											</div>
+											<div class="entry-content">
+												<h4 class="entry-title">
+													<a href="#">留言互动</a>
+												</h4>
+												<p>开放习题留言功能，为用户提供交流的平台</p>
+												<!--<a href="#" class="button-01">view detail</a>-->
+											</div>
+										</article>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			<footer class="kopa-footer style-01">
+				<div class="container">
+					<p>Copyright &copy; 2019. <a href="/" target="_blank" title="在线答题系统">在线答题系统</a> All Rights Reserved Powered.</p>
+				</div>
+			</footer>
+			</div>
+		</div>
+
+		<script src="/js/jquery-2.2.4.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+		<script src="/js/slick.min.js"></script>
+		<script src="/js/jquery.sliderPro.min.js"></script>
+		<script src="/js/imagesloaded.pkgd.min.js"></script>
+		<script src="/js/jquery.validate.min.js"></script>
+		<script src="/js/owl.carousel.min.js"></script>
+		<script src="/js/jquery.waypoints.min.js"></script>
+		<script src="/js/jquery.counterup.min.js"></script>
+		<script src="/js/jquery.mCustomScrollbar.js"></script>
+		<script src="/js/viewportchecker.min.js"></script>
+		<script src="/js/custom.js"></script>
+		<script src="/js/answer.js"></script>
+	</body>
+	<script>
+        window.onload = function () {
+            var modelInput = $("#modelInput").val();
+            if (modelInput != null && modelInput != "") {
+                return
+            }
+            $.ajax({
+                url: '/subject/base',
+                type: 'post',
+                contentType: "application/json",
+                success: function (data) {
+                    if (data != null) {
+                        $('#base').html("<option></option>");
+                        for (var i = 0; i < data.length; i++) {
+                            $('#base').append("<option>" + data[i] + "</option>");
+                        }
+                    }
+                }
+            });
+        }
+
+	</script>
+</html>

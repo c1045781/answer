@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.SubjectMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Subject">
-        <id column="id" jdbcType="INTEGER" property="subjectId"/>
+        <id column="subject_id" jdbcType="INTEGER" property="subjectId"/>
         <result column="base_subject" jdbcType="VARCHAR" property="baseSubject"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="subject_name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
 
     <select id="getSubjectByBase" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -18,7 +18,7 @@
         select * from subject
         <where>
            <if test="id != null">
-               and id = #{id}
+               and subject_id = #{id}
            </if>
         </where>
     </select>
@@ -27,7 +27,7 @@
         select * from subject
         <where>
             <if test="subjectName != null and subjectName != ''">
-                and name = #{subjectName}
+                and subject_name = #{subjectName}
             </if>
             <if test="baseSubject != null and baseSubject != ''">
                 and base_subject = #{baseSubject}
@@ -39,7 +39,75 @@
         select base_subject from subject
         <where>
             <if test="name != null and name != ''">
-                and name = #{name}
+                and subject_name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <select id="getSubjectList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+        select * from subject
+        <where>
+            <if test="search != null and search != ''">
+                and subject_name  like "%"#{search}"%"
+            </if>
+            <if test="type != null and type != ''">
+                and base_subject  = #{type}
+            </if>
+        </where>
+        <if test="order != null and order != ''">
+            order by ${order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countSubjectList" parameterType="top.qiyoung.answer.model.Query" resultType="java.lang.Integer">
+        select count(*) from subject
+        <where>
+            <if test="search != null and search != ''">
+                and subject_name  like "%"#{search}"%"
+            </if>
+            <if test="type != null and type != ''">
+                and base_subject  = #{type}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from subject
+        <where>
+            <if test="subjectId != null">
+                and subject_id = #{subjectId}
+            </if>
+        </where>
+    </delete>
+
+    <update id="update" parameterType="top.qiyoung.answer.model.Subject">
+        update subject
+        <set>
+            <if test="name != null and name != ''">
+                subject_name = #{name},
+            </if>
+            <if test="baseSubject != null and baseSubject != ''">
+                base_subject = #{baseSubject}
+            </if>
+        </set>
+        where subject_id = #{subjectId}
+    </update>
+
+    <insert id="insert" parameterType="top.qiyoung.answer.model.Subject">
+        insert into subject (base_subject, subject_name) values (#{baseSubject},#{name})
+    </insert>
+
+    <select id="getSubject" parameterType="top.qiyoung.answer.model.Subject" resultMap="BaseResultMap">
+        select * from subject
+        <where>
+            <if test="name != null and name != ''">
+              and subject_name =#{name}
+            </if>
+            <if test="baseSubject != null and baseSubject != ''">
+                and base_subject =#{baseSubject}
             </if>
         </where>
     </select>

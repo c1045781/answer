@@ -1,10 +1,20 @@
 function changeCorrect(e) {
-    console.log(e)
-    if (e == "单选题" || e == "判断题") {
+    if (e == "单选题") {
+        $('#correct_button').attr("disabled",false);
         $("#correct > label").each(function () {
             $(this).find(":input").attr('type', 'radio');
         })
-    } else {
+    } else if (e == "判断题") {
+        for (var i = 1; i < 100; i++) {
+            deleteOption()
+        }
+        $('#correct_button').attr("disabled",true);
+        $("#correct > label").each(function () {
+            $(this).find(":input").attr('type', 'radio');
+        })
+
+    }else{
+        $('#correct_button').attr("disabled",false);
         $("#correct > label").each(function () {
             $(this).find(":input").attr('type', 'checkbox');
             $(this).find(":input").removeAttr('required');
@@ -14,6 +24,11 @@ function changeCorrect(e) {
 }
 
 function showSubject(e) {
+    var content = $('#select_option').val();
+    if (content == null){
+        content = "";
+    }
+
     $.ajax({
         url: '/subject/subjectByBase',
         type: 'post',
@@ -21,7 +36,7 @@ function showSubject(e) {
         contentType: "application/json",
         success: function (data) {
             if (data != null) {
-                $('#subjectId').html("");
+                $('#subjectId').html(content);
                 for (var i = 0; i < data.length; i++) {
                     $('#subjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
                 }
@@ -43,6 +58,7 @@ function addOption() {
 }
 
 function deleteOption() {
+    if (input < 67) return;
     var A = $("#" + String.fromCharCode(input - 1));
     A.children(':last-child').removeClass("disabled");
     $("#opts").children(":last-child").remove();
@@ -59,7 +75,7 @@ function addExercise(e) {
         url: '/exercise/getExerciseBySubjectId',
         type: 'post',
         data: {
-            subjectId: $("#subject").val(), type: $("#type option:selected").val()
+            subjectId: $("#subjectId").val(), type: $("#type option:selected").val()
             , search: $("#search").val(), currentPage: $("#page").val()
         },
         dataType: 'json',
@@ -184,4 +200,241 @@ function submitExerciseFrom(e){
         skip = total;
     }
     window.location.href = "/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType;
+}
+
+function submitExerciseSetFrom(e){
+    var skip = parseInt(e);
+    var subjectId = parseInt($("#subjectId").val());
+    var type = $("#type").val();
+    var search = $("#search").val();
+    var total = parseInt($("#totalPage").val());
+    if (subjectId == null || isNaN(subjectId)){
+        subjectId = "";
+    }
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/exerciseSet/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search;
+}
+
+function submitSubjectFrom(e) {
+    var skip = parseInt(e);
+    var type = $("#type").val();
+    var search = $("#search").val();
+    var total = parseInt($("#totalPage").val());
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/subject/check?currentPage=" + skip +"&type="+ type+"&search="+search;
+}
+
+function submitReviewExerciseFrom(e) {
+    var skip = parseInt(e);
+    var subjectId = parseInt($("#subjectId").val());
+    var total = parseInt($("#totalPage").val());
+    if (subjectId == null || isNaN(subjectId)){
+        subjectId = "";
+    }
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/exercise/review?currentPage=" + skip+"&subjectId="+ subjectId;
+}
+
+function submitCommentFrom(e){
+    var skip = parseInt(e);
+    var type = $("#type").val();
+    var search = $("#search").val();
+    var total = parseInt($("#totalPage").val());
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/comment/check?currentPage=" + skip +"&type="+ type+"&search="+search;
+}
+
+
+function exerciseTypeChange(e){
+    var subjectId = $("#hidden_subjectId").val();
+    var search = $("#hidden_search").val();
+    window.location.href = "/exercise/check?subjectId="+ subjectId+"&search="+search+"&exerciseType="+e;
+}
+
+function orderbyChange(e){
+    var subjectId = $("#hidden_subjectId").val();
+    var search = $("#hidden_search").val();
+    debugger
+    window.location.href = "/exerciseSet/check?subjectId="+ subjectId+"&search="+search+"&orderby="+e;
+}
+
+function answer_Exercise(e){
+    window.open( "/exercise/exerciseToAnswer?exerciseId=" + e);
+}
+
+function answer_Exercise_set(e){
+    window.open("/exercise/exerciseSetToAnswer?exerciseSetId=" + e);
+}
+
+function confirm_answer(){
+
+    $("div[name=corrent_div]").css('display','block');
+    $("input[type=radio]:checked").each(function() {
+        checked_name = $(this).attr('name');
+        corrent = $("#"+checked_name).html();
+        if(corrent.indexOf($(this).val()) >= 0){
+            $("#corrent_div"+checked_name).removeClass();
+            $("#corrent_div"+checked_name).addClass("alert alert-success");
+            $("#isCorrect"+checked_name).html("正确");
+        }else{
+            $("#corrent_div"+checked_name).removeClass();
+            $("#corrent_div"+checked_name).addClass("alert alert-danger");
+            $("#isCorrect"+checked_name).html("错误");
+        }
+
+        $.ajax({
+            url: '/answer/add',
+            type: 'post',
+            data: JSON.stringify({exerciseId: checked_name,answer: $(this).val()}),
+            contentType: "application/json"
+        });
+    });
+
+    var arr = new Array();
+    $("input[type=checkbox]").each(function() {
+        if($(this).attr('name') != '' && $.inArray($(this).attr('name'),arr) == '-1'){
+            arr.push($(this).attr('name'));
+        }
+    });
+    for (i in arr){
+        var arr_id = arr[i];
+        var corrent = $("#"+arr[i]).html();
+        var corrent_count =  corrent.split('：')[1].split(',').length; // 答案个数
+        var i = 0;
+        var answer = '';
+        $("input[name="+ arr[i] +"]:checked").each(function() {
+            answer += $(this).val() + ",";
+            checked_name = $(this).attr('name');
+            i++;
+            console.log(checked_name);
+            if(corrent.indexOf($(this).val()) >= 0){
+                $("#corrent_div"+checked_name).removeClass();
+                $("#corrent_div"+checked_name).addClass("alert alert-success");
+                $("#isCorrect"+checked_name).html("正确");
+            }else{
+                $("#corrent_div"+checked_name).removeClass();
+                $("#corrent_div"+checked_name).addClass("alert alert-danger");
+                $("#isCorrect"+checked_name).html("错误");
+                return false;
+            }
+        });
+        if ( corrent_count != i){
+            $("#corrent_div"+arr_id).removeClass();
+            $("#corrent_div"+arr_id).addClass("alert alert-danger");
+            $("#isCorrect"+arr_id).html("错误");
+        }
+
+        $.ajax({
+            url: '/answer/add',
+            type: 'post',
+            data: JSON.stringify({exerciseId: arr_id,answer: answer}),
+            contentType: "application/json"
+        });
+
+        answer = '';
+    }
+
+    $("#a_confirm").css('display','none');
+
+}
+
+function open_exercise_comment(e){
+    $.ajax({
+        url: '/comment/getCommentDTOList',
+        type: 'post',
+        data: {"id":e},
+        success:function(data){
+            var content = "";
+            for (var i=0;i<data.length;i++){
+                content += '<li class="comment">' +
+                    '<article>' +
+                    '<div class="comment-avatar ">' +
+                    '<img alt="" src="'+ data[i].user.avatarImgUrl +'">' +
+                    '</div>' +
+                    '<div class="comment-content">' +
+                    '<header>' +
+                    '<div class="entry-meta ">' +
+                    '<p class="entry-author">' +
+                    '<a href="#">'+ data[i].user.username +'</a>' +
+                    '</p>' +
+                    '<p class="entry-date">' +
+                    '</p><div>'+ Format(new Date(data[i].createDate),"yyyy-MM-dd hh:mm:ss") +'</div>' +
+                    '</div>' +
+                    '</header>' +
+                    '<p>'+ data[i].content +'</p>' +
+                    '</div>' +
+                    '</article>' +
+                    '</li>';
+            }
+            $("#comment_ol"+e).html(content);
+        }
+    });
+    $("#comment_section"+e).css('display','block');
+    $("#a_close_comment"+e).css('display','block');
+    $("#a_open_comment"+e).css('display','none');
+}
+
+function close_exercise_comment(e) {
+    $("#a_close_comment"+e).css('display','none');
+    $("#a_open_comment"+e).css('display','block');
+    $("#comment_section"+e).css('display','none');
+}
+
+function Format(datetime,fmt) {
+    if (parseInt(datetime)==datetime) {
+        if (datetime.length==10) {
+            datetime=parseInt(datetime)*1000;
+        } else if(datetime.length==13) {
+            datetime=parseInt(datetime);
+        }
+    }
+    datetime=new Date(datetime);
+    var o = {
+        "M+" : datetime.getMonth()+1,                 //月份
+        "d+" : datetime.getDate(),                    //日
+        "h+" : datetime.getHours(),                   //小时
+        "m+" : datetime.getMinutes(),                 //分
+        "s+" : datetime.getSeconds(),                 //秒
+        "q+" : Math.floor((datetime.getMonth()+3)/3), //季度
+        "S"  : datetime.getMilliseconds()             //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (datetime.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+}
+
+function submit_comment(e){
+    $.ajax({
+        type: "POST",
+        dataType: "text",
+        url: "/comment/addComment",
+        data: $('#comment_form'+e).serialize(),
+        success:function (data) {
+            open_exercise_comment(e);
+        }
+    })
+    $("#comment_form"+ e +" textarea").val('');
 }

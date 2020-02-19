@@ -2,6 +2,9 @@ package top.qiyoung.answer.service;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Service;
+import top.qiyoung.answer.DTO.ExerciseEditDTO;
+import top.qiyoung.answer.DTO.ExerciseDTO;
+import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.ExerciseMapper;
 import top.qiyoung.answer.mapper.MidMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;
@@ -26,9 +29,8 @@ public class ExerciseService {
     @Resource
     private MidMapper midMapper;
 
-    public void insert(ExerciseEdit edit, User user) {
+    public int insert(ExerciseEditDTO edit, User user) {
         Exercise exercise = new Exercise();
-
 
         // 插入的option
         exercise.setExerciseType(edit.getExerciseType());
@@ -44,38 +46,34 @@ public class ExerciseService {
         } else {
             exercise.setStatus(0);
         }
-
-
-        exerciseMapper.insert(exercise);
+        return exerciseMapper.insert(exercise);
     }
 
-    public void update(ExerciseEdit edit) {
+    public int update(ExerciseEditDTO edit) {
         Exercise exercise = new Exercise();
 
-
-        // 制作content JSON
+        //  content JSON
         exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
         exercise.setExerciseId(edit.getExerciseEditId());
         exercise.setExerciseTitle(edit.getTitle());
         exercise.setExerciseType(edit.getExerciseType());
         exercise.setCorrect(edit.getCorrect());
         exercise.setModifyTime(new Date());
-        exerciseMapper.update(exercise);
+        return exerciseMapper.update(exercise);
     }
 
-    public Pagination<ExerciseVM> getExerciseList(Integer currentPage, Integer size,
-                                                  String search, String type, String order, Integer subjectId,String exerciseType) {
+    public PaginationDTO<ExerciseDTO> getExerciseList(Integer currentPage, Integer size, String search,
+                                                      String type, String orderby, Integer subjectId, String exerciseType) {
         List<Exercise> exercises = new ArrayList<>();
         int count = 0;
-        Pagination<ExerciseVM> pagination = new Pagination<>(currentPage, size);
-        List<ExerciseVM> VMList = new ArrayList<>();
+        PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage, size);
         Query query = new Query();
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
         query.setType(type);
         query.setExerciseType(exerciseType);
-        query.setOrder(order);
-        query.setSubjectId(subjectId);
+        query.setOrder(orderby);
+        query.setId(subjectId);
         if (type != null && type.equals("createUser")) {
             List<User> users = userMapper.getUserByUsername(search);
             for (User dbuser : users) {
@@ -96,41 +94,25 @@ public class ExerciseService {
             query.setIndex(null);
             query.setSize(null);
             count = exerciseMapper.countExerciseList(query);
-
         }
-        for (Exercise exercise : exercises) {
-            ExerciseVM exerciseVM = new ExerciseVM();
-            User user = userMapper.getUserById(exercise.getCreateUserId());
-            Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
-            exerciseVM.setExercise(exercise);
-            exerciseVM.setOptions(JSON.parseArray(exercise.getOptionContent(), Option.class));
-            exerciseVM.setSubject(subject);
-            exerciseVM.setUser(user);
-            VMList.add(exerciseVM);
-        }
-        pagination.setCurrentPage(currentPage);
-        pagination.setPageSize(size);
-        pagination.setDataList(VMList);
-        pagination.setTotalSize(count);
-        pagination.setTotalPage((int) Math.ceil((double) pagination.getTotalSize() / (double) size));
-        return pagination;
+        List<ExerciseDTO> exerciseDTOS = exerciseToExerciseDTO(exercises);
+        paginationDTO.setCurrentPage(currentPage);
+        paginationDTO.setPageSize(size);
+        paginationDTO.setDataList(exerciseDTOS);
+        paginationDTO.setTotalSize(count);
+        paginationDTO.setTotalPage((int) Math.ceil((double) paginationDTO.getTotalSize() / (double) size));
+        return paginationDTO;
     }
 
-    public void deleteById(Integer id) {
-        midMapper.deleteByExerciseId(id);
-        exerciseMapper.deleteById(id);
+    public int deleteById(Integer id) {
+        int result;
+        result =  midMapper.deleteByExerciseId(id);
+        result = exerciseMapper.deleteById(id);
+        return result;
     }
 
-    /*private Integer id;
-    private String exerciseType;
-    private Integer subjectId;
-    private String correct;
-    private List<Option> options;
-    private String title;
-    private List<String> answers;*/
-
-    public ExerciseEdit getExerciseEdit(Integer id) {
-        ExerciseEdit edit = new ExerciseEdit();
+    public ExerciseEditDTO getExerciseEdit(Integer id) {
+        ExerciseEditDTO edit = new ExerciseEditDTO();
         Exercise exercise = exerciseMapper.getExerciseById(id);
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
@@ -154,16 +136,19 @@ public class ExerciseService {
         return edit;
     }
 
-    public Pagination<ExerciseVM> getExerciseBySubjectId(Integer subjectId, Integer currentPage, Integer size, String search, String type, String order) {
 
-        Pagination<ExerciseVM> pagination = new Pagination<>(currentPage, size);
-        List<ExerciseVM> VMList = new ArrayList<>();
+
+
+    public PaginationDTO<ExerciseDTO> getExerciseBySubjectId(Integer subjectId, Integer currentPage, Integer size, String search, String type, String order) {
+
+        PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage, size);
+        List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
         Query query = new Query();
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
-        pagination.setSearch(search);
+        paginationDTO.setSearch(search);
         query.setType(type);
-        pagination.setType(type);
+        paginationDTO.setType(type);
         query.setOrder(order);
         List<Exercise> dbexerciseList = exerciseMapper.getExerciseBySubjectId(query, subjectId);
         List<Exercise> exerciseList = new ArrayList<>();
@@ -180,15 +165,77 @@ public class ExerciseService {
             length = index + size;
         }
         for (int i = index; i < length; i++) {
-            ExerciseVM exerciseVM = new ExerciseVM();
-            exerciseVM.setExercise(exerciseList.get(i));
+            ExerciseDTO exerciseDTO = new ExerciseDTO();
+            exerciseDTO.setExercise(exerciseList.get(i));
             List<Option> options = JSON.parseArray(exerciseList.get(i).getOptionContent(), Option.class);
-            exerciseVM.setOptions(options);
-            VMList.add(exerciseVM);
+            exerciseDTO.setOptions(options);
+            exerciseDTOS.add(exerciseDTO);
         }
-        pagination.setDataList(VMList);
-        pagination.setTotalSize(exerciseList.size());
-        pagination.setTotalPage((int) Math.ceil((double) pagination.getTotalSize() / (double) size));
-        return pagination;
+        paginationDTO.setDataList(exerciseDTOS);
+        paginationDTO.setTotalSize(exerciseList.size());
+        paginationDTO.setTotalPage((int) Math.ceil((double) paginationDTO.getTotalSize() / (double) size));
+        return paginationDTO;
+    }
+
+    public List<Exercise> getExerciseListBySubjectId(Integer subjectId) {
+        return exerciseMapper.getExerciseListBySubjectId(subjectId);
+    }
+
+    public PaginationDTO<ExerciseDTO> review(Integer currentPage, Integer size, Integer subjectId, String order) {
+        PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage,size);
+        Query query = new Query();
+        query.setIndex((currentPage-1)*size);
+        query.setSize(size);
+        query.setOrder(order);
+        query.setId(subjectId);
+        List<Exercise> exerciseList = exerciseMapper.getExerciseByReview(query);
+        query.setIndex(null);
+        query.setSize(null);
+        int count = exerciseMapper.countExerciseByReview(query);
+
+        List<ExerciseDTO> exerciseDTOS = exerciseToExerciseDTO(exerciseList);
+        paginationDTO.setDataList(exerciseDTOS);
+        paginationDTO.setTotalSize(count);
+        paginationDTO.setTotalPage((int) Math.ceil((double) paginationDTO.getTotalSize() / (double) size));
+        return paginationDTO;
+    }
+
+    private List<ExerciseDTO> exerciseToExerciseDTO(List<Exercise> exerciseList) {
+        List<ExerciseDTO> exerciseDTOS = new ArrayList<>();
+        for (Exercise exercise : exerciseList) {
+            ExerciseDTO exerciseDTO = new ExerciseDTO();
+            User user = userMapper.getUserById(exercise.getCreateUserId());
+            Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+            exerciseDTO.setExercise(exercise);
+            exerciseDTO.setOptions(JSON.parseArray(exercise.getOptionContent(), Option.class));
+            exerciseDTO.setSubject(subject);
+            exerciseDTO.setUser(user);
+            exerciseDTOS.add(exerciseDTO);
+        }
+        return exerciseDTOS;
+    }
+
+    public ExerciseDTO getExerciseDTOById(Integer id) {
+        ExerciseDTO exerciseDTO = new ExerciseDTO();
+        Exercise exercise = exerciseMapper.getExerciseById(id);
+        User user = userMapper.getUserById(exercise.getCreateUserId());
+        Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+        exerciseDTO.setExercise(exercise);
+        exerciseDTO.setOptions(JSON.parseArray(exercise.getOptionContent(), Option.class));
+        exerciseDTO.setSubject(subject);
+        exerciseDTO.setUser(user);
+        return exerciseDTO;
+    }
+
+    public int updateSatus(Integer id, Integer status) {
+        return exerciseMapper.updateById(id,status);
+    }
+
+    public int countExercise() {
+        return exerciseMapper.countExerciseList(new Query());
+    }
+
+    public List<Integer> getExerciseIdListByExerciseSetId(Integer exerciseSetId) {
+        return midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
     }
 }

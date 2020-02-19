@@ -6,12 +6,12 @@ import java.util.List;
 public class ExerciseSet {
     private Integer exerciseSetId;
     private String title;
-    private Integer subjectId;
     private Integer exerciseCount;
     private Integer createUserId;
     private Date createTime;
     private Date modifyTime;
     List<Exercise> exerciseList;
+    private Integer subjectId;
 
     public Integer getExerciseSetId() {
         return exerciseSetId;

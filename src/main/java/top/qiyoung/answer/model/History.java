@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class History {
     private Integer historyId;
-    private Integer userId;
-    private Integer examId;
-    private Integer subjectId;
     private String type;
     private String title;
     private Date createTime;
+    private Integer examId;
+    private Integer subjectId;
+    private Integer userId;
 
     public Integer getHistoryId() {
         return historyId;

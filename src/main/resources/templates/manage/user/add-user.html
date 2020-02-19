@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content=""/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+    <!-- //custom-theme -->
+    <link href="/css/bootstrap.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/component.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/style_grid.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/answer.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="/css/bootstrap-fileinput.css" rel="stylesheet" type="text/css" media="all"/>
+    <!-- font-awesome-icons -->
+    <link href="/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+<div class="wthree_agile_admin_info">
+    <div th:insert="~{manage/navigation :: nav}"></div>
+
+    <div class="clearfix"></div>
+    <!-- //w3_agileits_top_nav-->
+
+    <!-- /inner_content-->
+    <div class="inner_content">
+        <!-- /inner_content_w3_agile_info-->
+
+        <!-- breadcrumbs -->
+        <div class="w3l_agileits_breadcrumbs">
+            <div class="w3l_agileits_breadcrumbs_inner">
+                <ul>
+                    <li>首页<span>»</span></li>
+                    <li>用户管理<span>»</span></li>
+                    <li>编辑用户</li>
+                </ul>
+            </div>
+        </div>
+        <!-- //breadcrumbs -->
+
+        <div class="inner_content_w3_agile_info two_in">
+            <div class="agile-grids">
+                <!-- validation -->
+                <div class="grids">
+                    <div class="forms-grids">
+                        <div class="w3agile-validation w3ls-validation">
+                            <div class="agile-validation agile_info_shadow">
+                                <div class="form-div">
+                                    <div class="validation-grids widget-shadow" data-example-id="basic-forms">
+                                        <div class="input-info">
+                                            <h3 class="w3_inner_tittle two">编辑用户：</h3>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" th:if="${message != null}">
+                                            <strong th:text="${message}"></strong>
+                                        </div>
+                                        <div class="form-body form-body-info">
+                                            <form data-toggle="validator" novalidate="true" action="/user/addOrUpdate" method="post" enctype="multipart/form-data">
+                                                <div class="form-group valid-form col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">账号：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <input type="hidden" th:if="${user!=null && user.userId != null}" th:value="${user.userId}" name="userId">
+                                                    <input th:if="${user!=null && user.userId != null }" th:value="${user.account}" readonly type="text" class="form-control" id="account" name="account" placeholder="账号" required="">
+                                                    <input th:if="${user!=null && user.userId == null }" th:value="${user.account}" type="text" class="form-control" id="account" name="account" placeholder="账号" required="">
+                                                    <input th:if="${user==null}" type="text" class="form-control" id="account" name="account" required="">
+                                                    <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group valid-form col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">昵称：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <input th:value="${user!=null?user.username:''}" type="text" class="form-control" id="username" name="username" required="">
+                                                    <div class="help-block with-errors"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">密码：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <input th:value="${user!=null?user.password:''}" type="text" data-toggle="validator" data-minlength="6"
+                                                           class="form-control"
+                                                           id="password" name="password"  required="">
+                                                    <span class="help-block">密码长度至少6个字符</span>
+                                                    </div></div>
+                                                <div class="form-group col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">确认密码：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <input th:value="${user!=null?user.password:''}" type="text" class="form-control" id="passwordConfirm"
+                                                           data-match="#password"
+                                                           data-match-error="密码不一致"  required="">
+                                                    <div class="help-block with-errors"></div>
+                                                    </div></div>
+                                                <div class="form-group valid-form col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">性别：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                <select id="sex" name="sex" class="form-control" style="height: 50px;">
+                                                    <option th:selected="${user!=null?user.sex == '男':false}">男</option>
+                                                    <option th:selected="${user!=null?user.sex == '女':false}">女</option>
+                                                </select>
+                                                    </div></div>
+                                                <div class="form-group valid-form col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">手机号：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <input th:value="${user!=null?user.phone:''}" type="text" class="form-control" id="phone" name="phone"
+                                                           required="">
+                                                    <div class="help-block with-errors"></div>
+                                                    </div></div>
+                                                <div class="form-group col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">上传头像：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                        <div class="fileinput fileinput-new" data-provides="fileinput" id="uploadImageDiv">
+                                                            <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                                <img th:if="${user!=null && user.userId != null}" th:src="${user.avatarImgUrl}"  alt="" />
+                                                                <!--<img src="${companyInfo.image}" alt="" />-->
+                                                            </div>
+                                                            <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                                            <div>
+                                                                <span class="btn default btn-file"> <span class="fileinput-new">选择图片</span>
+                                                                <span class="fileinput-exists">更改</span> <input type="file" name="avatarImg" id="avatarImg" /></span>
+                                                                <a href="#" class="btn default fileinput-exists" data-dismiss="fileinput">移除</a>
+                                                                <span>请选择1M以内图片</span>
+                                                            </div>
+                                                        </div>
+                                                        <div id="titleImageError" style="color: #a94442"></div>
+                                                    </div></div>
+                                                <div class="form-group col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">自我描述：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <div class="">
+                                                        <textarea style="width: 100%" th:text="${user!=null?user.description:''}" name="description" id="description" cols="70" rows="5" ></textarea>
+                                                    </div>
+                                                    </div></div>
+                                                <div class="form-group valid-form col-xs-12 col-md-12 col-sm-12">
+                                                    <label class="col-xs-2 col-md-2 col-sm-2 control-label">用户类型：</label>
+                                                    <div class="col-xs-8 col-md-8 col-sm-8">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input th:if="${user!=null}" th:field="${user.role}" type="radio" name="role" required="" value="2">
+                                                            <input th:if="${user==null}" type="radio" name="role" required="" value="2">
+                                                            一般用户
+                                                        </label>
+                                                        <label>
+                                                            <input th:if="${user!=null}" th:field="${user.role}" type="radio" name="role" required="" value="3">
+                                                            <input th:if="${user==null}" type="radio" name="role" required="" value="3">
+                                                            特殊用户
+                                                        </label>
+                                                    </div></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-primary disabled">确认</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:insert="~{foot :: foot}"></div>
+</div>
+
+<script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
+<script src="/js/modernizr.custom.js"></script>
+
+<script src="/js/classie.js"></script>
+<script src="/js/gnmenu.js"></script>
+<script src="/js/bootstrap-fileinput.js"></script>
+<script>
+    new gnMenu(document.getElementById('gn-menu'));
+</script>
+
+<!-- 上传图片 -->
+<script>
+    var url = '';
+    $("#uploadImage").fileupload({
+        url : ROOT + "/security/company/uploadFile",
+        dataType : 'json',
+        autoUpload : false,
+        acceptFileTypes : /(gif|jpe?g|png)$/i,
+        maxFileSize : 1000000, // 1 MB
+        imageMaxWidth : 100,
+        imageMaxHeight : 100,
+        messages : {
+            acceptFileTypes : '文件类型不匹配',
+            maxFileSize : '文件过大',
+            minFileSize : '文件过小'
+        }
+    }).on("fileuploadadd", function(e, data) {
+        // 当文件添加上去时候调用
+        $("#titleImageError").html("");
+        data.submit()
+    }).on("fileuploaddone", function(e, data) {
+        // 上传完成时调用
+        if (data.result.returnState == "ERROR") {
+            alert("上传失败")
+            return;
+        }
+        url = data.result.returnData.url;
+    });
+
+    function updateMsg() {
+        $.ajax({
+            url : ROOT + "/security/company/updateInfo",
+            data : {
+                id : $("#companyId").val(),
+                image : url,
+                companyName : $("#companyName").val(),
+                companySite : $("#companySite").val(),
+                companyLinker : $("#companyLinker").val(),
+                companyTel : $("#companyTel").val()
+            },
+            type : "post",
+            success : function(data) {
+                if (data.returnState == "OK") {
+                    layer.msg('操作成功', {
+                        icon : 6,
+                        shade : 0.01,
+                        offset : [ '57px', '1100px' ]
+                    });
+                    $table.bootstrapTable('refresh');
+                } else {
+                    layer.msg('操作失败', {
+                        icon : 5,
+                        shade : 0.01,
+                        offset : [ '90px', '900px' ]
+                    });
+                }
+            }
+        });
+    }
+</script>
+
+<!-- input-forms -->
+<script type="text/javascript" src="/js/valida.2.1.6.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#version').valida('version');
+
+        $('.valida').valida();
+
+        $('#partial-1').on('click', function (ev) {
+            ev.preventDefault();
+            $('#res-1').click(); // clear form error msgs
+            $('form').valida('partial', '#field-1'); // validate only field-1
+            $('form').valida('partial', '#field-1-3'); // validate only field-1-3
+        });
+
+    });
+
+</script>
+<script src="/js/validator.min.js"></script>
+<script src="/js/screenfull.js"></script>
+<script>
+    $(function () {
+        $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
+
+        if (!screenfull.enabled) {
+            return false;
+        }
+
+
+        $('#toggle').click(function () {
+            screenfull.toggle($('#container')[0]);
+        });
+    });
+</script>
+<script src="/js/jquery.nicescroll.js"></script>
+<script src="/js/scripts.js"></script>
+
+<script type="text/javascript" src="/js/bootstrap-3.1.1.min.js"></script>
+</body>
+</html>

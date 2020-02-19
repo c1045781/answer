@@ -1,18 +1,20 @@
 package top.qiyoung.answer.model;
 
+import java.util.Date;
+
 public class Message {
-    private Integer messageid;
+    private Integer messageId;
     private String content;
     private Integer status;
-    private Integer userName;
-    private Integer createTime;
+    private Date createTime;
+    private Integer userId;
 
-    public Integer getMessageid() {
-        return messageid;
+    public Integer getMessageId() {
+        return messageId;
     }
 
-    public void setMessageid(Integer messageid) {
-        this.messageid = messageid;
+    public void setMessageId(Integer messageId) {
+        this.messageId = messageId;
     }
 
     public String getContent() {
@@ -31,19 +33,19 @@ public class Message {
         this.status = status;
     }
 
-    public Integer getUserName() {
-        return userName;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUserName(Integer userName) {
-        this.userName = userName;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Integer getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Integer createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }

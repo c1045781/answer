@@ -1,30 +1,76 @@
-.form-div{
+.form-div {
     margin: 0 auto;
-    width: 50%;
+    width: 70%;
 }
-.option-div{
+
+.option-div {
     display: inline-flex;
     height: 50px;
     width: 100%;
 }
-.option-button{
+
+.option-button {
     height: 35px;
     width: 50px;
     margin-left: 5px;
 }
-.correct-label{
+
+.correct-label {
     width: 50px;
 }
 
-.answer-select{
+.answer-select {
     width: 100px;
     height: 33px;
     margin-right: 10px;
 }
 
-.input-skip{
+.input-skip {
     height: 33px;
     margin-left: 10px;
     width: 37px;
     text-align: center;
+}
+
+.option-span {
+    margin: 0 20px;
+    font-size: 1.15em;
+}
+
+.answer-table {
+    table-layout: fixed;
+}
+
+.answer-table-td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bg1{
+    background: url('/images/bg-1.jpg');
+    height: 800px;
+    width: 100%;
+    margin-top: -20px;
+}
+
+.copyrights {
+    padding: 1.5em 0em;
+    text-align: center;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -o-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    background: #000;
+}
+.copyrights p {
+    font-size: 1em;
+    color: #fff;
+    margin-bottom: 0;
+}
+.copyrights p a{
+    color: #1b93e1;
+}
+.copyrights p a:hover{
+    color:#696969;
 }

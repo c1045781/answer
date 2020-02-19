@@ -1,8 +1,9 @@
 package top.qiyoung.answer.service;
 
-import com.alibaba.fastjson.JSON;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import top.qiyoung.answer.DTO.ExerciseSetDTO;
+import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.model.*;
 
@@ -24,123 +25,144 @@ public class ExerciseSetService {
     @Resource
     private UserMapper userMapper;
 
-    public void insert(ExerciseSetVM setVM, User user) {
+    public int insert(ExerciseSetDTO setVM, User user) {
+        int result;
         ExerciseSet exerciseSet = new ExerciseSet();
 
         exerciseSet.setCreateUserId(user.getUserId());
         exerciseSet.setCreateTime(new Date());
         exerciseSet.setModifyTime(new Date());
         List<Integer> exerciseIds = new ArrayList<>();
-        for (Exercise exercise : setVM.getExerciseList()) {
-            exerciseIds.add(exercise.getExerciseId());
-        }
+
         exerciseSet.setExerciseCount(exerciseIds.size());
         exerciseSet.setSubjectId(setVM.getSubject().getSubjectId());
         exerciseSet.setTitle(setVM.getTitle());
-        /*List<Exercise> exerciseList = new ArrayList<>();
-        for (Integer id : exerciseIds) {
-            Exercise exercise = exerciseMapper.getExerciseById(id);
-            if (exercise != null){
-                exerciseList.add(exercise);
-            }
-        }
-        exerciseSet.setExerciseList(exerciseList);*/
         int exerciseSetId = 1;
         Integer lastId = setMapper.getLastId();
-        if (lastId != null ){
+        if (lastId != null) {
             exerciseSetId = lastId + 1;
         }
         exerciseSet.setExerciseSetId(exerciseSetId);
-        setMapper.insert(exerciseSet);
-        for (Integer exerciseId : exerciseIds) {
-            midMapper.insert(exerciseSetId,exerciseId);
+        result = setMapper.insert(exerciseSet);
+        if (setVM.getExerciseList() != null) {
+            for (Exercise exercise : setVM.getExerciseList()) {
+                exerciseIds.add(exercise.getExerciseId());
+            }
+            for (Integer exerciseId : exerciseIds) {
+                result = midMapper.insert(exerciseSetId, exerciseId);
+            }
         }
+        return result;
     }
 
-    public void update(ExerciseSetVM setVM) {
+    public int update(ExerciseSetDTO setVM) {
+        int result;
+
         midMapper.deleteByExerciseSetId(setVM.getExerciseSetId());
 
         ExerciseSet exerciseSet = new ExerciseSet();
-
         List<Integer> exerciseIds = new ArrayList<>();
-        for (Exercise exercise : setVM.getExerciseList()) {
-            exerciseIds.add(exercise.getExerciseId());
+        if (setVM.getExerciseList() != null){
+            for (Exercise exercise : setVM.getExerciseList()) {
+                exerciseIds.add(exercise.getExerciseId());
+            }
         }
-
         exerciseSet.setExerciseSetId(setVM.getExerciseSetId());
         exerciseSet.setTitle(setVM.getTitle());
         exerciseSet.setSubjectId(setVM.getSubject().getSubjectId());
         exerciseSet.setExerciseCount(exerciseIds.size());
         exerciseSet.setModifyTime(new Date());
 
-        setMapper.update(exerciseSet);
+        result = setMapper.update(exerciseSet);
         for (Integer exerciseId : exerciseIds) {
-            midMapper.insert(setVM.getExerciseSetId(),exerciseId);
+            result = midMapper.insert(setVM.getExerciseSetId(), exerciseId);
         }
-//        Exercise exercise = new Exercise();
-//
-//
-//        // 制作content JSON
-//        exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
-//        exercise.setExerciseId(edit.getExerciseEditId());
-//        exercise.setExerciseTitle(edit.getTitle());
-//        exercise.setExerciseType(edit.getExerciseType());
-//        exercise.setCorrect(edit.getCorrect());
-//        exercise.setModifyTime(new Date());
-//        exerciseMapper.update(exercise);
-
+        return result;
     }
 
-    public Pagination<ExerciseSetVM> getAll(Integer currentPage, Integer size, String title, Integer subjectId,Integer userId,String order) {
-        Pagination<ExerciseSetVM> pagination = new Pagination<>(currentPage, size);
+    public PaginationDTO<ExerciseSetDTO> getExerciseList(Integer currentPage, Integer size, String type, Integer subjectId, String order, String search) {
+        PaginationDTO<ExerciseSetDTO> paginationDTO = new PaginationDTO<>(currentPage, size);
         Query query = new Query();
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
         query.setOrder(order);
-        List<ExerciseSet> exerciseList = setMapper.getExerciseSetList(query,title,subjectId,userId);
-        List<ExerciseSetVM> vms = new ArrayList<>();
-        for (ExerciseSet set : exerciseList) {
-            ExerciseSetVM exerciseSetVM = new ExerciseSetVM();
-            Subject subject = subjectMapper.getSubjectById(set.getSubjectId());
-            User user = userMapper.getUserById(set.getCreateUserId());
-            BeanUtils.copyProperties(set,exerciseSetVM);
-            exerciseSetVM.setUser(user);
-            exerciseSetVM.setSubject(subject);
-            vms.add(exerciseSetVM);
+        query.setId(subjectId);
+        query.setType(type);
+        List<ExerciseSet> exerciseSets = new ArrayList<>();
+        int count = 0;
+        if (type != null && type.equals("createUser")) {
+            List<User> users = userMapper.getUserByUsername(search);
+            List<ExerciseSet> exerciseList = new ArrayList<>();
+            for (User dbuser : users) {
+                query.setIndex(null);
+                query.setSize(null);
+                query.setSearch(dbuser.getUserId() + "");
+                List<ExerciseSet> temp = setMapper.getExerciseSetList(query);
+                for (ExerciseSet set : temp) {
+                    exerciseList.add(set);
+                }
+                count += setMapper.countExerciseSetList(query);
+            }
+            int index = (currentPage - 1) * size;
+            int length;
+            if (exerciseList.size() < (index + size)) {
+                length = exerciseList.size();
+            } else {
+                length = index + size;
+            }
+            for (int i = index; i < length; i++) {
+                exerciseSets.add(exerciseList.get(i));
+            }
+        } else {
+            query.setSearch(search);
+            exerciseSets = setMapper.getExerciseSetList(query);
+            query.setIndex(null);
+            query.setSize(null);
+            count = setMapper.countExerciseSetList(query);
         }
-        query.setIndex(null);
-        query.setSize(null);
-        int count = setMapper.countExerciseSetList(query,title,subjectId,userId);
+        List<ExerciseSetDTO> vms = new ArrayList<>();
 
-        pagination.setDataList(vms);
-        pagination.setTotalSize(count);
-        pagination.setTotalPage((int) Math.ceil((double) pagination.getTotalSize() / (double) size));
-        return pagination;
-
+        for (ExerciseSet exerciseSet : exerciseSets) {
+            ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO();
+            Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
+            User user = userMapper.getUserById(exerciseSet.getCreateUserId());
+            BeanUtils.copyProperties(exerciseSet, exerciseSetDTO);
+            exerciseSetDTO.setUser(user);
+            exerciseSetDTO.setSubject(subject);
+            vms.add(exerciseSetDTO);
+        }
+        paginationDTO.setDataList(vms);
+        paginationDTO.setTotalSize(count);
+        paginationDTO.setTotalPage((int) Math.ceil((double) paginationDTO.getTotalSize() / (double) size));
+        return paginationDTO;
     }
 
-    public void delete(Integer exerciseSetId) {
-
-        setMapper.delete(exerciseSetId);
+    public int delete(Integer exerciseSetId) {
+        int result;
+        result = midMapper.deleteByExerciseSetId(exerciseSetId);
+        result = setMapper.delete(exerciseSetId);
+        return result;
     }
 
-    public ExerciseSetVM getExerciseSetVMById(Integer exerciseSetId) {
+    public ExerciseSetDTO getExerciseSetVMById(Integer exerciseSetId) {
         ExerciseSet exerciseSet = setMapper.getExerciseSetById(exerciseSetId);
-        ExerciseSetVM exerciseSetVM = new ExerciseSetVM();
+        if(exerciseSet.getExerciseList().get(0).getExerciseId() == null){
+            exerciseSet.setExerciseList(null);
+        }
+        ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO();
         User user = userMapper.getUserById(exerciseSet.getCreateUserId());
         Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
         List<String> base = subjectMapper.getBase();
-        BeanUtils.copyProperties(exerciseSet,exerciseSetVM);
-        exerciseSetVM.setBaseList(base);
-        exerciseSetVM.setSubjectList(subjectList);
-        exerciseSetVM.setUser(user);
-        exerciseSetVM.setSubject(subject);
-//        exerciseSetVM.setExerciseList(exerciseSet.getExerciseList());
-//        exerciseSetVM.setExerciseSetId(exerciseSet.getExerciseSetId());
-//        exerciseSetVM.setTitle(exerciseSet.getTitle());
-        return exerciseSetVM;
+        BeanUtils.copyProperties(exerciseSet, exerciseSetDTO);
+        exerciseSetDTO.setBaseList(base);
+        exerciseSetDTO.setSubjectList(subjectList);
+        exerciseSetDTO.setUser(user);
+        exerciseSetDTO.setSubject(subject);
+        return exerciseSetDTO;
     }
 
-
+    public int countExerciseSet() {
+        return setMapper.countExerciseSetList(new Query());
+    }
 }

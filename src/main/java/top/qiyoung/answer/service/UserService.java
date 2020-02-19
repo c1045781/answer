@@ -2,8 +2,10 @@ package top.qiyoung.answer.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import top.qiyoung.answer.mapper.ExerciseMapper;
+import top.qiyoung.answer.mapper.ExerciseSetMapper;
 import top.qiyoung.answer.mapper.UserMapper;
-import top.qiyoung.answer.model.Pagination;
+import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.utils.DeleteFile;
@@ -18,7 +20,11 @@ import java.util.List;
 public class UserService {
 
     @Resource
-    UserMapper userMapper;
+    private UserMapper userMapper;
+    @Resource
+    private ExerciseMapper exerciseMapper;
+    @Resource
+    private ExerciseSetMapper exerciseSetMapper;
 
     public User login(User user) {
         return userMapper.login(user);
@@ -31,10 +37,14 @@ public class UserService {
         }
         FileUpload fileUpload = new FileUpload();
         String upload;
-        try {
-            upload = fileUpload.upload(avatarImg);
-        } catch (IOException e) {
-            return 2;
+        if (avatarImg == null){
+            upload = "/upload/default.jpg";
+        }else {
+            try {
+                upload = fileUpload.upload(avatarImg);
+            } catch (IOException e) {
+                return 2;
+            }
         }
         user.setCreateTime(new Date());
         user.setAvatarImgUrl(upload);
@@ -42,8 +52,8 @@ public class UserService {
         return 1;
     }
 
-    public Pagination<User> getUserList(Integer currentPage, Integer size, String search, String type, String order,Integer role) {
-        Pagination<User> pagination = new Pagination<>(currentPage,size);
+    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role) {
+        PaginationDTO<User> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
         query.setSize(size);
@@ -52,25 +62,28 @@ public class UserService {
         query.setType(type);
         query.setOrder(order);
         List<User> userList = userMapper.getUserList(query);
-        pagination.setDataList(userList);
+        paginationDTO.setDataList(userList);
 
         query.setIndex(null);
         query.setSize(null);
         int count = userMapper.countUserList(query);
-        pagination.setTotalSize(count);
-        pagination.setTotalPage((int)Math.ceil((double)pagination.getTotalSize()/(double)size));
-        return pagination;
+        paginationDTO.setTotalSize(count);
+        paginationDTO.setTotalPage((int)Math.ceil((double) paginationDTO.getTotalSize()/(double)size));
+        return paginationDTO;
     }
 
-    public void deleteById(Integer id){
-        userMapper.deleteById(id);
+    public int deleteById(Integer id){
+        exerciseMapper.deleteByUserId(id);
+        exerciseSetMapper.deleteByUserId(id);
+        int reslut = userMapper.deleteById(id);
+        return reslut;
     }
 
     public User getUserById(Integer id) {
         return userMapper.getUserById(id);
     }
 
-    public void update(User user, MultipartFile avatarImg) {
+    public int update(User user, MultipartFile avatarImg) {
         if (!avatarImg.isEmpty()) {
             User dbUser = userMapper.getUserById(user.getUserId());
             DeleteFile deleteFile = new DeleteFile();
@@ -84,7 +97,7 @@ public class UserService {
             }
             user.setAvatarImgUrl(upload);
         }
-        userMapper.update(user);
+        return userMapper.update(user);
     }
 
     public int userCount() {

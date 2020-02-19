@@ -11,6 +11,24 @@ public class User {
     private String description;
     private String avatarImgUrl;
     private Date createTime;
+    private String sex;
+    private String phone;
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public Integer getUserId() {
         return userId;

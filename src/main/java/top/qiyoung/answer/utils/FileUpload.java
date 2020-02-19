@@ -25,7 +25,7 @@ public class FileUpload {
             }
             return "/upload/" + filename;
         } else {
-            return "/uoload/default.jpg";
+            throw new IOException();
         }
     }
 }

@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>答题页面</title>
+
+
+    <!-- Css Plugin -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/themify-icons.css">
+    <link rel="stylesheet" href="/css/owl.carousel.css">
+    <link rel="stylesheet" href="/css/owl.theme.css">
+    <link rel="stylesheet" href="/css/owl.transitions.css">
+    <link rel="stylesheet" href="/css/slick.css">
+    <link rel="stylesheet" href="/css/slider-pro.min.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/index-style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+</head>
+<body>
+<div id="main-container">
+    <header class="kopa-header-02">
+        <div class="top-header">
+            <div class="container">
+                <div class="right-top-header" th:if="${session.user == null}">
+                    <a href="/toSignin">登陆</a>
+                    <a href="/toSignup">注册</a>
+                </div>
+                <div class="right-top-header" th:if="${session.user != null}">
+                    <a href="/signout">退出</a>
+                    <a href="#">个人中心</a>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-header style-02">
+            <div class="container">
+                <div class="pull-left" style="height: 110px;">
+                </div>
+                <div class="pull-right">
+                    <nav class="kopa-main-menu style-02">
+                        <ul>
+                            <li><a href="/">首页</a></li>
+                            <li><a href="/exercise/check">试题库</a></li>
+                            <li><a href="/exerciseSet/check">套题库</a></li>
+                            <li><a href="error-book.html">历史答题</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--<div id="main-content">
+        <section class="kopa-area kopa-area-breadcrumb"></section>
+        <div style="width: 60%;margin: -80px 20% 100px 20%;background-color: #ffffff;height: 1000px;box-shadow:0px 20px 20px #808080"></div>
+    </div>-->
+
+
+    <div id="main-content">
+        <section class="kopa-area kopa-area-breadcrumb">
+
+        </section>
+        <section class="kopa-area kopa-area-18">
+            <div class="container">
+                <div class="widget kopa-widget-news">
+                    <div class="widget-content module-news-04">
+                        <div class="list-blog">
+                            <article class="entry-item" th:each="exerciseEditDTO,status:${exerciseEditDTOList}">
+                                <div class="entry-content">
+                                    <h4 class="entry-title" th:text="${status.index+1} + '.' +${exerciseEditDTO.title}"></h4>
+                                    <input th:id="'input_id' + ${exerciseEditDTO.exerciseEditId}" type="hidden" th:value="${status.index+1}">
+                                    <!--<div class="entry-meta">
+                                        <span th:each="subject:${exerciseEditDTO.subjectList}" th:if="${exerciseEditDTO.subjectId == subject.subjectId}" th:text="${subject.baseSubject}+'>'+${subject.name}+' |'+${exerciseEditDTO.exerciseType}"></span>
+                                    </div>-->
+                                    <div class="radio" id="correct">
+                                        <label class="correct-label" th:each="option:${exerciseEditDTO.options}"
+                                               style="width: 100%;margin-bottom: 10px">
+                                            <input th:name="${exerciseEditDTO.exerciseEditId}" required="required"
+                                                   th:type="${exerciseEditDTO.exerciseType == '多选题'?'checkbox':'radio'}"
+                                                   th:value="${option.option}">
+                                            <span style="overflow-wrap: break-word;"
+                                                  th:text="${option.option}+ '.' +${option.content}"></span>
+                                        </label>
+                                    </div>
+                                    <div name="corrent_div" style="display: none">
+                                        <p style="float: left;margin-top: 10px;">结果：</p>
+                                        <div th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;"><span th:id="'isCorrect' + ${exerciseEditDTO.exerciseEditId}">错误</span></div>
+                                        <div style="clear: both;margin-top: 66px;"><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></div>
+                                        <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="open_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">进入讨论区</a>
+                                        <a th:id="a_close_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none" th:onclick="close_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭讨论区</a>
+                                    </div>
+                                </div>
+                                <section th:id="comment_section + ${exerciseEditDTO.exerciseEditId}" class="kopa-commnent" style="display: none;">
+                                    <h3 class="comments-title">讨论区</h3>
+                                    <div class="single-comment-list">
+                                        <ol class="comments-list" th:id="comment_ol + ${exerciseEditDTO.exerciseEditId}">
+                                        </ol>
+                                    </div>
+                                    <div class="single-comment-form">
+                                        <div class="comment-form-content">
+                                            <div class="kopa-form-box">
+                                                <div class="comment-respond">
+                                                    <h3 class="comment-reply-title">
+                                                        发布区 &nbsp;
+                                                        <small><span href="#">分享你的想法</span></small>
+                                                    </h3>
+                                                    <form th:id="comment_form + ${exerciseEditDTO.exerciseEditId}"  onsubmit="return false" method="post" class="comment-form  novalidate" novalidate="">
+                                                        <p class="textarea-block">
+                                                            <textarea aria-required="true" name="content" rows="10" placeholder=""></textarea>
+                                                        </p>
+                                                        <input type="hidden" name="exerciseId" th:value="${exerciseEditDTO.exerciseEditId}">
+                                                        <p class="post-comment input-block">
+                                                            <button id="submit-comment" th:onclick="submit_comment([[${exerciseEditDTO.exerciseEditId}]]);" name="submit" type="submit" class="button-01">发布</button>
+                                                        </p>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin: 20px 20%;">
+                <a id="a_confirm" href="javascript:void(0)"  style="float: right" onclick="confirm_answer ()" class="button-01">确认</a>
+            </div>
+
+        </section>
+
+    </div>
+
+    <footer class="kopa-footer style-01">
+        <div class="container">
+            <p>Copyright &copy; 2019. <a href="/" target="_blank" title="在线答题系统">在线答题系统</a> All Rights Reserved Powered.
+            </p>
+        </div>
+    </footer>
+</div>
+
+<script src="/js/jquery-2.2.4.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/slick.min.js"></script>
+<script src="/js/jquery.sliderPro.min.js"></script>
+<script src="/js/imagesloaded.pkgd.min.js"></script>
+<script src="/js/jquery.validate.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/jquery.waypoints.min.js"></script>
+<script src="/js/jquery.counterup.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.js"></script>
+<script src="/js/viewportchecker.min.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/answer.js"></script>
+</body>
+</html>

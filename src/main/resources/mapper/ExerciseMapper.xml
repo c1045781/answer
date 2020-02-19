@@ -35,15 +35,21 @@
             <if test="role != null">
                 and role = #{role}
             </if>
-            <if test="subjectId != null">
-                and subject_id = #{subjectId}
+            <if test="id != null">
+                and subject_id = #{id}
             </if>
             <if test="exerciseType != null and exerciseType != ''">
                 and exercise_type = #{exerciseType}
             </if>
+            <if test="1 == 1">
+                and status = 1
+            </if>
         </where>
         <if test="order != null and order != ''">
-            order by ${order} limit #{index},#{size}
+            order by ${order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
         </if>
     </select>
 
@@ -63,11 +69,14 @@
             <if test="role != null">
                 and role = #{role}
             </if>
-            <if test="subjectId != null">
-                and subject_id = #{subjectId}
+            <if test="id != null">
+                and subject_id = #{id}
             </if>
             <if test="exerciseType != null and exerciseType != ''">
                 and exercise_type = #{exerciseType}
+            </if>
+            <if test="1 == 1">
+                and status = 1
             </if>
         </where>
     </select>
@@ -81,6 +90,15 @@
         <where>
             <if test="id != null">
                 exercise_id = #{id}
+            </if>
+        </where>
+    </delete>
+
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from exercise
+        <where>
+            <if test="userId != null">
+                create_user_id = #{userId}
             </if>
         </where>
     </delete>
@@ -131,4 +149,60 @@
             order by ${query.order}
         </if>
     </select>
+
+    <select id="getExerciseListBySubjectId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select exercise_id from exercise
+        <where>
+            <if test="subjectId != null">
+                and subject_id = #{subjectId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getExerciseByReview" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+        select * from exercise
+        <where>
+            <if test="id != null">
+                and subject_id = #{id}
+            </if>
+            <if test="1==1">
+                and status = 0
+            </if>
+        </where>
+        <if test="order != null and order != ''">
+            order by #{order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countExerciseByReview" resultType="java.lang.Integer">
+        select count(*) from exercise
+        <where>
+            <if test="id != null">
+                and subject_id = #{id}
+            </if>
+            <if test="1==1">
+                and status = 0
+            </if>
+        </where>
+        <if test="order != null and order != ''">
+            order by #{order}
+        </if>
+    </select>
+
+    <update id="updateById" parameterType="java.lang.Integer">
+        update exercise
+        <set>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </set>
+        <where>
+            <if test="id != null">
+                exercise_id = #{id}
+            </if>
+        </where>
+    </update>
 </mapper>

@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("top.qiyoung.answer.mapper")
+@MapperScan("top.qiyoung.Answer.mapper")
 public class AnswerApplication {
 
     public static void main(String[] args) {

@@ -2,9 +2,9 @@ package top.qiyoung.answer.model;
 
 public class HistoryAnswer {
     private Integer historyAnswerid;
-    private Integer historyId;
     private String answer;
     private Integer order;
+    private Integer historyId;
 
     public Integer getHistoryAnswerid() {
         return historyAnswerid;

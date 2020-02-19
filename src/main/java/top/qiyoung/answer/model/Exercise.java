@@ -5,7 +5,6 @@ import java.util.Date;
 public class Exercise {
     private Integer exerciseId;
     private String exerciseType;
-    private Integer subjectId;
     private String correct;
     private String exerciseTitle;
     private String optionContent;
@@ -13,6 +12,7 @@ public class Exercise {
     private Integer status;
     private Date createTime;
     private Date modifyTime;
+    private Integer subjectId;
 
     public Integer getExerciseId() {
         return exerciseId;

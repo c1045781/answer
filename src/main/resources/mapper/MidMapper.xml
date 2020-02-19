@@ -21,4 +21,12 @@
             </if>
         </where>
     </delete>
+    <select id="getExerciseIdListByExerciseSetId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select exercise_id from exercise_set_mid
+        <where>
+            <if test="exerciseSetId != null">
+                and exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </select>
 </mapper>

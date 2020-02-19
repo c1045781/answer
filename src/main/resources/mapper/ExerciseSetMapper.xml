@@ -9,7 +9,7 @@
         <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
-        <collection  property="exerciseList"  ofType="top.qiyoung.answer.model.Exercise">
+        <collection property="exerciseList" ofType="top.qiyoung.answer.model.Exercise">
             <id column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
             <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
             <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
@@ -22,45 +22,50 @@
             <result column="modify_time" property="modifyTime"/>
         </collection>
     </resultMap>
-    <insert id="insert" parameterType="top.qiyoung.answer.model.ExerciseSet" useGeneratedKeys="true" keyProperty="exerciseSetId" keyColumn="exercise_set_id">
+    <insert id="insert" parameterType="top.qiyoung.answer.model.ExerciseSet" useGeneratedKeys="true"
+            keyProperty="exerciseSetId" keyColumn="exercise_set_id">
         insert into exercise_set (exercise_set_id,title, subject_id, exercise_count, create_user_id, create_time, modify_time)
            values(#{exerciseSetId},#{title},#{subjectId},#{exerciseCount},#{createUserId},#{createTime},#{modifyTime})
     </insert>
 
-    <select id="getExerciseSetList" resultMap="BaseResultMap">
+    <select id="getExerciseSetList" resultMap="BaseResultMap" parameterType="top.qiyoung.answer.model.Query">
         select * from exercise_set
         <where>
-           <if test="title != '' and title != null">
-               and title = #{title}
-           </if>
-            <if test="subjectId != '' and subjectId != null">
-                and subject_id = #{subjectId}
+            <if test="search != '' and search != null">
+                <if test="type == 'title'">
+                    and title like "%"#{search}"%"
+                </if>
+                <if test="type == 'createUser'">
+                    and create_user_id = #{search}
+                </if>
             </if>
-            <if test="userId != '' and userId != null">
-                and user_id = #{userId}
+            <if test="id != null">
+                and subject_id = #{id}
             </if>
         </where>
-        <if test="query.order != null and query.order != ''">
-            order by ${query.order} limit #{query.index},#{query.size}
+        <if test="order != null and order != ''">
+            order by ${order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
         </if>
     </select>
 
-    <select id="countExerciseSetList" resultType="java.lang.Integer">
+    <select id="countExerciseSetList" resultType="java.lang.Integer" parameterType="top.qiyoung.answer.model.Query">
         select count(*) from exercise_set
         <where>
-            <if test="title != '' and title != null">
-                and title = #{title}
+            <if test="search != '' and search != null">
+                <if test="type == 'title'">
+                    and title like "%"#{search}"%"
+                </if>
+                <if test="type == 'createUser'">
+                    and create_user_id = #{search}
+                </if>
             </if>
-            <if test="subjectId != '' and subjectId != null">
-                and subject_id = #{subjectId}
-            </if>
-            <if test="userId != '' and userId != null">
-                and user_id = #{userId}
+            <if test="id != null">
+                and subject_id = #{id}
             </if>
         </where>
-        <if test="query.order != null and query.order != ''">
-            order by ${query.order}
-        </if>
     </select>
 
     <delete id="delete" parameterType="java.lang.Integer">
@@ -71,6 +76,16 @@
             </if>
         </where>
     </delete>
+
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from exercise_set
+        <where>
+            <if test="userId != null">
+                create_user_id = #{userId}
+            </if>
+        </where>
+    </delete>
+
     <select id="getLastId" resultType="java.lang.Integer">
         select exercise_set_id from exercise_set order by exercise_set_id desc limit 0,1
     </select>
@@ -85,8 +100,8 @@
             </if>
         </where>
     </select>
-    <update id="update" parameterType="top.qiyoung.answer.model.ExerciseSet" >
-        update  exercise_set
+    <update id="update" parameterType="top.qiyoung.answer.model.ExerciseSet">
+        update exercise_set
         <set>
             <if test="exerciseCount != null">
                 exercise_count = #{exerciseCount},

@@ -2,11 +2,15 @@ package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface MidMapper {
 
     int insert(@Param("exerciseSetId") Integer exerciseSetId,@Param("exerciseId") Integer exerciseId);
 
-    void deleteByExerciseSetId(Integer exerciseSetId);
+    int deleteByExerciseSetId(Integer exerciseSetId);
 
-    void deleteByExerciseId(Integer exerciseId);
+    int deleteByExerciseId(Integer exerciseId);
+
+    List<Integer> getExerciseIdListByExerciseSetId(Integer exerciseSetId);
 }
