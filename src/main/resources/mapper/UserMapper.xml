@@ -123,7 +123,7 @@
             <if test="role != null and role != ''">
                 role = #{role},
             </if>
-            <if test="description != null and description != ''">
+            <if test="description != null">
                 description = #{description},
             </if>
             <if test="avatarImgUrl != null and avatarImgUrl != ''">

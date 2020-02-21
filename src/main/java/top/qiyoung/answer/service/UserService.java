@@ -87,6 +87,7 @@ public class UserService {
         if (!avatarImg.isEmpty()) {
             User dbUser = userMapper.getUserById(user.getUserId());
             DeleteFile deleteFile = new DeleteFile();
+            if (!dbUser.getAvatarImgUrl().equals("/upload/default.jpg"))
             deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\"+dbUser.getAvatarImgUrl());
             FileUpload fileUpload = new FileUpload();
             String upload = "/upload/default.jpg";

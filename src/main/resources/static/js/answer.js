@@ -464,5 +464,23 @@ function changeCollectActiveIcon(e) {
             $("#collectActiveIcon" +e).css("display","none");
             $("#collectIcon" + e).css("display","block");
         }
-    })
+    });
+}
+
+function personInformation(){
+    $.ajax({
+        url:"/user/information",
+        contentType:"application/json",
+        success:function (data){
+            $("#userId").val(data.userId);
+            $("#password").val(data.password);
+            $("#passwordConfirm").val(data.password);
+            $("#account").val(data.account);
+            $("#avatarImgUrl").attr("src",data.avatarImgUrl);
+            $("#phone").val(data.phone);
+            $("#description").val(data.description);
+            $("#username").val(data.username);
+            $("#sex").val(data.sex);
+        }
+    });
 }
