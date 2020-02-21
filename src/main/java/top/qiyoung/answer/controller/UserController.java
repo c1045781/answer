@@ -111,4 +111,10 @@ public class UserController {
         }
         return "success";
     }
+
+    @RequestMapping("/personal")
+    public String personal(){
+        return "user/personal";
+    }
+
 }

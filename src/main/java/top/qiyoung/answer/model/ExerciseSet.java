@@ -77,4 +77,19 @@ public class ExerciseSet {
     public void setExerciseList(List<Exercise> exerciseList) {
         this.exerciseList = exerciseList;
     }
+
+
+    public ExerciseSet(Integer exerciseSetId, String title, Integer exerciseCount, Integer createUserId, Date createTime, Date modifyTime, List<Exercise> exerciseList, Integer subjectId) {
+        this.exerciseSetId = exerciseSetId;
+        this.title = title;
+        this.exerciseCount = exerciseCount;
+        this.createUserId = createUserId;
+        this.createTime = createTime;
+        this.modifyTime = modifyTime;
+        this.exerciseList = exerciseList;
+        this.subjectId = subjectId;
+    }
+
+    public ExerciseSet() {
+    }
 }

@@ -33,7 +33,7 @@
                 </div>
                 <div class="right-top-header" th:if="${session.user != null}">
                     <a href="/signout">退出</a>
-                    <a href="#">个人中心</a>
+                    <a href="/user/personal">个人中心</a>
                 </div>
             </div>
         </div>
@@ -71,7 +71,13 @@
                         <div class="list-blog">
                             <article class="entry-item" th:each="exerciseEditDTO,status:${exerciseEditDTOList}">
                                 <div class="entry-content">
-                                    <h4 class="entry-title" th:text="${status.index+1} + '.' +${exerciseEditDTO.title}"></h4>
+                                    <button th:onclick="changeCollectIcon([[${exerciseEditDTO.exerciseEditId}]]);" th:id="collectIcon + ${exerciseEditDTO.exerciseEditId}" type="button" class="btn btn-default btn-lg" style="float: right;display: block;">收藏
+                                        <span   class="glyphicon glyphicon-star-empty" ></span>
+                                    </button>
+                                    <button th:onclick="changeCollectActiveIcon([[${exerciseEditDTO.exerciseEditId}]]);"  th:id="collectActiveIcon + ${exerciseEditDTO.exerciseEditId}" type="button" class="btn btn-default btn-lg" style="float: right;display: none;">取消收藏
+                                        <span class="glyphicon glyphicon-star"></span>
+                                    </button>
+                                    <h4 style="overflow-wrap: break-word;word-break: break-word;width: 90%;" class="entry-title" th:text="${status.index+1} + '.' +${exerciseEditDTO.title}"></h4>
                                     <input th:id="'input_id' + ${exerciseEditDTO.exerciseEditId}" type="hidden" th:value="${status.index+1}">
                                     <!--<div class="entry-meta">
                                         <span th:each="subject:${exerciseEditDTO.subjectList}" th:if="${exerciseEditDTO.subjectId == subject.subjectId}" th:text="${subject.baseSubject}+'>'+${subject.name}+' |'+${exerciseEditDTO.exerciseType}"></span>
@@ -142,7 +148,30 @@
         </div>
     </footer>
 </div>
+<script th:inline="javascript">
+    window.onload = function (){
+        var exerciseEditDTOList = [[${exerciseEditDTOList}]];
+        var exerciseId = new Array();
+        for (var i = 0;i < exerciseEditDTOList.length;i++){
+            exerciseId[i] = exerciseEditDTOList[i].exerciseEditId;
+        }
 
+        $.ajax({
+            url:"/collect/collection",
+            dataType:"json",
+            type:"post",
+            contentType: 'application/json',
+            data:JSON.stringify(exerciseId),
+            success:function (data) {
+                for (var i = 0;i<data.length;i++){
+                    $("#collectActiveIcon" + data[i]).css("display","block");
+                    $("#collectIcon" + data[i]).css("display","none");
+                }
+            }
+        });
+
+    }
+</script>
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/slick.min.js"></script>

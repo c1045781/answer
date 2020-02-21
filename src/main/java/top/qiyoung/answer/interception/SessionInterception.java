@@ -39,10 +39,6 @@ public class SessionInterception implements HandlerInterceptor {
                 }
             }
         }
-        /*if (user == null){
-            response.sendRedirect("/toSignin");
-            return false;
-        }*/
 
         return true;
     }

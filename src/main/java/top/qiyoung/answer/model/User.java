@@ -94,4 +94,19 @@ public class User {
         this.createTime = createTime;
     }
 
+    public User(Integer userId, String account, String username, String password, Integer role, String description, String avatarImgUrl, Date createTime, String sex, String phone) {
+        this.userId = userId;
+        this.account = account;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.description = description;
+        this.avatarImgUrl = avatarImgUrl;
+        this.createTime = createTime;
+        this.sex = sex;
+        this.phone = phone;
+    }
+
+    public User() {
+    }
 }

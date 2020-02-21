@@ -93,4 +93,20 @@ public class Exercise {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId) {
+        this.exerciseId = exerciseId;
+        this.exerciseType = exerciseType;
+        this.correct = correct;
+        this.exerciseTitle = exerciseTitle;
+        this.optionContent = optionContent;
+        this.createUserId = createUserId;
+        this.status = status;
+        this.createTime = createTime;
+        this.modifyTime = modifyTime;
+        this.subjectId = subjectId;
+    }
+
+    public Exercise() {
+    }
 }

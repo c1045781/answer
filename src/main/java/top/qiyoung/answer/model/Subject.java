@@ -28,4 +28,13 @@ public class Subject {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Subject(Integer subjectId, String baseSubject, String name) {
+        this.subjectId = subjectId;
+        this.baseSubject = baseSubject;
+        this.name = name;
+    }
+
+    public Subject() {
+    }
 }

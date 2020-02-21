@@ -48,4 +48,17 @@ public class Comment{
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    public Comment(Integer id, Integer userId, Integer exerciseId, String content, Date createTime) {
+        this.id = id;
+        this.userId = userId;
+        this.exerciseId = exerciseId;
+        this.content = content;
+        this.createTime = createTime;
+    }
+
+    public Comment(){
+
+    }
+
 }

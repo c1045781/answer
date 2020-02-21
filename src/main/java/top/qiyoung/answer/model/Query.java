@@ -74,4 +74,18 @@ public class Query {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public Query(String search, String order, String type, Integer role, Integer index, Integer size, Integer id, String exerciseType) {
+        this.search = search;
+        this.order = order;
+        this.type = type;
+        this.role = role;
+        this.index = index;
+        this.size = size;
+        this.id = id;
+        this.exerciseType = exerciseType;
+    }
+
+    public Query() {
+    }
 }

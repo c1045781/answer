@@ -19,4 +19,12 @@ public class Option {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public Option(String option, String content) {
+        this.option = option;
+        this.content = content;
+    }
+
+    public Option() {
+    }
 }

@@ -438,3 +438,31 @@ function submit_comment(e){
     })
     $("#comment_form"+ e +" textarea").val('');
 }
+
+function changeCollectIcon(e) {
+    console.log(e);
+    $.ajax({
+        url:"/collect/addCollect",
+        contentType:"text",
+        dataType:"text",
+        data:{"exerciseId":e},
+        success:function(data){
+            $("#collectActiveIcon" +e).css("display","block");
+            $("#collectIcon" + e).css("display","none");
+        }
+    })
+}
+
+function changeCollectActiveIcon(e) {
+    console.log(e);
+    $.ajax({
+        url:"/collect/deleteCollect",
+        contentType:"text",
+        dataType:"text",
+        data:{"exerciseId":e},
+        success:function(data){
+            $("#collectActiveIcon" +e).css("display","none");
+            $("#collectIcon" + e).css("display","block");
+        }
+    })
+}

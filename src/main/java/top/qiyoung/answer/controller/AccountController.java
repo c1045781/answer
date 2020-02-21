@@ -27,7 +27,7 @@ public class AccountController {
             return "redirect:/";
         }
         model.addFlashAttribute("error","账号或密码错误");
-        return "redirect:/";
+        return "redirect:/toSignin";
     }
 
     // 用户登出

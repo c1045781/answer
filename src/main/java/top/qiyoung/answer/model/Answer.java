@@ -48,4 +48,16 @@ public class Answer {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    public Answer(Integer answerId, Integer exerciseId, Integer userId, String answer, Date createTime) {
+        this.answerId = answerId;
+        this.exerciseId = exerciseId;
+        this.userId = userId;
+        this.answer = answer;
+        this.createTime = createTime;
+    }
+
+    public Answer(){
+
+    }
 }

@@ -48,4 +48,15 @@ public class Message {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    public Message(Integer messageId, String content, Integer status, Date createTime, Integer userId) {
+        this.messageId = messageId;
+        this.content = content;
+        this.status = status;
+        this.createTime = createTime;
+        this.userId = userId;
+    }
+
+    public Message() {
+    }
 }
