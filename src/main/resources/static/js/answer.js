@@ -48,12 +48,12 @@ function showSubject(e) {
 function addOption() {
     var A = $("#" + String.fromCharCode(input));
     A.children(':last-child').addClass("disabled");
-    $("#opts").append("<div class=\"option-div\" id='" + String.fromCharCode(input + 1) + "'>\n" +
-        "<label class=\"control-label\" style=\"width: 5%;\"> " + String.fromCharCode(input + 1) + "：</label>\n" +
-        "<input type=\"text\" class=\"form-control\" name=\"answers\" required='' >\n" +
-        "<button onclick=\"deleteOption()\" type=\"button\" class=\"btn btn-danger option-button\" >删除</button>" +
+    $("#opts").append("<div class='option-div' id='" + String.fromCharCode(input + 1) + "'>\n" +
+        "<label class='control-label' style='width: 5%;'> " + String.fromCharCode(input + 1) + "：</label>\n" +
+        "<input type='text' class='form-control' name='answers' required='' >\n" +
+        "<button onclick='deleteOption()' type='button' class='btn btn-danger option-button' >删除</button>" +
         "</div>\n");
-    $("#correct").append("<label class=\"correct-label\"><input type=\"radio\" name=\"correct\" required=''  value=\"" + String.fromCharCode(input + 1) + "\">" + String.fromCharCode(input + 1) + "</label>");
+    $("#correct").append("<label class='correct-label'><input type='radio' name='correct' required=''  value=''" + String.fromCharCode(input + 1) + "'>" + String.fromCharCode(input + 1) + "</label>");
     input = input + 1;
 }
 
@@ -303,7 +303,7 @@ function confirm_answer(){
         }
 
         $.ajax({
-            url: '/answer/add',
+            url: '/answer/addOrUpdate',
             type: 'post',
             data: JSON.stringify({exerciseId: checked_name,answer: $(this).val()}),
             contentType: "application/json"
@@ -312,40 +312,41 @@ function confirm_answer(){
 
     var arr = new Array();
     $("input[type=checkbox]").each(function() {
-        if($(this).attr('name') != '' && $.inArray($(this).attr('name'),arr) == '-1'){
+        if($(this).attr('name') != '' && $.inArray($(this).attr('name'),arr) == '-1'){ // 获取所有题目id  (name = id)
             arr.push($(this).attr('name'));
         }
     });
-    for (i in arr){
+    for (var i = 0; i < arr.length;i++){
         var arr_id = arr[i];
         var corrent = $("#"+arr[i]).html();
         var corrent_count =  corrent.split('：')[1].split(',').length; // 答案个数
-        var i = 0;
+        var count = 0;
         var answer = '';
+        debugger
         $("input[name="+ arr[i] +"]:checked").each(function() {
             answer += $(this).val() + ",";
+            console.log(answer);
             checked_name = $(this).attr('name');
-            i++;
-            console.log(checked_name);
-            if(corrent.indexOf($(this).val()) >= 0){
-                $("#corrent_div"+checked_name).removeClass();
-                $("#corrent_div"+checked_name).addClass("alert alert-success");
-                $("#isCorrect"+checked_name).html("正确");
-            }else{
-                $("#corrent_div"+checked_name).removeClass();
-                $("#corrent_div"+checked_name).addClass("alert alert-danger");
-                $("#isCorrect"+checked_name).html("错误");
-                return false;
-            }
+            count++;
         });
-        if ( corrent_count != i){
+        answer = answer.substr(0,answer.length-1);
+        if(corrent.indexOf(answer) >= 0){
+            $("#corrent_div"+checked_name).removeClass();
+            $("#corrent_div"+checked_name).addClass("alert alert-success");
+            $("#isCorrect"+checked_name).html("正确");
+        }else{
+            $("#corrent_div"+checked_name).removeClass();
+            $("#corrent_div"+checked_name).addClass("alert alert-danger");
+            $("#isCorrect"+checked_name).html("错误");
+        }
+        if ( corrent_count != count){
             $("#corrent_div"+arr_id).removeClass();
             $("#corrent_div"+arr_id).addClass("alert alert-danger");
             $("#isCorrect"+arr_id).html("错误");
         }
 
         $.ajax({
-            url: '/answer/add',
+            url: '/answer/addOrUpdate',
             type: 'post',
             data: JSON.stringify({exerciseId: arr_id,answer: answer}),
             contentType: "application/json"
@@ -354,7 +355,7 @@ function confirm_answer(){
         answer = '';
     }
 
-    $("#a_confirm").css('display','none');
+    // $("#a_confirm").css('display','none');
 
 }
 
@@ -440,7 +441,6 @@ function submit_comment(e){
 }
 
 function changeCollectIcon(e) {
-    console.log(e);
     $.ajax({
         url:"/collect/addCollect",
         contentType:"text",
@@ -454,10 +454,9 @@ function changeCollectIcon(e) {
 }
 
 function changeCollectActiveIcon(e) {
-    console.log(e);
     $.ajax({
         url:"/collect/deleteCollect",
-        contentType:"text",
+        type:"post",
         dataType:"text",
         data:{"exerciseId":e},
         success:function(data){
@@ -481,6 +480,81 @@ function personInformation(){
             $("#description").val(data.description);
             $("#username").val(data.username);
             $("#sex").val(data.sex);
+        }
+    });
+}
+
+function historyAnswer(e){
+    $.ajax({
+        url:"/answer/findAnswer",
+        dataType:"json",
+        data:{"currentPage":e},
+        success:function(data){
+            var content = "";
+            var list = data.dataList;
+            for (var i=0;i<list.length;i++){
+                content += "<li class='product has-post-thumbnail' style='width: 100%'>" +
+                    "<div class='content'>" +
+                    "<div class='history-div-55'>" +
+                    "<h3 class='history-left'>"+ list[i].exercise.exerciseTitle +"</h3>" +
+                    "<h3 class='history-right'>"+ list[i].exercise.exerciseType +"</h3>" +
+                    "<h3 class='history-right' style='padding-right:20px;'>"+ list[i].subject.baseSubject+ "»" + list[i].subject.name +"</h3>" +
+                    "</div>\n" +
+                    "<div class='history-div-50'>" +
+                    "<p class='history-right'>答题时间：<span>"+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +"</span></p>" +
+                    "</div>" +
+                    "<a href='/answer/viewHistoryExercise?exerciseId="+ list[i].exercise.exerciseId +"' class='button-01 history-right'>查看</a>" +
+                    "</div>" +
+                    "</li>";
+            }
+            $("#history_ul").html(content);
+
+            if (data.currentPage == 1){
+                $("#nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li  class='disabled'>" +
+                    "<a onclick='historyAnswer("+ (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li>" +
+                    "<a onclick='historyAnswer(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            } else if (data.currentPage == data.totalPage) {
+                $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li>" +
+                    "<a onclick='historyAnswer(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li   class='disabled'>" +
+                    "<a onclick='historyAnswer(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            }else{
+                $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li>" +
+                    "<a onclick='historyAnswer(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li>" +
+                    "<a onclick='historyAnswer(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            }
         }
     });
 }

@@ -74,3 +74,25 @@
 .copyrights p a:hover{
     color:#696969;
 }
+
+.history-left{
+    float: left;
+    width: 75%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.history-div-55{
+    height: 55px;
+}
+
+.history-div-50{
+    height: 50px;
+}
+
+
+
+.history-right{
+    float: right;
+}

@@ -79,9 +79,6 @@
                                     </button>
                                     <h4 style="overflow-wrap: break-word;word-break: break-word;width: 90%;" class="entry-title" th:text="${status.index+1} + '.' +${exerciseEditDTO.title}"></h4>
                                     <input th:id="'input_id' + ${exerciseEditDTO.exerciseEditId}" type="hidden" th:value="${status.index+1}">
-                                    <!--<div class="entry-meta">
-                                        <span th:each="subject:${exerciseEditDTO.subjectList}" th:if="${exerciseEditDTO.subjectId == subject.subjectId}" th:text="${subject.baseSubject}+'>'+${subject.name}+' |'+${exerciseEditDTO.exerciseType}"></span>
-                                    </div>-->
                                     <div class="radio" id="correct">
                                         <label class="correct-label" th:each="option:${exerciseEditDTO.options}"
                                                style="width: 100%;margin-bottom: 10px">
@@ -94,7 +91,12 @@
                                     </div>
                                     <div name="corrent_div" style="display: none">
                                         <p style="float: left;margin-top: 10px;">结果：</p>
-                                        <div th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;"><span th:id="'isCorrect' + ${exerciseEditDTO.exerciseEditId}">错误</span></div>
+                                        <div th:if="${answer == null}" th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;">
+                                            <span th:id="'isCorrect' + ${exerciseEditDTO.exerciseEditId}">错误</span>
+                                        </div>
+                                        <div th:if="${answer != null}" th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;">
+                                            <span th:text="${answer.answer == exerciseEditDTO.correct?'正确':'错误'}"></span>
+                                        </div>
                                         <div style="clear: both;margin-top: 66px;"><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></div>
                                         <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="open_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">进入讨论区</a>
                                         <a th:id="a_close_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none" th:onclick="close_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭讨论区</a>
@@ -133,7 +135,7 @@
                     </div>
                 </div>
             </div>
-            <div style="margin: 20px 20%;">
+            <div style="margin: 20px 20%;" th:if="${answer == null}">
                 <a id="a_confirm" href="javascript:void(0)"  style="float: right" onclick="confirm_answer ()" class="button-01">确认</a>
             </div>
 

@@ -18,6 +18,7 @@ public class CollectController {
     @Resource
     private CollectService collectService;
 
+    // 查找用户收藏
     @RequestMapping("/collection")
     @ResponseBody
     public List<Integer> collection(@RequestBody List<String> exerciseId, HttpServletRequest request){
@@ -26,6 +27,7 @@ public class CollectController {
         return dbExerciseIdList;
     }
 
+    // 添加习题收藏
     @RequestMapping("/addCollect")
     @ResponseBody
     public String addCollect(Integer exerciseId,HttpServletRequest request){
@@ -34,6 +36,7 @@ public class CollectController {
         return "success";
     }
 
+    // 删除习题收藏
     @RequestMapping("/deleteCollect")
     @ResponseBody
     public String deleteCollect(Integer exerciseId,HttpServletRequest request){

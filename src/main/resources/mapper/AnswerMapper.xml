@@ -12,4 +12,58 @@
     <insert id="add" parameterType="top.qiyoung.answer.model.Answer">
         insert into answer (exercise_id, user_id, answer, create_time) values (#{exerciseId},#{userId},#{answer},#{createTime})
     </insert>
+
+    <select id="countAnswerByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from answer
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAnswerByUserId" resultMap="BaseResultMap">
+        select * from answer
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+        order by create_time desc
+        <if test="pageSize != null and currentPage != null">
+          limit #{currentPage},#{pageSize}
+        </if>
+    </select>
+
+    <select id="findAnswerByExerciseIdAndUserId" resultMap="BaseResultMap">
+        select * from answer
+        <where>
+            <if test="exerciseId != null">
+                and exercise_id = #{exerciseId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="top.qiyoung.answer.model.Answer">
+        update answer
+        <set>
+            <if test="answer != null and answer != ''">
+                answer = #{answer},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime}
+            </if>
+        </set>
+        <where>
+            <if test="exerciseId != null">
+                and exercise_id = #{exerciseId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </update>
 </mapper>

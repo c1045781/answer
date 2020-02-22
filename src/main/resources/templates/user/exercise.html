@@ -148,7 +148,6 @@
 	                                </li>
 	                            </ul>
 	                            <nav class="woocommerce-pagination">
-
 									<ul class="page-numbers"  th:if="${paginationDTO.totalPage} > 0">
 										<li th:if="${paginationDTO.currentPage != 1} ">
 											<a class="prev page-numbers" href="#"
@@ -156,9 +155,6 @@
 												<i class="fa fa-angle-left"></i>
 											</a>
 										</li>
-										<!--<li>
-											<a class="prev page-numbers" href="#"><i class="fa fa-angle-left"></i></a>
-										</li>-->
 
 										<!-- 页数小于7，显示所有页数 -->
 										<li th:if="${paginationDTO.totalPage<=7}"

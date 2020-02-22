@@ -16,6 +16,16 @@ public class PaginationDTO<T> {
         this.pageSize = pageSize;
     }
 
+    public PaginationDTO(Integer currentPage, Integer pageSize, Integer totalPage, Integer totalSize, String search, String type, List<T> dataList) {
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
+        this.totalPage = totalPage;
+        this.totalSize = totalSize;
+        this.search = search;
+        this.type = type;
+        this.dataList = dataList;
+    }
+
     public String getSearch() {
         return search;
     }
