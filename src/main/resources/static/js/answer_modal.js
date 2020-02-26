@@ -213,3 +213,34 @@ function failPermissionReviewModal(id,userId) {
     });
 
 }
+
+function showPermission(id){
+    $.ajax({
+        url: '/permission/checkOfOne',
+        type: 'post',
+        data: {id: id},
+        dataType: "json",
+        success: function (data) {
+            $("#permission_content").html(data.content);
+            if (data.status == 0){
+                $("#permission_status").html("未处理");
+            } else if (data.status == 1){
+                $("#permission_status").html("同意");
+            } else {
+                $("#permission_status").html("拒绝");
+            }
+
+            $("#permission_date").html(Format(new Date(data.createTime),"yyyy-MM-dd hh:mm:ss"));
+            if (data.reason != null && data.reason != "") {
+                $("#permission_reason").html(data.reason);
+            }else {
+                $("#permission_is").css("display","none");
+            }
+            $('#showPermission').modal();
+        }
+    });
+}
+
+function addPermission(){
+    $('#addPermission').modal();
+}

@@ -44,4 +44,16 @@ public class PermissionService {
     public int countPermission() {
         return permissionMapper.countMessageList(new Query());
     }
+
+    public Message getMessageById(Integer id) {
+        return permissionMapper.getMessageById(id);
+    }
+
+    public List<Message> getMessageListByUserId(Integer userId) {
+        return permissionMapper.getMessageListByUserId(userId);
+    }
+
+    public void add(Message message) {
+        permissionMapper.add(message);
+    }
 }

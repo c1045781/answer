@@ -8,6 +8,15 @@ public class Message {
     private Integer status;
     private Date createTime;
     private Integer userId;
+    private String reason;
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 
     public Integer getMessageId() {
         return messageId;
@@ -49,12 +58,13 @@ public class Message {
         this.createTime = createTime;
     }
 
-    public Message(Integer messageId, String content, Integer status, Date createTime, Integer userId) {
+    public Message(Integer messageId, String content, Integer status, Date createTime, Integer userId,String reason) {
         this.messageId = messageId;
         this.content = content;
         this.status = status;
         this.createTime = createTime;
         this.userId = userId;
+        this.reason = reason;
     }
 
     public Message() {

@@ -2,10 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.PermissionMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Message">
-        <id column="id" jdbcType="INTEGER" property="messageId"/>
+        <id column="message_id" jdbcType="INTEGER" property="messageId"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
@@ -34,4 +35,26 @@
             </if>
         </where>
     </update>
+
+    <select id="getMessageById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from message
+        <where>
+            <if test="id != null">
+                message_id =#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="getMessageListByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from message
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="add" parameterType="top.qiyoung.answer.model.Query">
+        insert into message(content, status, user_id, create_time) values (#{content},#{status},#{userId},#{createTime})
+    </insert>
 </mapper>

@@ -355,7 +355,7 @@ function confirm_answer(){
         answer = '';
     }
 
-    // $("#a_confirm").css('display','none');
+    $("#a_confirm").css('display','none');
 
 }
 
@@ -503,13 +503,13 @@ function historyAnswer(e){
                     "<div class='history-div-50'>" +
                     "<p class='history-right'>答题时间：<span>"+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +"</span></p>" +
                     "</div>" +
-                    "<a href='/answer/viewHistoryExercise?exerciseId="+ list[i].exercise.exerciseId +"' class='button-01 history-right'>查看</a>" +
+                    "<a target='_blank' href='/answer/viewHistoryExercise?exerciseId="+ list[i].exercise.exerciseId +"' class='button-01 history-right'>查看</a>" +
                     "</div>" +
                     "</li>";
             }
             $("#history_ul").html(content);
 
-            if (data.currentPage == 1){
+            if (data.currentPage == 1 && data.currentPage != data.totalPage){
                 $("#nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
                     "<li  class='disabled'>" +
@@ -524,7 +524,7 @@ function historyAnswer(e){
                     "</li>" +
                     "</ul>" +
                     "</nav>")
-            } else if (data.currentPage == data.totalPage) {
+            } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
                 $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
                     "<li>" +
@@ -539,7 +539,7 @@ function historyAnswer(e){
                     "</li>" +
                     "</ul>" +
                     "</nav>")
-            }else{
+            }else if (data.currentPage != data.totalPage && data.currentPage != 1) {
                 $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
                     "<li>" +
@@ -555,6 +555,36 @@ function historyAnswer(e){
                     "</ul>" +
                     "</nav>")
             }
+        }
+    });
+}
+
+function permissionList(){
+    $.ajax({
+        url: '/permission/permissionList',
+        type: 'post',
+        dataType: "json",
+        success: function (data) {
+            var content = "";
+            for (var i = 0;i<data.length;i++){
+                content += "<li>" +
+                "<p class='permission-content'><span class='fa fa-caret-right'></span>"+ data[i].content +"</p>" +
+                "<a href='javascript:void(0)' onclick='showPermission("+ data[i].messageId +")'>查看</a></li>"
+            }
+            $("#permission_ul").html(content)
+        }
+    });
+}
+
+function submit_permission_add_from() {
+    var content = $("#permission_add_from textarea").val();
+    $.ajax({
+        url:"/permission/add",
+        type:"post",
+        data:{"content":content},
+        success:function(data){
+            $('#addPermission').modal('hide');
+            permissionList();
         }
     });
 }
