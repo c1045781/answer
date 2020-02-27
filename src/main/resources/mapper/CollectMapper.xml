@@ -5,6 +5,7 @@
         <id column="collect_id" jdbcType="INTEGER" property="collectId"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
 
     <select id="findCollectByExerciseIdAndUserId" resultMap="BaseResultMap">
@@ -19,8 +20,8 @@
         </where>
     </select>
 
-    <insert id="addCollect" parameterType="java.lang.Integer">
-        insert into collect(user_id, exercise_id) VALUES (#{userId},#{exerciseId})
+    <insert id="addCollect" parameterType="top.qiyoung.answer.model.Collect">
+        insert into collect(user_id, exercise_id,create_time) VALUES (#{userId},#{exerciseId},#{createTime})
     </insert>
 
     <delete id="deleteCollect" parameterType="java.lang.Integer">
@@ -34,4 +35,26 @@
             </if>
         </where>
     </delete>
+
+    <select id="findCollectByUserId" resultMap="BaseResultMap">
+        select * from collect
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+        order by create_time
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countCollectByUserId" resultType="java.lang.Integer">
+        select count(1) from collect
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -55,7 +55,7 @@ public class ExerciseSetController {
         model.addAttribute("search", search);
         model.addAttribute("orderby", orderby);
         User user = (User) request.getSession().getAttribute("user");
-        if (user.getRole() != 1){
+        if (user.getRole() != 1 || user.getRole() != 0){
             return "user/exercise-set";
         }
         return "manage/exercise-set/exercise-set";

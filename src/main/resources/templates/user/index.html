@@ -29,28 +29,21 @@
 				<div class="container">
 					<div class="top-header" th:if="${session.user == null}">
 						<div class="kopa-login">
-							<a href="/toSignin">
+							<a href="/toLogin">
 								<i class="fa fa-sign-in"></i>
 								登录
 							</a>
 						</div>
 						<div class="kopa-register">
-							<a href="/toSignup">
+							<a href="/toReigster">
 								<i class="fa fa-unlock"></i>
 								注册
 							</a>
 						</div>
-						<!--<ul>
-							<li><a href="#"><i class="fa fa-facebook-square"></i></a></li>
-							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-							<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							<li><a href="#"><i class="fa fa-skype"></i></a></li>
-						</ul>-->
 					</div>
 					<div class="top-header" th:if="${session.user != null}">
 						<div class="kopa-login">
-							<a href="/signout">
+							<a href="/logout">
 								<i class="fa fa-sign-in"></i>
 								退出
 							</a>
@@ -75,7 +68,7 @@
 										<li><a href="/">首页</a></li>
 										<li><a href="/exercise/check">试题库</a></li>
 										<li><a href="/exerciseSet/check">套题库</a></li>
-										<li><a href="shop.html">历史答题</a></li>
+										<li><a href="/answer/wrongBook">错题本</a></li>
 									</ul>
 								</nav>
 							</div>
@@ -83,50 +76,6 @@
 					</div>
 				</div>
 			</header>
-			<!--<div id="kopa-menu-scroll">
-		        <div class="kopa-close-menu-scroll">
-		            <span>close x</span>
-		        </div>
-		        <div class="top-menu-scroll">
-		        	<div class="kopa-social-links style-03">
-					    <ul class="clearfix">
-					        <li><span>Social</span></li>
-					        <li><a href="#" class="fa fa-twitter"></a></li>
-					        <li><a href="#" class="fa fa-google-plus"></a></li>
-					        <li><a href="#" class="fa fa-rss"></a></li>
-					    </ul>
-					</div>
-			        <ul class="kopa-menu-click">
-			            <li><a href="index.html">Home</a></li>
-						<li><a href="about.html">About</a></li>
-						<li><a href="shop.html">Shop</a></li>
-						<li><a href="single-shop.html">Single-shop</a></li>
-						<li><a href="blog.html">Blog</a></li>
-						<li><a href="single-blog.html">Single-blog</a></li>
-			        </ul>
-		        </div>
-		        <form>
-		        	<button type="submit" class="btn"><i class="fa fa-search"></i></button>
-		            <input type="text" placeholder="Search courses">
-		        </form>
-		        <div class="widget kopa-widget-banner">
-		        	<div class="widget-content module-banner-01">
-		        		<ul class="kopa-banner">
-				        	<li>
-				        		<span>100%</span>
-				        		<div>
-				        			<h4>MONEY BACK GUARANTEE</h4>
-				        			<p>No hassles, no question asked!</p>
-				        		</div>
-				        	</li>
-				        	<li>
-				        		<h4>EARN UP TO <span>35%</span></h4>
-				        		<p>Sign up our affiliate program</p>
-				        	</li>
-				        </ul>
-		        	</div>
-		        </div>
-		    </div>-->
 			<div id="main-content">
 				<section class="kopa-area-nospace">
 					<div class="widget kopa-widget-slider">

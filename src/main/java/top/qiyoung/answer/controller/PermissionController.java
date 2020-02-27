@@ -36,8 +36,8 @@ public class PermissionController {
     // 更新用户类型
     @RequestMapping("/role")
     @ResponseBody
-    public String updateStatus(Integer id,Integer role,Integer userId){
-        permissionService.updateRole(id,role,userId);
+    public String updateStatus(Integer id,Integer role,Integer userId,String reason){
+        permissionService.updateRole(id,role,userId,reason);
         return "success";
     }
 

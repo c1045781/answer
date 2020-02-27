@@ -26,13 +26,7 @@ public class AnswerService {
     private SubjectMapper subjectMapper;
 
     public void addOrUpdate(Answer answer) {
-        Answer dbAnswer = answerMapper.findAnswerByExerciseIdAndUserId(answer.getExerciseId(), answer.getUserId());
-        if (dbAnswer == null){
-            answerMapper.add(answer);
-        }else{
-            answer.setCreateTime(new Date());
-            answerMapper.update(answer);
-        }
+        answerMapper.add(answer);
     }
 
     public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(Integer userId, Integer currentPage, Integer pageSize) {

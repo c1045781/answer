@@ -1,5 +1,6 @@
 package top.qiyoung.answer.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import top.qiyoung.answer.model.Message;
 import top.qiyoung.answer.model.Query;
 
@@ -11,7 +12,7 @@ public interface PermissionMapper {
 
     List<Message> getMessageList(Query query);
 
-    void updateStatus(Integer id);
+    void updateStatus(@Param("id") Integer id,@Param("reason") String reason);
 
     Message getMessageById(Integer id);
 

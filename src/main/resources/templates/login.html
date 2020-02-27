@@ -41,7 +41,7 @@
                     <h2>登录在线答题系统</h2>
                     <div class="login-form">
                         <span th:text="${error}"></span>
-                        <form action="/signin" method="post">
+                        <form action="/login" method="post">
                             <input type="text" name="account" required="">
                             <input type="password" name="password" required="">
                             <div class="tp">
@@ -50,7 +50,7 @@
 
                         </form>
                     </div>
-                    <h6><a href="/">返回首页</a> | <a href="/signup">注册</a></h6>
+                    <h6><a href="/">返回首页</a> | <a href="/toRegister">注册</a></h6>
 
                 </div>
             </div>

@@ -19,7 +19,7 @@ public class AccountController {
     private UserService userService;
 
     // 用户登录
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public String login(User user, RedirectAttributesModelMap model, HttpServletResponse response){
         User dbuser = userService.login(user);
         if(dbuser != null){
@@ -27,11 +27,11 @@ public class AccountController {
             return "redirect:/";
         }
         model.addFlashAttribute("error","账号或密码错误");
-        return "redirect:/toSignin";
+        return "redirect:/toRegister";
     }
 
     // 用户登出
-    @RequestMapping("/signout")
+    @RequestMapping("/logout")
     public String signout(HttpServletRequest request,HttpServletResponse response){
         request.getSession().removeAttribute("user");
         for (Cookie cookie : request.getCookies()) {

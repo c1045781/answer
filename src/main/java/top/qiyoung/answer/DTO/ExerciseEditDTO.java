@@ -15,6 +15,15 @@ public class ExerciseEditDTO {
     private List<Option> options;
     private String title;
     private List<String> answers;
+    private String analysis;
+
+    public String getAnalysis() {
+        return analysis;
+    }
+
+    public void setAnalysis(String analysis) {
+        this.analysis = analysis;
+    }
 
     public Integer getExerciseEditId() {
         return exerciseEditId;
@@ -86,5 +95,21 @@ public class ExerciseEditDTO {
 
     public void setAnswers(List<String> answers) {
         this.answers = answers;
+    }
+
+    public ExerciseEditDTO(Integer exerciseEditId, String exerciseType, List<String> baseList, Integer subjectId, List<Subject> subjectList, String correct, List<Option> options, String title, List<String> answers, String analysis) {
+        this.exerciseEditId = exerciseEditId;
+        this.exerciseType = exerciseType;
+        this.baseList = baseList;
+        this.subjectId = subjectId;
+        this.subjectList = subjectList;
+        this.correct = correct;
+        this.options = options;
+        this.title = title;
+        this.answers = answers;
+        this.analysis = analysis;
+    }
+
+    public ExerciseEditDTO() {
     }
 }

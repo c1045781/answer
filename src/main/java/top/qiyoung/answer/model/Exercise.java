@@ -13,6 +13,15 @@ public class Exercise {
     private Date createTime;
     private Date modifyTime;
     private Integer subjectId;
+    private String analysis;
+
+    public String getAnalysis() {
+        return analysis;
+    }
+
+    public void setAnalysis(String analysis) {
+        this.analysis = analysis;
+    }
 
     public Integer getExerciseId() {
         return exerciseId;
@@ -94,7 +103,7 @@ public class Exercise {
         this.modifyTime = modifyTime;
     }
 
-    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId) {
+    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId,String analysis) {
         this.exerciseId = exerciseId;
         this.exerciseType = exerciseType;
         this.correct = correct;
@@ -105,6 +114,7 @@ public class Exercise {
         this.createTime = createTime;
         this.modifyTime = modifyTime;
         this.subjectId = subjectId;
+        this.analysis = analysis;
     }
 
     public Exercise() {

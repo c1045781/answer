@@ -200,13 +200,24 @@ function failExerciseReviewModal(id) {
     });
 }
 
-function failPermissionReviewModal(id,userId) {
+function reasonModal(id,userId){
+    $("#reasonUserId").val(userId);
+    $("#reasonId").val(id);
+    $('#reasonModal').modal();
+}
+
+function failPermissionReviewModal() {
+    var userId = $("#reasonUserId").val();
+    var id = $("#reasonId").val();
+    var reason = $("#reason").val();
+    debugger
     $.ajax({
         url: '/permission/role',
         type: 'post',
-        data: {id: id,role:2,userId:userId},
+        data: {id: id,role:2,userId:userId,reason:reason},
         dataType: "text",
         success: function (data) {
+            $('#reasonModal').modal('hide');
             $('#successModal').modal();
             $('#resultUrl').val("/permission/check");
         }

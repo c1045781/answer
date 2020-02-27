@@ -3,12 +3,17 @@ package top.qiyoung.answer.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.qiyoung.answer.DTO.CollectDTO;
+import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.Collect;
 import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.CollectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -32,7 +37,8 @@ public class CollectController {
     @ResponseBody
     public String addCollect(Integer exerciseId,HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("user");
-        collectService.addCollect(exerciseId,user.getUserId());
+        Collect collect = new Collect(null,user.getUserId(),exerciseId,new Date());
+        collectService.addCollect(collect);
         return "success";
     }
 
@@ -43,5 +49,15 @@ public class CollectController {
         User user = (User) request.getSession().getAttribute("user");
         collectService.deleteCollect(exerciseId,user.getUserId());
         return "success";
+    }
+
+    @RequestMapping("/findCollect")
+    @ResponseBody
+    public PaginationDTO<CollectDTO> findCollect(HttpServletRequest request,
+                                                 Integer currentPage,
+                                                 @RequestParam(defaultValue = "3") Integer pageSize){
+        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO<CollectDTO> paginationDTO = collectService.findCollect(user.getUserId(),currentPage,pageSize);
+        return paginationDTO;
     }
 }

@@ -141,6 +141,11 @@
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
                                                     <div class="radio">
                                                         <label>
+                                                            <input th:if="${user!=null}" th:field="${user.role}" type="radio" name="role" required="" value="1">
+                                                            <input th:if="${user==null}" type="radio" name="role" required="" value="1">
+                                                            管理员
+                                                        </label>
+                                                        <label>
                                                             <input th:if="${user!=null}" th:field="${user.role}" type="radio" name="role" required="" value="2">
                                                             <input th:if="${user==null}" type="radio" name="role" required="" value="2">
                                                             一般用户

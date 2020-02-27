@@ -34,15 +34,15 @@ public class IndexController {
     }
 
     // 跳转登陆页面
-    @RequestMapping("/toSignin")
+    @RequestMapping("/toLogin")
     public String signin(){
-        return "signin";
+        return "login";
     }
 
     // 跳转注册页面
-    @RequestMapping("/toSignup")
+    @RequestMapping("/toRegister")
     public String signup(){
-        return "signup";
+        return "register";
     }
 
     // 首页根据用户跳转页面

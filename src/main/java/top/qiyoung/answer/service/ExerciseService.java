@@ -30,17 +30,18 @@ public class ExerciseService {
     private MidMapper midMapper;
 
     public int insert(ExerciseEditDTO edit, User user) {
-        Exercise exercise = new Exercise();
+        Exercise exercise = new Exercise(null,edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),user.getUserId(),
+                null,new Date(),new Date(),edit.getSubjectId(),edit.getAnalysis());
 
         // 插入的option
-        exercise.setExerciseType(edit.getExerciseType());
+        /*exercise.setExerciseType(edit.getExerciseType());
         exercise.setSubjectId(edit.getSubjectId());
         exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
         exercise.setCorrect(edit.getCorrect());
         exercise.setExerciseTitle(edit.getTitle());
         exercise.setCreateUserId(user.getUserId());
         exercise.setCreateTime(new Date());
-        exercise.setModifyTime(new Date());
+        exercise.setModifyTime(new Date());*/
         if (user.getRole() == 1) {
             exercise.setStatus(1);
         } else {
@@ -50,15 +51,16 @@ public class ExerciseService {
     }
 
     public int update(ExerciseEditDTO edit) {
-        Exercise exercise = new Exercise();
+        Exercise exercise = new Exercise(edit.getExerciseEditId(),edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),null,
+                null,null,new Date(),null,edit.getAnalysis());
 
         //  content JSON
-        exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
+        /*exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
         exercise.setExerciseId(edit.getExerciseEditId());
         exercise.setExerciseTitle(edit.getTitle());
         exercise.setExerciseType(edit.getExerciseType());
         exercise.setCorrect(edit.getCorrect());
-        exercise.setModifyTime(new Date());
+        exercise.setModifyTime(new Date());*/
         return exerciseMapper.update(exercise);
     }
 
@@ -112,7 +114,7 @@ public class ExerciseService {
     }
 
     public ExerciseEditDTO getExerciseEdit(Integer id) {
-        ExerciseEditDTO edit = new ExerciseEditDTO();
+
         Exercise exercise = exerciseMapper.getExerciseById(id);
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
@@ -124,7 +126,9 @@ public class ExerciseService {
             answerList.add(option.getContent());
 
         }
-        edit.setExerciseEditId(id);
+        ExerciseEditDTO edit = new ExerciseEditDTO(id,exercise.getExerciseType(),base,exercise.getSubjectId(),subjectList,
+                exercise.getCorrect(),options,exercise.getExerciseTitle(),answerList,exercise.getAnalysis());
+       /* edit.setExerciseEditId(id);
         edit.setExerciseType(exercise.getExerciseType());
         edit.setBaseList(base);
         edit.setSubjectList(subjectList);
@@ -132,7 +136,7 @@ public class ExerciseService {
         edit.setCorrect(exercise.getCorrect());
         edit.setOptions(options);
         edit.setTitle(exercise.getExerciseTitle());
-        edit.setAnswers(answerList);
+        edit.setAnswers(answerList);*/
         return edit;
     }
 

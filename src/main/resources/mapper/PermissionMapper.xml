@@ -24,14 +24,17 @@
         </if>
     </select>
 
-    <update id="updateStatus" parameterType="java.lang.Integer">
+    <update id="updateStatus">
         update message
         <set>
-            status = 1
+            status = 1,
+            <if test="reason != null and reason != ''">
+                reason = #{reason}
+            </if>
         </set>
         <where>
             <if test="id != null">
-                id = #{id}
+                message_id = #{id}
             </if>
         </where>
     </update>

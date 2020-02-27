@@ -28,11 +28,11 @@
         <div class="top-header">
             <div class="container">
                 <div class="right-top-header" th:if="${session.user == null}">
-                    <a href="/toSignin">登陆</a>
-                    <a href="/toSignup">注册</a>
+                    <a href="/toLogin">登陆</a>
+                    <a href="/toRegister">注册</a>
                 </div>
                 <div class="right-top-header" th:if="${session.user != null}">
-                    <a href="/signout">退出</a>
+                    <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
                 </div>
             </div>
@@ -47,7 +47,6 @@
                             <li><a href="/">首页</a></li>
                             <li><a href="/exercise/check">试题库</a></li>
                             <li><a href="/exerciseSet/check">套题库</a></li>
-                            <li><a href="error-book.html">历史答题</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -100,7 +99,8 @@
                                         <div th:if="${answer != null}" th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" th:class="${answer.answer == exerciseEditDTO.correct?'alert alert-success':'alert alert-danger'}" role="alert" style="width: 7%;float: left;">
                                             <span th:text="${answer.answer == exerciseEditDTO.correct?'正确':'错误'}"></span>
                                         </div>
-                                        <div style="clear: both;margin-top: 66px;"><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></div>
+                                        <div style="clear: both;margin-top: 66px;width: 80%;"><p><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></p>
+                                            <p style="word-break:break-all" th:utext="${'<span>答案解析：</span>'+exerciseEditDTO.analysis}"></p></div>
                                         <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="open_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">进入讨论区</a>
                                         <a th:id="a_close_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none" th:onclick="close_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭讨论区</a>
                                     </div>
@@ -141,7 +141,6 @@
             <div style="margin: 20px 20%;" th:if="${answer == null}">
                 <a id="a_confirm" href="javascript:void(0)"  style="float: right" onclick="confirm_answer ()" class="button-01">确认</a>
             </div>
-
         </section>
 
     </div>

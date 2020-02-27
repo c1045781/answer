@@ -68,7 +68,7 @@ public class ExerciseController {
         model.addAttribute("type", type);
 
         User user = (User) request.getSession().getAttribute("user");
-        if (user.getRole() != 1){
+        if (user.getRole() != 1 || user.getRole() != 0){
             return "user/exercise";
         }else{
             return "manage/exercise/exercise";
@@ -125,6 +125,7 @@ public class ExerciseController {
             String title = row.getCell(3).getStringCellValue();
             String answers = row.getCell(4).getStringCellValue();
             String correct = row.getCell(5).getStringCellValue();
+            String analysis = row.getCell(6).getStringCellValue();
 
             Subject subject = subjectService.verification(baseSubject, subjectName);
             if (subject != null) {
@@ -154,17 +155,17 @@ public class ExerciseController {
                 options.add(option);
             }
             edit.setOptions(options);
+            edit.setAnalysis(analysis);
             exerciseEditDTOList.add(edit);
         }
 
         DeleteFile deleteFile = new DeleteFile();
         String s = deleteFile.delFile(upload);
-        System.out.println(s);
 
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, user);
         }
-        return "redirect:/manage/exercise/check";
+        return "redirect:/exercise/check";
     }
 
     // 添加或更新习题
@@ -196,7 +197,7 @@ public class ExerciseController {
             model.addAttribute("exerciseEditDTO", exerciseEditDTO);
             return "manage/exercise/add-exercise";
         }else{
-            return "redirect:/manage/exercise/check";
+            return "redirect:/exercise/check";
         }
     }
 

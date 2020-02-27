@@ -43,8 +43,8 @@ public class AnswerController {
     @RequestMapping("/findAnswer")
     @ResponseBody
     public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(HttpServletRequest request,
-                                             Integer currentPage,
-                                             @RequestParam(defaultValue = "3") Integer pageSize){
+                                                             Integer currentPage,
+                                                             @RequestParam(defaultValue = "3") Integer pageSize){
         User user = (User) request.getSession().getAttribute("user");
         PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findHistoryAnswer(user.getUserId(),currentPage,pageSize);
         return paginationDTO;
@@ -62,5 +62,17 @@ public class AnswerController {
         model.addAttribute("answer",answer);
         model.addAttribute("exerciseEditDTOList", exerciseEditDTOList);
         return "user/answer";
+    }
+
+    @RequestMapping("/wrongBook")
+    public String error(HttpServletRequest request,
+                        Integer currentPage,
+                        @RequestParam(defaultValue = "3") Integer pageSize){
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null){
+            return "redirect:/toLogin";
+        }
+
+        return "wrong-book";
     }
 }

@@ -33,12 +33,12 @@ public class PermissionService {
         return paginationDTO;
     }
 
-    public void updateRole(Integer id, Integer role,Integer userId) {
+    public void updateRole(Integer id, Integer role, Integer userId, String reason) {
         User user = new User();
         user.setUserId(userId);
         user.setRole(role);
         userMapper.update(user);
-        permissionMapper.updateStatus(id);
+        permissionMapper.updateStatus(id,reason);
     }
 
     public int countPermission() {

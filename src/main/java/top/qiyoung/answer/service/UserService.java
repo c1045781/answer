@@ -37,7 +37,8 @@ public class UserService {
         }
         FileUpload fileUpload = new FileUpload();
         String upload;
-        if (avatarImg == null){
+        System.out.println("".equals(avatarImg.getOriginalFilename()));
+        if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
             upload = "/upload/default.jpg";
         }else {
             try {
