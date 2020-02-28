@@ -51,13 +51,14 @@ public class CollectController {
         return "success";
     }
 
-    @RequestMapping("/findCollect")
+    // 获取收藏列表
+    @RequestMapping("/findCollectList")
     @ResponseBody
-    public PaginationDTO<CollectDTO> findCollect(HttpServletRequest request,
+    public PaginationDTO<CollectDTO> findCollectList(HttpServletRequest request,
                                                  Integer currentPage,
                                                  @RequestParam(defaultValue = "3") Integer pageSize){
         User user = (User) request.getSession().getAttribute("user");
-        PaginationDTO<CollectDTO> paginationDTO = collectService.findCollect(user.getUserId(),currentPage,pageSize);
+        PaginationDTO<CollectDTO> paginationDTO = collectService.findCollectList(user.getUserId(),currentPage,pageSize);
         return paginationDTO;
     }
 }

@@ -37,7 +37,6 @@ public class UserService {
         }
         FileUpload fileUpload = new FileUpload();
         String upload;
-        System.out.println("".equals(avatarImg.getOriginalFilename()));
         if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
             upload = "/upload/default.jpg";
         }else {
@@ -106,4 +105,5 @@ public class UserService {
         Query query = new Query();
         return userMapper.countUserList(query);
     }
+
 }

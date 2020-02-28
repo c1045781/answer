@@ -35,14 +35,11 @@
         </if>
     </select>
 
-    <select id="findAnswerByExerciseIdAndUserId" resultMap="BaseResultMap">
+    <select id="findAnswerByAnswerId" resultMap="BaseResultMap">
         select * from answer
         <where>
-            <if test="exerciseId != null">
-                and exercise_id = #{exerciseId}
-            </if>
-            <if test="userId != null">
-                and user_id = #{userId}
+            <if test="answerId != null">
+                and answer_id = #{answerId}
             </if>
         </where>
     </select>
@@ -66,4 +63,54 @@
             </if>
         </where>
     </update>
+
+    <select id="findExerciseIdByUserId" resultType="java.lang.Integer">
+        select distinct exercise_id from answer
+        <where>
+            <if test="userId != null">
+              user_id = #{userId}
+            </if>
+            and exercise_id in ( select exercise_id from exercise
+            <where>
+                <if test="subjectId != null">
+                    and subject_id = #{subjectId}
+                </if>
+                <if test="search != null">
+                    and exercise_title like "%"#{search}"%"
+                </if>
+            </where>);
+        </where>
+    </select>
+
+    <select id="findWrongAnswerByUserIdAndExerciseId" resultMap="BaseResultMap">
+        select * from answer
+         <where>
+             answer.answer != (select correct from exercise
+                 <where>
+                     <if test="exerciseId != null">
+                         and exercise.exercise_id = #{exerciseId}
+                     </if>
+                 </where>)
+             <if test=" exerciseId != null">
+                and answer.exercise_id = ${exerciseId}
+             </if>
+             <if test="userId != null">
+                 and answer.user_id = #{userId}
+             </if>
+         </where>
+        order by create_time desc limit 1
+    </select>
+
+    <select id="findAnswerByExerciseIdAndUserId" resultMap="BaseResultMap">
+        select * from answer
+        <where>
+            <if test=" exerciseId != null">
+                and answer.exercise_id = ${exerciseId}
+            </if>
+            <if test="userId != null">
+                and answer.user_id = #{userId}
+            </if>
+        </where>
+        order by create_time desc limit 1
+    </select>
 </mapper>

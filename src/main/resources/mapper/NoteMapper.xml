@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.NoteMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Note">
+        <id column="note_id" jdbcType="INTEGER" property="noteId"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+
+    <select id="getNote" resultMap="BaseResultMap">
+        select * from note
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="exerciseId != null">
+                and exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addNote" parameterType="top.qiyoung.answer.model.Note">
+        insert into note(content, exercise_id, user_id, create_time, modify_time)
+        values (#{content},#{exerciseId},#{userId},#{createTime},#{modifyTime})
+    </insert>
+
+    <update id="updateNote" parameterType="top.qiyoung.answer.model.Note">
+        update note
+        <set>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime}
+            </if>
+        </set>
+        <where>
+            <if test="noteId != null">
+                note_id = #{noteId}
+            </if>
+        </where>
+    </update>
+
+    <select id="findNoteByNoteId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from note
+        <where>
+            <if test="noteId != null">
+                note_id = #{noteId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findNoteList" resultMap="BaseResultMap">
+        select * from note
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+        order by create_time desc
+        <if test="index != null and pageSize != null">
+            limit #{index},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countNoteList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from note
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

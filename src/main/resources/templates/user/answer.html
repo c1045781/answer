@@ -47,18 +47,13 @@
                             <li><a href="/">首页</a></li>
                             <li><a href="/exercise/check">试题库</a></li>
                             <li><a href="/exerciseSet/check">套题库</a></li>
+                            <li><a href="/answer/wrongBook">错题本</a></li>
                         </ul>
                     </nav>
                 </div>
             </div>
         </div>
     </header>
-    <!--<div id="main-content">
-        <section class="kopa-area kopa-area-breadcrumb"></section>
-        <div style="width: 60%;margin: -80px 20% 100px 20%;background-color: #ffffff;height: 1000px;box-shadow:0px 20px 20px #808080"></div>
-    </div>-->
-
-
     <div id="main-content">
         <section class="kopa-area kopa-area-breadcrumb">
 
@@ -103,8 +98,35 @@
                                             <p style="word-break:break-all" th:utext="${'<span>答案解析：</span>'+exerciseEditDTO.analysis}"></p></div>
                                         <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="open_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">进入讨论区</a>
                                         <a th:id="a_close_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none" th:onclick="close_exercise_comment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭讨论区</a>
+                                        <a th:id="a_open_note + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;margin-right: 20px" th:onclick="open_exercise_note([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">打开笔记</a>
+                                        <a th:id="a_close_note + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none;margin-right: 20px" th:onclick="close_exercise_note([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭笔记</a>
                                     </div>
                                 </div>
+                                <section th:id="note_section + ${exerciseEditDTO.exerciseEditId}" class="kopa-commnent" style="display: none;">
+                                    <div class="single-comment-form">
+                                        <div class="comment-form-content">
+                                            <div class="kopa-form-box">
+                                                <div class="comment-respond">
+                                                    <h3 class="comment-reply-title">
+                                                        笔记
+                                                    </h3>
+                                                    <p style="margin-left: 20px;font-size: 1.5em;" th:id="'note_p'+${exerciseEditDTO.exerciseEditId}"></p>
+                                                    <a style="float: right;margin-right: 20px;color: #81bde5;" href="javascript:void(0)" th:id="'note_a'+${exerciseEditDTO.exerciseEditId}" th:onclick="showNoteForm([[${exerciseEditDTO.exerciseEditId}]])" ></a>
+
+                                                    <form style="display: none" th:id="note_form + ${exerciseEditDTO.exerciseEditId}"  onsubmit="return false" method="post" class="comment-form  novalidate" novalidate="">
+                                                        <p class="textarea-block">
+                                                            <textarea th:id="note_textarea + ${exerciseEditDTO.exerciseEditId}" aria-required="true" name="content" rows="10" placeholder=""></textarea>
+                                                        </p>
+                                                        <input type="hidden" id="noteId">
+                                                        <p style="float: right" class="post-comment input-block">
+                                                            <button id="submit-note" th:onclick="submit_note([[${exerciseEditDTO.exerciseEditId}]]);" name="submit" type="submit" class="button-01">保存</button>
+                                                        </p>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
                                 <section th:id="comment_section + ${exerciseEditDTO.exerciseEditId}" class="kopa-commnent" style="display: none;">
                                     <h3 class="comments-title">讨论区</h3>
                                     <div class="single-comment-list">

@@ -48,11 +48,11 @@ function showSubject(e) {
 function addOption() {
     var A = $("#" + String.fromCharCode(input));
     A.children(':last-child').addClass("disabled");
-    $("#opts").append("<div class='option-div' id='" + String.fromCharCode(input + 1) + "'>\n" +
-        "<label class='control-label' style='width: 5%;'> " + String.fromCharCode(input + 1) + "：</label>\n" +
-        "<input type='text' class='form-control' name='answers' required='' >\n" +
+    $("#opts").append("<div class='option-div' id='" + String.fromCharCode(input + 1) + "'>" +
+        "<label class='control-label' style='width: 5%;'> " + String.fromCharCode(input + 1) + "：</label>" +
+        "<input type='text' class='form-control' name='answers' required='' >" +
         "<button onclick='deleteOption()' type='button' class='btn btn-danger option-button' >删除</button>" +
-        "</div>\n");
+        "</div>");
     if ($("#type").val() == '多选题'){
         $("#correct").append("<label class='correct-label'><input type='checkbox' name='correct' required=''  value=''" + String.fromCharCode(input + 1) + "'>" + String.fromCharCode(input + 1) + "</label>");
     }else {
@@ -88,9 +88,9 @@ function addExercise(e) {
                 var list = data.dataList;
                 $("#table-tbody").html("");
                 for (var i = 0; i < list.length; i++) {
-                    $("#table-tbody").append("<tr id='" + list[i].exercise.exerciseId + "'><td><input type='checkbox' value='" + list[i].exercise.exerciseId + "'></td>\n" +
-                        "<td>" + list[i].exercise.exerciseId + "</td>\n" +
-                        "<td>" + list[i].exercise.exerciseType + "</td>\n" +
+                    $("#table-tbody").append("<tr id='" + list[i].exercise.exerciseId + "'><td><input type='checkbox' value='" + list[i].exercise.exerciseId + "'></td>" +
+                        "<td>" + list[i].exercise.exerciseId + "</td>" +
+                        "<td>" + list[i].exercise.exerciseType + "</td>" +
                         "<td>" + list[i].exercise.exerciseTitle + "</td></tr>");
                 }
                 if (data.totalPage == 0) {
@@ -405,6 +405,47 @@ function close_exercise_comment(e) {
     $("#comment_section"+e).css('display','none');
 }
 
+function open_exercise_note(e){
+    $.ajax({
+        url: '/note/getNote',
+        type: 'post',
+        data: {"exerciseId":e},
+        dataType:"json",
+        success:function(data){
+            console.log(data);
+            $("#note_form"+e).css('display','none');
+            if (data == null){
+                $("#note_a"+e).html("添加笔记");
+            } else{
+                $("#note_a"+e).html("编辑");
+                $("#note_p"+e).html(data.content);
+                $("#noteId").val(data.noteId);
+            }
+        },
+        error:function () {
+            $("#note_form"+e).css('display','none');
+            $("#note_a"+e).html("添加笔记");
+        }
+    });
+    $("#note_section"+e).css('display','block');
+    $("#a_close_note"+e).css('display','block');
+    $("#a_open_note"+e).css('display','none');
+}
+
+function close_exercise_note(e){
+    $("#note_form"+e).css('display','none');
+    $("#a_close_note"+e).css('display','none');
+    $("#a_open_note"+e).css('display','block');
+    $("#note_section"+e).css('display','none');
+}
+
+function showNoteForm(e){
+    $("#note_textarea"+e).val($("#note_p"+e).html());
+    $("#note_a"+e).html("");
+    $("#note_p"+e).html("");
+    $("#note_form"+e).css('display','block');
+}
+
 function Format(datetime,fmt) {
     if (parseInt(datetime)==datetime) {
         if (datetime.length==10) {
@@ -440,8 +481,21 @@ function submit_comment(e){
         success:function (data) {
             open_exercise_comment(e);
         }
-    })
+    });
     $("#comment_form"+ e +" textarea").val('');
+}
+
+function submit_note(e){
+    $.ajax({
+        type: "POST",
+        url: "/note/addOrUpdateNote;charset=utf-8",
+        data: JSON.stringify({"content":$("#note_textarea"+e).val(),"exerciseId":e,"noteId":$("#noteId").val()}),
+        contentType:"application/json",
+        dataType: "text",
+        success:function (data) {
+            open_exercise_note(e);
+        }
+    });
 }
 
 function changeCollectIcon(e) {
@@ -503,11 +557,11 @@ function historyAnswer(e){
                     "<h3 class='history-left'>"+ list[i].exercise.exerciseTitle +"</h3>" +
                     "<h3 class='history-right'>"+ list[i].exercise.exerciseType +"</h3>" +
                     "<h3 class='history-right' style='padding-right:20px;'>"+ list[i].subject.baseSubject+ "»" + list[i].subject.name +"</h3>" +
-                    "</div>\n" +
+                    "</div>" +
                     "<div class='history-div-50'>" +
                     "<p class='history-right'>答题时间：<span>"+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +"</span></p>" +
                     "</div>" +
-                    "<a target='_blank' href='/answer/viewHistoryExercise?exerciseId="+ list[i].exercise.exerciseId +"' class='button-01 history-right'>查看</a>" +
+                    "<a target='_blank' href='/answer/viewHistoryExercise?answerId="+ list[i].answerId +"' class='button-01 history-right'>查看</a>" +
                     "</div>" +
                     "</li>";
             }
@@ -516,6 +570,7 @@ function historyAnswer(e){
             if (data.currentPage == 1 && data.currentPage != data.totalPage){
                 $("#nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li  class='disabled'>" +
                     "<a onclick='historyAnswer("+ (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -531,6 +586,7 @@ function historyAnswer(e){
             } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
                 $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li>" +
                     "<a onclick='historyAnswer(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -546,6 +602,7 @@ function historyAnswer(e){
             }else if (data.currentPage != data.totalPage && data.currentPage != 1) {
                 $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li>" +
                     "<a onclick='historyAnswer(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -595,7 +652,7 @@ function submit_permission_add_from() {
 
 function collectList(e){
     $.ajax({
-        url:"/collect/findCollect",
+        url:"/collect/findCollectList",
         dataType:"json",
         data:{"currentPage":e},
         success:function(data){
@@ -608,7 +665,7 @@ function collectList(e){
                     "<h3 class='history-left'>"+ list[i].exercise.exerciseTitle +"</h3>" +
                     "<h3 class='history-right'>"+ list[i].exercise.exerciseType +"</h3>" +
                     "<h3 class='history-right' style='padding-right:20px;'>"+ list[i].subject.baseSubject+ "»" + list[i].subject.name +"</h3>" +
-                    "</div>\n" +
+                    "</div>" +
                     "<div class='history-div-50'>" +
                     "<p class='history-right'>收藏时间：<span>"+ Format(new Date(list[i].collect.createTime),"yyyy-MM-dd hh:mm:ss") +"</span></p>" +
                     "</div>" +
@@ -621,6 +678,7 @@ function collectList(e){
             if (data.currentPage == 1 && data.currentPage != data.totalPage){
                 $("#collect_nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li  class='disabled'>" +
                     "<a onclick='collectList("+ (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -636,6 +694,7 @@ function collectList(e){
             } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
                 $("#collect_nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li>" +
                     "<a onclick='collectList(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -651,6 +710,7 @@ function collectList(e){
             }else if (data.currentPage != data.totalPage && data.currentPage != 1) {
                 $("#collect_nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
                     "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
                     "<li>" +
                     "<a onclick='collectList(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
                     "<span aria-hidden='true'>上一页</span>" +
@@ -666,4 +726,92 @@ function collectList(e){
             }
         }
     });
+}
+
+
+function noteList(e){
+    $.ajax({
+        url:"/note/findNoteList",
+        type:"post",
+        data:{"currentPage":e},
+        dataType:"json",
+        success:function (data) {
+            var content = "";
+            var list = data.dataList;
+            for (var i = 0;i<list.length;i++){
+                content += "<article class='entry-item'>" +
+                    "<div class='entry-content'>" +
+                    "<h4 class='entry-title'>" +
+                    "<a target='_blank' href='/answer/viewNoteExercise?noteId="+ list[i].noteId +"'>"+ list[i].content +"</a>" +
+                    "</h4>" +
+                    "<div class='entry-meta'>" +
+                    "<span>"+ Format(list[i].modifyTime,'yyyy-MM-dd hh:mm:ss') +"</span>" +
+                    "</div>" +
+                    "</div>" +
+                    "</article>"
+            }
+            $("#note").html(content);
+
+            if (data.currentPage == 1 && data.currentPage != data.totalPage){
+                $("#note_nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
+                    "<li  class='disabled'>" +
+                    "<a onclick='noteList("+ (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li>" +
+                    "<a onclick='noteList(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
+                $("#note_nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
+                    "<li>" +
+                    "<a onclick='noteList(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li   class='disabled'>" +
+                    "<a onclick='noteList(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            }else if (data.currentPage != data.totalPage && data.currentPage != 1) {
+                $("#note_nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
+                    "<ul class='pagination pagination-lg'>" +
+                    "<li><span>"+ data.currentPage+"/"+data.totalPage +"</span></li>"+
+                    "<li>" +
+                    "<a onclick='noteList(" + (data.currentPage-1) +")' href='javascript:void(0)' aria-label='Previous'>" +
+                    "<span aria-hidden='true'>上一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "<li>" +
+                    "<a onclick='noteList(" + (data.currentPage+1) +")' href='javascript:void(0)' aria-label='Next'>" +
+                    " <span aria-hidden='true'>下一页</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</nav>")
+            }
+
+        }
+
+    });
+}
+
+
+function changePasswd() {
+    if($("input[name='password']").attr("type")=="text"){
+        $("input[name='password']").attr("type","password");
+    }else {
+        $("input[name='password']").attr("type","text");
+    }
 }

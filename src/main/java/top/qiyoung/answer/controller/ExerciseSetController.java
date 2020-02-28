@@ -55,10 +55,10 @@ public class ExerciseSetController {
         model.addAttribute("search", search);
         model.addAttribute("orderby", orderby);
         User user = (User) request.getSession().getAttribute("user");
-        if (user.getRole() != 1 || user.getRole() != 0){
-            return "user/exercise-set";
+        if (user != null && (user.getRole() == 1 || user.getRole() == 0)){
+            return "manage/exercise-set/exercise-set";
         }
-        return "manage/exercise-set/exercise-set";
+        return "user/exercise-set";
     }
 
     // 添加或更新习题集

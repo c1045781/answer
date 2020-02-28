@@ -45,6 +45,31 @@ public class AnswerService {
     }
 
 
+    public Answer findAnswerByAnswerId(Integer answerId) {
+        return answerMapper.findAnswerByAnswerId(answerId);
+    }
+
+    public PaginationDTO<HistoryAnswerDTO> findWrongAnswer(Integer userId, Integer currentPage, Integer pageSize, String search, Integer subjectId) {
+        List<Integer> idList = answerMapper.findExerciseIdByUserId(userId,subjectId,search);
+        List<Answer> list = new ArrayList<>();
+        for (Integer id : idList) {
+            Answer answer = answerMapper.findWrongAnswerByUserIdAndExerciseId(id, userId);
+            if (answer != null) list.add(answer);
+        }
+        int count = list.size();
+        List<HistoryAnswerDTO> historyAnswerDTOList = new ArrayList<>();
+        int end = currentPage*pageSize > list.size()?list.size():currentPage*pageSize;
+        for (int i = (currentPage-1)*pageSize; i < end;i++) {
+            Exercise exercise = exerciseMapper.getExerciseById(list.get(i).getExerciseId());
+            Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+            HistoryAnswerDTO dto = new HistoryAnswerDTO(list.get(i).getAnswerId(),list.get(i).getUserId(),list.get(i).getAnswer(),exercise,subject,list.get(i).getCreateTime());
+            historyAnswerDTOList.add(dto);
+        }
+        int totalPage = (int) Math.ceil((double) count / (double) pageSize);
+        PaginationDTO<HistoryAnswerDTO> paginationDTO = new PaginationDTO<>(currentPage,pageSize,totalPage,count,null,null,historyAnswerDTOList);
+        return paginationDTO;
+    }
+
     public Answer findAnswerByExerciseIdAndUserId(Integer exerciseId, Integer userId) {
         return answerMapper.findAnswerByExerciseIdAndUserId(exerciseId,userId);
     }

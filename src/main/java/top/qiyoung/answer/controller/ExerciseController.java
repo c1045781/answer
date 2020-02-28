@@ -68,10 +68,10 @@ public class ExerciseController {
         model.addAttribute("type", type);
 
         User user = (User) request.getSession().getAttribute("user");
-        if (user.getRole() != 1 || user.getRole() != 0){
-            return "user/exercise";
-        }else{
+        if (user != null && (user.getRole() == 1 || user.getRole() == 0)){
             return "manage/exercise/exercise";
+        }else{
+            return "user/exercise";
         }
     }
 

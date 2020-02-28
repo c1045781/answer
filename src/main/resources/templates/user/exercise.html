@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/css/woocommerce-smallscreen.css" type="text/css" media="only screen and (max-width: 768px)">
     <link rel="stylesheet" href="/css/animate.css">
     <link rel="stylesheet" href="/css/index-style.css">
+    <link rel="stylesheet" href="/css/answer.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -30,7 +31,7 @@
                 <div class="top-header">
 					<div class="container">
 						<div class="right-top-header" th:if="${session.user == null}">
-							<a href="/toLogin">登陆</a>
+							<a href="/toLogin">登录</a>
 							<a href="/toRegister">注册</a>
 						</div>
 						<div class="right-top-header" th:if="${session.user != null}">
@@ -49,6 +50,7 @@
 									<li><a href="/">首页</a></li>
 									<li><a href="/exercise/check">试题库</a></li>
 									<li><a href="/exerciseSet/check">套题库</a></li>
+									<li><a href="/answer/wrongBook">错题本</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -137,6 +139,7 @@
 											<div style="height: 55px;">
 												<h3 style="float: left;width: 75%;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;" th:text="${ExerciseVM.exercise.exerciseTitle}"></h3>
 												<h3 style="float: right" th:text="${ExerciseVM.exercise.exerciseType}"></h3>
+												<h3 class='history-right' style='padding-right:20px;' th:text="${ExerciseVM.subject.baseSubject} +'»'+${ExerciseVM.subject.name}"></h3>
 											</div>
 											<div style="height: 50px;">
 	                                        <p style="float: left">创建人：<span th:text="${ExerciseVM.user.username}"></span></p>

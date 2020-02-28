@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>试题库</title>
+    <title>错题本</title>
     <!-- Css Plugin -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
@@ -49,6 +49,7 @@
 									<li><a href="/">首页</a></li>
 									<li><a href="/exercise/check">试题库</a></li>
 									<li><a href="/exerciseSet/check">套题库</a></li>
+									<li><a href="/answer/wrongBook">错题本</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -60,14 +61,14 @@
                 <div class="container">
                     <div class="widget kopa-widget-breadcrumb">
                         <div class="widget-content">
-                            <h3 class="breadcrumb-title">试题库</h3>
+                            <h3 class="breadcrumb-title">错题本</h3>
                             <div class="breadcrumb-nav">
                                 <span>
 								<a href="/">
 									<span>首页</span>
                                 </a>
                                 </span>
-                                <span class="current-page">试题库</span>
+                                <span class="current-page">错题本</span>
                             </div>
                         </div>
                     </div>
@@ -79,7 +80,7 @@
 						<div class="widget-content module-advanced_search-01">
 							<div class="custom-bg-0"></div>
 							<div class="custom-bg">
-								<form action="/exercise/check">
+								<form action="/answer/wrongBook">
 									<p class="arrow-select">
 									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
@@ -121,12 +122,6 @@
                         <div class="col-md-8 col-sm-12 col-xs-12">
                             <div class="shop-content">
 	                            <form class="woocommerce-ordering" method="get">
-	                                <select name="exerciseType" onchange="exerciseTypeChange(this.value)">
-	                                    <option>全部</option>
-	                                    <option value="单选题" th:selected="${exerciseType == '单选题'}">单选题</option>
-	                                    <option value="多选题" th:selected="${exerciseType == '多选题'}">多选题</option>
-	                                    <option value="判断题" th:selected="${exerciseType == '判断题'}">判断题</option>
-	                                </select>
 	                                <input type="hidden" id="hidden_subjectId" th:value="${subjectId}">
 	                                <input type="hidden" id="hidden_search" th:value="${search}">
 									<!--<input type="hidden" id="hidden_currentPage" th:value="${paginationDTO.currentPage}">-->
@@ -137,12 +132,12 @@
 											<div style="height: 55px;">
 												<h3 style="float: left;width: 75%;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;" th:text="${ExerciseVM.exercise.exerciseTitle}"></h3>
 												<h3 style="float: right" th:text="${ExerciseVM.exercise.exerciseType}"></h3>
+                                                <h3 class='history-right' style='padding-right:20px;' th:text="${ExerciseVM.subject.baseSubject} +'»'+${ExerciseVM.subject.name}"></h3>
 											</div>
 											<div style="height: 50px;">
-	                                        <p style="float: left">创建人：<span th:text="${ExerciseVM.user.username}"></span></p>
-	                                        <p style="float: right">创建时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></span></p>
+	                                        <p style="float: right">做题时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></span></p>
 											</div>
-											<a href="javascript:void(0)" style="float: right" th:onclick="answer_Exercise([[${ExerciseVM.exercise.exerciseId}]]);" class="button-01">答题</a>
+											<a style="float: right" th:href="@{/answer/viewHistoryExercise(answerId=${ExerciseVM.answerId})}" class="button-01">查看</a>
 	                                    </div>
 	                                </li>
 	                            </ul>
@@ -150,7 +145,7 @@
 									<ul class="page-numbers"  th:if="${paginationDTO.totalPage} > 0">
 										<li th:if="${paginationDTO.currentPage != 1} ">
 											<a class="prev page-numbers" href="#"
-											   th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}">
+											   th:href="@{/answer/wrongBook(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},search=${search})}">
 												<i class="fa fa-angle-left"></i>
 											</a>
 										</li>
@@ -160,7 +155,7 @@
 											th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -169,7 +164,7 @@
 											th:each="pageNo : ${#numbers.sequence(1, 7)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -178,7 +173,7 @@
 											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}">
 											<a  class="page-numbers" href="#" th:text="${pageNo}"
 												th:if="${paginationDTO.currentPage != pageNo}"
-											   	th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											   	th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -187,7 +182,7 @@
 											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},exerciseType=${exerciseType},search=${search})}"></a>
+											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -203,7 +198,7 @@
 
 										<li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
 											<a href="#" class="next page-numbers"
-											   th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},orderby=${orderby},search=${search})}">
+											   th:href="@{/answer/wrongBook(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},orderby=${orderby},search=${search})}">
 												<i class="fa fa-angle-right"></i>
 											</a>
 										</li>

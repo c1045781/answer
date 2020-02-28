@@ -54,6 +54,7 @@
                             <li><a href="/">首页</a></li>
                             <li><a href="/exercise/check">试题库</a></li>
                             <li><a href="/exerciseSet/check">套题库</a></li>
+                            <li><a href="/answer/wrongBook">错题本</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -119,6 +120,12 @@
                                         <a th:if="${session.user.role == 3}" href="#t6" aria-controls="t6" role="tab"
                                            data-toggle="tab">
                                             套题管理
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a onclick="noteList(1)" href="#t7"  aria-controls="t7" role="tab"
+                                           data-toggle="tab">
+                                            我的笔记
                                         </a>
                                     </li>
                                 </ul>
@@ -268,6 +275,15 @@
 
                                     </div>
                                     <div class="tab-pane fade" id="t6">
+                                    </div>
+                                    <div class="tab-pane fade" id="t7">
+                                        <div class="widget kopa-widget-news">
+                                            <div class="widget-content module-news-04">
+                                                <div class="list-blog" id="note">
+                                                </div>
+                                                <div id="note_nav"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -44,7 +44,7 @@ public class CollectService {
         return list;
     }
 
-    public PaginationDTO<CollectDTO> findCollect(Integer userId, Integer currentPage, Integer pageSize) {
+    public PaginationDTO<CollectDTO> findCollectList(Integer userId, Integer currentPage, Integer pageSize) {
         List<Collect> list = collectMapper.findCollectByUserId(userId,(currentPage-1)*pageSize,pageSize);
         int count = collectMapper.countCollectByUserId(userId);
         List<CollectDTO> collectDTOList = new ArrayList<>();

@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.HistoryAnswerDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Answer;
+import top.qiyoung.answer.model.Note;
+import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.AnswerService;
 import top.qiyoung.answer.service.ExerciseService;
+import top.qiyoung.answer.service.NoteService;
+import top.qiyoung.answer.service.SubjectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +33,10 @@ public class AnswerController {
     private AnswerService answerService;
     @Resource
     private ExerciseService exerciseService;
+    @Resource
+    private SubjectService subjectService;
+    @Resource
+    private NoteService noteService;
 
     // 添加用户答题记录
     @RequestMapping("/addOrUpdate")
@@ -52,11 +61,10 @@ public class AnswerController {
 
     // 查找用户答题记录
     @RequestMapping("/viewHistoryExercise")
-    public String viewHistoryExercise(HttpServletRequest request, Integer exerciseId, Model model){
-        User user = (User) request.getSession().getAttribute("user");
+    public String viewHistoryExercise(Integer answerId, Model model){
 
-        Answer answer = answerService.findAnswerByExerciseIdAndUserId(exerciseId,user.getUserId());
-        ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(exerciseId);
+        Answer answer = answerService.findAnswerByAnswerId(answerId);
+        ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(answer.getExerciseId());
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList();
         exerciseEditDTOList.add(exerciseEditDTO);
         model.addAttribute("answer",answer);
@@ -65,14 +73,44 @@ public class AnswerController {
     }
 
     @RequestMapping("/wrongBook")
-    public String error(HttpServletRequest request,
-                        Integer currentPage,
-                        @RequestParam(defaultValue = "3") Integer pageSize){
+    public String error(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                        @RequestParam(value = "pageSize", defaultValue = "2") Integer pageSize,
+                        @RequestParam(value = "search", required = false) String search,
+                        @RequestParam(value = "subjectId", required = false) Integer subjectId,
+                        HttpServletRequest request,
+                        Model model,
+                        RedirectAttributesModelMap redirectAttributesModelMap){
         User user = (User) request.getSession().getAttribute("user");
         if (user == null){
+            redirectAttributesModelMap.addFlashAttribute("error","请先登录账号");
             return "redirect:/toLogin";
         }
+        PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findWrongAnswer(user.getUserId(),currentPage,pageSize,search,subjectId);
 
-        return "wrong-book";
+        if (subjectId != null) {
+            Subject subject = subjectService.getSubjectById(subjectId);
+            List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
+            List<String> baseList = subjectService.getBase();
+            model.addAttribute("subjectList",subjects);
+            model.addAttribute("baseList",baseList);
+        }
+
+        model.addAttribute("paginationDTO",paginationDTO);
+        model.addAttribute("subjectId", subjectId);
+        model.addAttribute("search", search);
+        return "user/wrong-book";
+    }
+
+    // 查找用户答题记录
+    @RequestMapping("/viewNoteExercise")
+    public String viewNoteExercise(Integer noteId, Model model){
+        Note note = noteService.findNoteByNoteId(noteId);
+        Answer answer = answerService.findAnswerByExerciseIdAndUserId(note.getExerciseId(),note.getUserId());
+        ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(answer.getExerciseId());
+        List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList();
+        exerciseEditDTOList.add(exerciseEditDTO);
+        model.addAttribute("answer",answer);
+        model.addAttribute("exerciseEditDTOList", exerciseEditDTOList);
+        return "user/answer";
     }
 }

@@ -12,7 +12,13 @@ public interface AnswerMapper {
 
     int countAnswerByUserId(Integer userId);
 
-    Answer findAnswerByExerciseIdAndUserId(@Param("exerciseId") Integer exerciseId,@Param("userId") Integer userId);
+    Answer findAnswerByAnswerId(Integer answerId);
 
     void update(Answer answer);
+
+    List<Integer> findExerciseIdByUserId(@Param("userId") Integer userId,@Param("subjectId") Integer subjectId,@Param("search") String search);
+
+    Answer findWrongAnswerByUserIdAndExerciseId(@Param("exerciseId") Integer id, @Param("userId") Integer userId);
+
+    Answer findAnswerByExerciseIdAndUserId(@Param("exerciseId") Integer id, @Param("userId") Integer userId);
 }

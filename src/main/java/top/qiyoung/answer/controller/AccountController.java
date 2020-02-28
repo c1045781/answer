@@ -27,8 +27,26 @@ public class AccountController {
             return "redirect:/";
         }
         model.addFlashAttribute("error","账号或密码错误");
-        return "redirect:/toRegister";
+        return "redirect:/toLogin";
     }
+
+    // 用户注册
+    @RequestMapping("/register")
+    public String register(User user, RedirectAttributesModelMap model){
+        if (user.getPassword().length() < 6){
+            model.addFlashAttribute("error","密码长度最少6个字符");
+            return "redirect:/toRegister";
+        }
+        user.setRole(2);
+        user.setSex("男");
+        int i = userService.insert(user, null);
+        if (i == 0){
+            model.addFlashAttribute("error","账号已存在");
+            return "redirect:/toRegister";
+        }
+        return "redirect:/";
+    }
+
 
     // 用户登出
     @RequestMapping("/logout")
@@ -43,4 +61,6 @@ public class AccountController {
         }
         return "user/index";
     }
+
+
 }
