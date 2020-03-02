@@ -15,7 +15,7 @@
     </select>
 
     <select id="getMessageList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
-        select * from message where status = 0
+        select * from message where status = 0 and type = 1
         <if test="order != null and order != ''">
             order by #{order}
         </if>
@@ -27,8 +27,10 @@
     <update id="updateStatus">
         update message
         <set>
-            status = 1,
-            <if test="reason != null and reason != ''">
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="reason != null">
                 reason = #{reason}
             </if>
         </set>
@@ -48,16 +50,45 @@
         </where>
     </select>
 
-    <select id="getMessageListByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getMessageListByUserId" resultMap="BaseResultMap">
         select * from message
         <where>
             <if test="userId != null">
                 user_id = #{userId}
             </if>
+            <if test="1==1">
+                and type = 1
+            </if>
+        </where>
+        order by #{query.order}
+        <if test="query.index != null and query.size">
+            limit #{query.index},#{query.size}
+        </if>
+    </select>
+
+    <select id="countMessageListByUserId" resultType="java.lang.Integer">
+        select count(1) from message
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="1==1">
+                and type = 1
+            </if>
         </where>
     </select>
 
-    <insert id="add" parameterType="top.qiyoung.answer.model.Query">
-        insert into message(content, status, user_id, create_time) values (#{content},#{status},#{userId},#{createTime})
+    <insert id="add" parameterType="top.qiyoung.answer.model.Message">
+        insert into message(exercise_id, content, type, reason, user_id, status, create_time) values (#{exerciseId},#{content},#{type},#{reason},
+        #{userId},#{status},#{createTime})
     </insert>
+
+    <select id="getMessageByExerciseIdAndUserId" resultMap="BaseResultMap">
+        select * from message
+        <where>
+            <if test="userId != null and exerciseId != null">
+                user_id = #{userId} and exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
 </mapper>

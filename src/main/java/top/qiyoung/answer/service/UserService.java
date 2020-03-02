@@ -52,7 +52,7 @@ public class UserService {
         return 1;
     }
 
-    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role) {
+    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role,Integer userRole) {
         PaginationDTO<User> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
@@ -61,12 +61,17 @@ public class UserService {
         query.setSearch(search);
         query.setType(type);
         query.setOrder(order);
-        List<User> userList = userMapper.getUserList(query);
-        paginationDTO.setDataList(userList);
-
-        query.setIndex(null);
-        query.setSize(null);
-        int count = userMapper.countUserList(query);
+        List<User> userList;
+        int count;
+        if (userRole == 0){
+            userList = userMapper.getUserList0(query);
+            paginationDTO.setDataList(userList);
+            count = userMapper.countUserList0(query);
+        }else {
+            userList = userMapper.getUserList1(query);
+            paginationDTO.setDataList(userList);
+            count = userMapper.countUserList1(query);
+        }
         paginationDTO.setTotalSize(count);
         paginationDTO.setTotalPage((int)Math.ceil((double) paginationDTO.getTotalSize()/(double)size));
         return paginationDTO;
@@ -103,7 +108,7 @@ public class UserService {
 
     public int userCount() {
         Query query = new Query();
-        return userMapper.countUserList(query);
+        return userMapper.countUserList1(query);
     }
 
 }

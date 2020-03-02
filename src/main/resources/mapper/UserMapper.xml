@@ -44,13 +44,14 @@
         </where>
     </select>
 
-    <select id="getUserList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+    <select id="getUserList0" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
         select * from user
         <where>
+            role != 0
             <if test="search != null and search != ''">
                 <if test="type != null and type != ''">
                     <if test="type == 'id'">
-                        and user_id like "%"#{search}"%"
+                        and user_id = #{search}
                     </if>
                     <if test="type == 'account'">
                         and account like "%"#{search}"%"
@@ -72,13 +73,66 @@
         </if>
     </select>
 
-    <select id="countUserList" parameterType="top.qiyoung.answer.model.Query" resultType="Integer">
+    <select id="countUserList0" parameterType="top.qiyoung.answer.model.Query" resultType="Integer">
         select count(*) from user
         <where>
+            role != 0
             <if test="search != null and search != ''">
                 <if test="type != null and type != ''">
                     <if test="type == 'id'">
-                        and user_id like "%"#{search}"%"
+                        and user_id = #{search}
+                    </if>
+                    <if test="type == 'account'">
+                        and account like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'username'">
+                        and username like "%"#{search}"%"
+                    </if>
+                </if>
+            </if>
+            <if test="role != null">
+                and role = #{role}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserList1" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+        select * from user
+        <where>
+            role != 0 and role != 1
+            <if test="search != null and search != ''">
+                <if test="type != null and type != ''">
+                    <if test="type == 'id'">
+                        and user_id = #{search}
+                    </if>
+                    <if test="type == 'account'">
+                        and account like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'username'">
+                        and username like "%"#{search}"%"
+                    </if>
+                </if>
+            </if>
+            <if test="role != null">
+                and role = #{role}
+            </if>
+        </where>
+        <if test="order != null and order != ''">
+            order by ${order}
+        </if>
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countUserList1" parameterType="top.qiyoung.answer.model.Query" resultType="Integer">
+        select count(*) from user
+        <where>
+            role != 0 and role != 1
+            <if test="search != null and search != ''">
+                <if test="type != null and type != ''">
+                    <if test="type == 'id'">
+                        and user_id = #{search}
                     </if>
                     <if test="type == 'account'">
                         and account like "%"#{search}"%"

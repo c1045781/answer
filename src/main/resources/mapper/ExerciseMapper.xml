@@ -15,7 +15,12 @@
         <result column="modify_time" property="modifyTime"/>
     </resultMap>
 
-    <insert id="insert" parameterType="top.qiyoung.answer.model.Exercise">
+    <resultMap id="EIdAndMId" type="top.qiyoung.answer.model.EIdAndMId">
+        <result column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="message_id" jdbcType="INTEGER" property="messageId"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="exerciseId" keyColumn="exercise_id" parameterType="top.qiyoung.answer.model.Exercise">
         insert into exercise (exercise_type, subject_id, correct, option_content, create_user_id, status, create_time, modify_time,exercise_title,analysis)
            values(#{exerciseType},#{subjectId},#{correct},#{optionContent},#{createUserId},#{status},#{createTime},#{modifyTime},#{exerciseTitle},#{analysis})
     </insert>
@@ -113,6 +118,9 @@
             <if test="subjectId != null">
                 subject_id = #{subjectId},
             </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
             <if test="correct != null and correct != ''">
                 correct = #{correct},
             </if>
@@ -163,14 +171,14 @@
         </where>
     </select>
 
-    <select id="getExerciseByReview" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
-        select * from exercise
+    <select id="getReviewExercise" parameterType="top.qiyoung.answer.model.Query" resultMap="EIdAndMId">
+        select e.exercise_id,m.message_id from exercise e inner join message m on e.exercise_id = m.exercise_id
         <where>
             <if test="id != null">
-                and subject_id = #{id}
+                and e.subject_id = #{id}
             </if>
             <if test="1==1">
-                and status = 0
+                and e.status = 0 and m.type = 2 and m.status = 0
             </if>
         </where>
         <if test="order != null and order != ''">
@@ -181,19 +189,47 @@
         </if>
     </select>
 
-    <select id="countExerciseByReview" resultType="java.lang.Integer">
-        select count(*) from exercise
+    <select id="countReviewExercise" resultType="java.lang.Integer">
+        select count(*) from exercise e inner join message m on e.exercise_id = m.exercise_id
         <where>
             <if test="id != null">
-                and subject_id = #{id}
+                and e.subject_id = #{id}
             </if>
             <if test="1==1">
-                and status = 0
+                and e.status = 0 and m.type = 2 and m.status = 0
             </if>
         </where>
         <if test="order != null and order != ''">
             order by #{order}
         </if>
+    </select>
+
+    <select id="getReviewExerciseByUserId" resultMap="BaseResultMap">
+        select * from exercise
+        <where>
+            <if test="userId != null">
+                and create_user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+            order by create_time desc
+        <if test="index != null and size != null">
+            limit #{index},#{size}
+        </if>
+    </select>
+
+    <select id="countReviewExerciseByUserId" resultType="java.lang.Integer">
+        select count(*) from exercise
+        <where>
+            <if test="userId != null">
+                and create_user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
     </select>
 
     <update id="updateById" parameterType="java.lang.Integer">

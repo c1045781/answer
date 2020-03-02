@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.ExerciseDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.mapper.PermissionMapper;
 import top.qiyoung.answer.model.*;
 import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.SubjectService;
@@ -82,7 +84,7 @@ public class ExerciseController {
                          @RequestParam(value = "subjectId", required = false) Integer subjectId,
                          @RequestParam(value = "order", defaultValue = "create_time asc") String order,
                          Model model){
-        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.review(currentPage,size,subjectId,order);
+        PaginationDTO<ExerciseReviewDTO> paginationDTO = exerciseService.review(currentPage,size,subjectId,order);
         if (subjectId != null) {
             Subject subject = subjectService.getSubjectById(subjectId);
             List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
@@ -165,6 +167,9 @@ public class ExerciseController {
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, user);
         }
+        if (user.getRole() == 3){
+            return "redirect:/user/personal";
+        }
         return "redirect:/exercise/check";
     }
 
@@ -186,7 +191,7 @@ public class ExerciseController {
         edit.setOptions(options);
         int result;
         if (edit.getExerciseEditId() != null) {
-            result = exerciseService.update(edit);
+            result = exerciseService.update(edit,user);
         } else {
             result = exerciseService.insert(edit, user);
         }
@@ -195,9 +200,13 @@ public class ExerciseController {
             if (edit.getExerciseEditId() != null)
                 exerciseEditDTO = exerciseService.getExerciseEdit(edit.getExerciseEditId());
             model.addAttribute("exerciseEditDTO", exerciseEditDTO);
+            if (user.getRole() == 0 || user.getRole() == 1)
             return "manage/exercise/add-exercise";
+            return "redirect:/user/personal";
         }else{
+            if (user.getRole() == 0 || user.getRole() == 1)
             return "redirect:/exercise/check";
+            return "redirect:/user/personal";
         }
     }
 
@@ -246,13 +255,9 @@ public class ExerciseController {
     // 修改习题状态
     @RequestMapping("/status")
     @ResponseBody
-    public String updateStatus(Integer id,Integer status){
-        int reslut = exerciseService.updateSatus(id,status);
-        if (reslut>0){
-            return "success";
-        }else{
-            return "failure";
-        }
+    public String updateStatus(Integer exerciseId,Integer status,String reason,Integer messageId){
+        exerciseService.updateSatus(exerciseId,status,reason,messageId);
+        return "success";
     }
 
     // 根据ID获取习题并跳转到答题页面
@@ -277,6 +282,35 @@ public class ExerciseController {
         }
         model.addAttribute("exerciseEditDTOList", exerciseEditDTOList);
         return "user/answer";
+    }
+
+    // 通过用户ID获取用户上传题目
+    @RequestMapping("/getReviewExerciseByUserId")
+    @ResponseBody
+    public PaginationDTO<Exercise> getReviewExerciseByUserId(HttpServletRequest request,
+                                                             @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                                             @RequestParam(value = "size", defaultValue = "1") Integer size,
+                                                             @RequestParam(value = "status") Integer status){
+        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO<Exercise> dto = exerciseService.getReviewExerciseByUserId(user.getUserId(),currentPage,size,status);
+        return dto;
+    }
+
+    // 获取单个上传题目
+    @RequestMapping("/checkOfAddExercise")
+    @ResponseBody
+    public ExerciseReviewDTO checkOfAddExercise(Integer exerciseId,HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        ExerciseReviewDTO dto = exerciseService.checkOfAddExercise(exerciseId,user);
+        return dto;
+    }
+
+    // 跳转到用户习题更新
+    @RequestMapping("/userExerciseUpdate")
+    @ResponseBody
+    public ExerciseEditDTO userExerciseUpdate(Integer exerciseId) {
+        ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(exerciseId);
+        return exerciseEditDTO;
     }
 
 }

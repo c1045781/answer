@@ -52,6 +52,7 @@
                     <div>
                         用户类型：<select name="role" id="role" class="answer-select">
                             <option value=""></option>
+                            <option th:if="${session.user.role == 0}" th:selected="${role == 1}" value="1">管理员</option>
                             <option th:selected="${role == 2}" value="2">一般用户</option>
                             <option th:selected="${role == 3}" value="3">特殊用户</option>
                         </select>

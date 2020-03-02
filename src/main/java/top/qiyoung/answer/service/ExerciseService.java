@@ -2,13 +2,11 @@ package top.qiyoung.answer.service;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.stereotype.Service;
+import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.ExerciseDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.mapper.ExerciseMapper;
-import top.qiyoung.answer.mapper.MidMapper;
-import top.qiyoung.answer.mapper.SubjectMapper;
-import top.qiyoung.answer.mapper.UserMapper;
+import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.model.*;
 
 import javax.annotation.Resource;
@@ -28,6 +26,8 @@ public class ExerciseService {
     private SubjectMapper subjectMapper;
     @Resource
     private MidMapper midMapper;
+    @Resource
+    private PermissionMapper permissionMapper;
 
     public int insert(ExerciseEditDTO edit, User user) {
         Exercise exercise = new Exercise(null,edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),user.getUserId(),
@@ -42,17 +42,30 @@ public class ExerciseService {
         exercise.setCreateUserId(user.getUserId());
         exercise.setCreateTime(new Date());
         exercise.setModifyTime(new Date());*/
-        if (user.getRole() == 1) {
+        int id;
+        if (user.getRole() == 1 || user.getRole() == 0) {
+            id = exerciseMapper.insert(exercise);
             exercise.setStatus(1);
         } else {
             exercise.setStatus(0);
+            id = exerciseMapper.insert(exercise);
+            Message message = new Message(null,exercise.getExerciseId(),null,2,null,user.getUserId(),new Date(),0);
+            permissionMapper.add(message);
         }
-        return exerciseMapper.insert(exercise);
+        return id;
     }
 
-    public int update(ExerciseEditDTO edit) {
-        Exercise exercise = new Exercise(edit.getExerciseEditId(),edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),null,
-                null,null,new Date(),null,edit.getAnalysis());
+    public int update(ExerciseEditDTO edit, User user) {
+        Exercise exercise;
+        if (user.getRole() == 1 || user.getRole() == 0) {
+            exercise = new Exercise(edit.getExerciseEditId(),edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),null,
+                    null,null,new Date(),null,edit.getAnalysis());
+        }else {
+            exercise = new Exercise(edit.getExerciseEditId(),edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),null,
+                    0,null,new Date(),null,edit.getAnalysis());
+            permissionMapper.updateStatus(permissionMapper.getMessageByExerciseIdAndUserId(exercise.getExerciseId(),user.getUserId()).getMessageId(),"",0);
+        }
+
 
         //  content JSON
         /*exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
@@ -185,20 +198,29 @@ public class ExerciseService {
         return exerciseMapper.getExerciseListBySubjectId(subjectId);
     }
 
-    public PaginationDTO<ExerciseDTO> review(Integer currentPage, Integer size, Integer subjectId, String order) {
-        PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage,size);
+    public PaginationDTO<ExerciseReviewDTO> review(Integer currentPage, Integer size, Integer subjectId, String order) {
+        PaginationDTO<ExerciseReviewDTO> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
         query.setSize(size);
         query.setOrder(order);
         query.setId(subjectId);
-        List<Exercise> exerciseList = exerciseMapper.getExerciseByReview(query);
+
+        List<EIdAndMId> eIdAndMIds = exerciseMapper.getReviewExercise(query);
+        List<ExerciseReviewDTO> list = new ArrayList<>();
+        for (EIdAndMId eIdAndMId : eIdAndMIds) {
+            Exercise exercise = exerciseMapper.getExerciseById(eIdAndMId.getExerciseId());
+            Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+            Message message = permissionMapper.getMessageById(eIdAndMId.getMessageId());
+            User user = userMapper.getUserById(exercise.getCreateUserId());
+            ExerciseReviewDTO dto = new ExerciseReviewDTO(exercise,message,subject,user,JSON.parseArray(exercise.getOptionContent(), Option.class));
+            list.add(dto);
+        }
         query.setIndex(null);
         query.setSize(null);
-        int count = exerciseMapper.countExerciseByReview(query);
+        int count = exerciseMapper.countReviewExercise(query);
 
-        List<ExerciseDTO> exerciseDTOS = exerciseToExerciseDTO(exerciseList);
-        paginationDTO.setDataList(exerciseDTOS);
+        paginationDTO.setDataList(list);
         paginationDTO.setTotalSize(count);
         paginationDTO.setTotalPage((int) Math.ceil((double) paginationDTO.getTotalSize() / (double) size));
         return paginationDTO;
@@ -231,8 +253,9 @@ public class ExerciseService {
         return exerciseDTO;
     }
 
-    public int updateSatus(Integer id, Integer status) {
-        return exerciseMapper.updateById(id,status);
+    public void updateSatus(Integer id, Integer status, String reason, Integer messageId) {
+        permissionMapper.updateStatus(messageId,reason,status);
+        exerciseMapper.updateById(id,status);
     }
 
     public int countExercise() {
@@ -241,5 +264,20 @@ public class ExerciseService {
 
     public List<Integer> getExerciseIdListByExerciseSetId(Integer exerciseSetId) {
         return midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
+    }
+
+    public PaginationDTO<Exercise> getReviewExerciseByUserId(Integer userId, Integer currentPage, Integer size, Integer status) {
+        List<Exercise> exerciseList = exerciseMapper.getReviewExerciseByUserId(userId,(currentPage-1)*size,size,status);
+        int count = exerciseMapper.countReviewExerciseByUserId(userId,status);
+        PaginationDTO dto = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,""+status,exerciseList);
+        return dto;
+    }
+
+    public ExerciseReviewDTO checkOfAddExercise(Integer exerciseId,User user) {
+        Exercise exercise = exerciseMapper.getExerciseById(exerciseId);
+        Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+        Message message = permissionMapper.getMessageByExerciseIdAndUserId(exerciseId,user.getUserId());
+        ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,message,subject,user,JSON.parseArray(exercise.getOptionContent(), Option.class));
+        return exerciseReviewDTO;
     }
 }

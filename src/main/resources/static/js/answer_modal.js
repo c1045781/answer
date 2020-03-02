@@ -142,31 +142,31 @@ function resultOK(){
 }
 
 function viewExerciseReviewModal(id){
-    var content = '';
-    $('#option').html('');
     $.ajax({
         url: '/exercise/viewExercise',
         type: 'post',
         data: {id: id},
         dataType: "json",
         success: function (data) {
+            var content = '';
             $('#title').html(data.exercise.exerciseTitle);
             $('#correct').html("正确答案：" + data.exercise.correct);
+            $('#analysis').html("答案解析：" + data.exercise.analysis);
             $.each(data.options,function(index,item){
                 content += '<span class="list-group-item-text option-span">'+item.option + '.' + item.content + '</span>';
 
             });
-            $('#option').append(content);
+            $('#option').html(content);
             $('#viewExerciseReview').modal();
         }
     });
 }
 
-function successExerciseReviewModal(id) {
+function successExerciseReviewModal(exerciseId,messageId) {
     $.ajax({
         url: '/exercise/status',
         type: 'post',
-        data: {id: id,status:1},
+        data: {exerciseId: exerciseId,status:1,messageId:messageId},
         dataType: "text",
         success: function (data) {
             $('#successModal').modal();
@@ -175,13 +175,17 @@ function successExerciseReviewModal(id) {
     });
 }
 
-function failExerciseReviewModal(id) {
+function failExerciseReviewModal() {
+    var id = $("#reasonUserId").val();
+    var reasonId = $("#reasonId").val();
+    var reason = $("#reason").val();
     $.ajax({
         url: '/exercise/status',
         type: 'post',
-        data: {id: id,status:3},
+        data: {exerciseId: id,status:2,reason:reason,messageId:reasonId},
         dataType: "text",
-        success: function (data) {
+        success: function () {
+            $('#reasonModal').modal("hide");
             $('#successModal').modal();
             $('#resultUrl').val("/exercise/review");
         }
@@ -191,7 +195,7 @@ function failExerciseReviewModal(id) {
     $.ajax({
         url: '/permission/role',
         type: 'post',
-        data: {id: id,role:3,userId:userId},
+        data: {id: id,role:3,userId:userId,status:1},
         dataType: "text",
         success: function (data) {
             $('#successModal').modal();
@@ -200,9 +204,9 @@ function failExerciseReviewModal(id) {
     });
 }
 
-function reasonModal(id,userId){
-    $("#reasonUserId").val(userId);
-    $("#reasonId").val(id);
+function reasonModal(reasonId,id){
+    $("#reasonUserId").val(id);
+    $("#reasonId").val(reasonId);
     $('#reasonModal').modal();
 }
 
@@ -210,11 +214,10 @@ function failPermissionReviewModal() {
     var userId = $("#reasonUserId").val();
     var id = $("#reasonId").val();
     var reason = $("#reason").val();
-    debugger
     $.ajax({
         url: '/permission/role',
         type: 'post',
-        data: {id: id,role:2,userId:userId,reason:reason},
+        data: {id: id,role:2,userId:userId,reason:reason,status:2},
         dataType: "text",
         success: function (data) {
             $('#reasonModal').modal('hide');
@@ -222,6 +225,48 @@ function failPermissionReviewModal() {
             $('#resultUrl').val("/permission/check");
         }
     });
+
+}
+
+function showAddExercise(e){
+    $.ajax({
+        url: '/exercise/checkOfAddExercise',
+        type: 'post',
+        data: {exerciseId: e},
+        dataType: "json",
+        success: function (data) {
+
+            var content = '';
+            $('#addExerciseTitle').html(data.exercise.exerciseTitle);
+            $('#addExerciseCorrect').html("正确答案：" + data.exercise.correct);
+            $('#addExerciseAnalysis').html("答案解析：" + data.exercise.analysis);
+            $('#addExerciseSubject').html("题目分类：" + data.subject.baseSubject +'»'+data.subject.name);
+            $.each(data.options,function(index,item){
+                content += '<span class="list-group-item-text option-span">'+item.option + '.' + item.content + '</span>';
+
+            });
+            $('#addExerciseOption').html(content);
+
+            if (data.message.status == 0){
+                $("#addExercise_status").html("未处理");
+            } else if (data.message.status == 1){
+                $("#addExercise_status").html("审核通过");
+            } else {
+                $("#addExercise_status").html("审核未通过");
+            }
+
+            $("#addExercise_date").html(Format(new Date(data.message.createTime),"yyyy-MM-dd hh:mm:ss"));
+            if (data.message.reason != null && data.message.reason != "") {
+                $("#modify").attr("onclick","modifyExercise("+ data.exercise.exerciseId +")");
+                $("#modify").css("display","block");
+                $("#addExercise_reason").html(data.message.reason);
+            }else {
+                $("#modify").css("display","none");
+                $("#addExercise_is").css("display","none");
+            }
+            $("#showAddExercise").modal();
+        }
+    })
 
 }
 
@@ -234,11 +279,11 @@ function showPermission(id){
         success: function (data) {
             $("#permission_content").html(data.content);
             if (data.status == 0){
-                $("#permission_status").html("未处理");
+                $("#permission_status").html("未审核");
             } else if (data.status == 1){
-                $("#permission_status").html("同意");
+                $("#permission_status").html("审核通过");
             } else {
-                $("#permission_status").html("拒绝");
+                $("#permission_status").html("审核未通过");
             }
 
             $("#permission_date").html(Format(new Date(data.createTime),"yyyy-MM-dd hh:mm:ss"));

@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,8 @@ public class PermissionController {
     // 更新用户类型
     @RequestMapping("/role")
     @ResponseBody
-    public String updateStatus(Integer id,Integer role,Integer userId,String reason){
-        permissionService.updateRole(id,role,userId,reason);
+    public String updateStatus(Integer id,Integer role,Integer userId,String reason,Integer status){
+        permissionService.updateRole(id,role,userId,reason,status);
         return "success";
     }
 
@@ -50,17 +51,21 @@ public class PermissionController {
 
     @RequestMapping("/permissionList")
     @ResponseBody
-    public List<Message> permissionList(HttpServletRequest request){
+    public PaginationDTO<Message> permissionList(HttpServletRequest request,
+                                        @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                        @RequestParam(value = "size", defaultValue = "1") Integer size){
         User user = (User) request.getSession().getAttribute("user");
-        return permissionService.getMessageListByUserId(user.getUserId());
+        return permissionService.getMessageListByUserId(user.getUserId(),currentPage,size);
     }
 
     @RequestMapping("/add")
     @ResponseBody
     public String add(HttpServletRequest request,String content){
         User user = (User) request.getSession().getAttribute("user");
-        Message message = new Message(null,content,0,new Date(),user.getUserId(),null);
-        permissionService.add(message);
+        if (StringUtils.isNotBlank(content)){
+            Message message = new Message(null,null,content,1,null,user.getUserId(),new Date(),0);
+            permissionService.add(message);
+        }
         return "success";
     }
 }

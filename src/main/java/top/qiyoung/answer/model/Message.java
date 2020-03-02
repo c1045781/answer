@@ -4,11 +4,14 @@ import java.util.Date;
 
 public class Message {
     private Integer messageId;
+    private Integer exerciseId;
     private String content;
-    private Integer status;
-    private Date createTime;
-    private Integer userId;
+    private Integer type;
     private String reason;
+    private Integer userId;
+    private Date createTime;
+    private Integer status;
+
 
     public String getReason() {
         return reason;
@@ -58,13 +61,31 @@ public class Message {
         this.createTime = createTime;
     }
 
-    public Message(Integer messageId, String content, Integer status, Date createTime, Integer userId,String reason) {
+    public Integer getExerciseId() {
+        return exerciseId;
+    }
+
+    public void setExerciseId(Integer exerciseId) {
+        this.exerciseId = exerciseId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Message(Integer messageId, Integer exerciseId, String content, Integer type, String reason, Integer userId, Date createTime, Integer status) {
         this.messageId = messageId;
+        this.exerciseId = exerciseId;
         this.content = content;
-        this.status = status;
-        this.createTime = createTime;
-        this.userId = userId;
+        this.type = type;
         this.reason = reason;
+        this.userId = userId;
+        this.createTime = createTime;
+        this.status = status;
     }
 
     public Message() {

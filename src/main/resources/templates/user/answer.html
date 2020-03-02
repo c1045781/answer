@@ -86,12 +86,12 @@
                                                   th:text="${option.option}+ '.' +${option.content}"></span>
                                         </label>
                                     </div>
-                                    <div name="corrent_div" th:style="${answer!=null?'':'display: none'}">
+                                    <div name="correct_div" th:style="${answer!=null?'':'display: none'}">
                                         <p style="float: left;margin-top: 10px;">结果：</p>
-                                        <div th:if="${answer == null}" th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;">
+                                        <div th:if="${answer == null}" th:id="'correct_div' + ${exerciseEditDTO.exerciseEditId}" class="alert alert-danger" role="alert" style="width: 7%;float: left;">
                                             <span th:id="'isCorrect' + ${exerciseEditDTO.exerciseEditId}">错误</span>
                                         </div>
-                                        <div th:if="${answer != null}" th:id="'corrent_div' + ${exerciseEditDTO.exerciseEditId}" th:class="${answer.answer == exerciseEditDTO.correct?'alert alert-success':'alert alert-danger'}" role="alert" style="width: 7%;float: left;">
+                                        <div th:if="${answer != null}" th:id="'correct_div' + ${exerciseEditDTO.exerciseEditId}" th:class="${answer.answer == exerciseEditDTO.correct?'alert alert-success':'alert alert-danger'}" role="alert" style="width: 7%;float: left;">
                                             <span th:text="${answer.answer == exerciseEditDTO.correct?'正确':'错误'}"></span>
                                         </div>
                                         <div style="clear: both;margin-top: 66px;width: 80%;"><p><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></p>

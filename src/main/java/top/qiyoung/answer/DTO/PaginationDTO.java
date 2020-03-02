@@ -11,6 +11,9 @@ public class PaginationDTO<T> {
     private String type;
     private List<T> dataList;
 
+    public PaginationDTO() {
+    }
+
     public PaginationDTO(Integer currentPage, Integer pageSize) {
         this.currentPage = currentPage;
         this.pageSize = pageSize;

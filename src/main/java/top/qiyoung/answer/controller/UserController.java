@@ -32,10 +32,12 @@ public class UserController {
                             @RequestParam(value = "size", defaultValue = "2") Integer size,
                             @RequestParam(value = "search", required = false) String search,
                             @RequestParam(value = "type", required = false) String type,
-                            @RequestParam(value = "role", required = false) Integer role,
+                            @RequestParam(value = "role", required = false ) Integer role,
                             @RequestParam(value = "order", defaultValue = "user_id asc") String order,
-                            Model model) {
-        PaginationDTO paginationDTO = userService.getUserList(currentPage, size, search, type, order,role);
+                            Model model,
+                            HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO paginationDTO = userService.getUserList(currentPage, size, search, type, order,role,user.getRole());
         model.addAttribute("paginationDTO", paginationDTO);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
@@ -120,6 +122,14 @@ public class UserController {
         User user = (User) request.getSession().getAttribute("user");
         User dbUser = userService.getUserById(user.getUserId());
         return dbUser;
+    }
+
+    @RequestMapping("/manager")
+    public String manager(HttpServletRequest request,Model model){
+        User user = (User) request.getSession().getAttribute("user");
+        User dbUser = userService.getUserById(user.getUserId());
+        model.addAttribute("user",dbUser);
+        return "/manage/manager-info";
     }
 
     @RequestMapping("/personal")

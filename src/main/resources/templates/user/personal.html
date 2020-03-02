@@ -105,13 +105,13 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a onclick="permissionList()" th:if="${session.user.role == 2}" href="#t4" aria-controls="t4" role="tab"
+                                        <a onclick="permissionList(1)" href="#t4" aria-controls="t4" role="tab"
                                            data-toggle="tab">
                                             权限申请
                                         </a>
                                     </li>
                                     <li>
-                                        <a th:if="${session.user.role == 3}" href="#t5" aria-controls="t5" role="tab"
+                                        <a onclick="AddExerciseList(1)" th:if="${session.user.role == 3}" href="#t5" aria-controls="t5" role="tab"
                                            data-toggle="tab">
                                             添加习题
                                         </a>
@@ -223,7 +223,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div id="titleImageError"
-                                                                         style="color: #a94442"></div>
+                                                                         style="color: #cfe8fc"></div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group col-xs-12 col-md-12 col-sm-12">
@@ -266,13 +266,165 @@
                                             <div class="permission-add-div"><a onclick="addPermission()">添加申请</a></div>
                                             <h4>权限申请列表</h4>
 
-                                            <ul class="list-post" id="permission_ul">
-
-                                            </ul>
+                                            <ul class="list-post" id="permission_ul"></ul>
+                                            <div id="permission_nav"></div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="t5">
 
+                                        <div style="margin-top: 0px;" class="related-post" id="addExerciseList">
+                                            <div class="permission-add-div"><a onclick="addExerciseForForm()">表单添加</a><a onclick="addExerciseForXLS()">文件添加</a></div>
+                                            <h4>添加习题列表</h4>
+                                            <select id="status" onchange="AddExerciseList(1)" style="height: 50px;width: 123px;text-align: center;text-align-last: center;margin: 10px 0;">
+                                                <option value="">全部</option>
+                                                <option value="0">审核中</option>
+                                                <option value="1">审核通过</option>
+                                                <option value="2">审核未通过</option>
+                                            </select>
+                                            <ul class="list-post" id="add_exercise_ul">
+                                            </ul>
+                                            <div id="add_exercise_nav"></div>
+                                        </div>
+
+                                        <div id="addExercise" class="wthree_agile_admin_info" style="display: none;">
+                                            <div class="inner_content" style="padding: 0;">
+                                                <div class="inner_content_w3_agile_info two_in" style="margin-top: 0px;">
+                                                    <div class="agile-grids">
+                                                        <!-- validation -->
+                                                        <div class="grids">
+                                                            <div class="forms-grids">
+                                                                <div class="w3agile-validation w3ls-validation">
+                                                                    <div class="agile-validation agile_info_shadow">
+                                                                        <div class="form-div">
+                                                                            <div class="validation-grids widget-shadow" data-example-id="basic-forms">
+                                                                                <div id="AddExerciseXLS">
+                                                                                    <div class="input-info">
+                                                                                        <h3 class="w3_inner_tittle two">上传文件添加：</h3>
+                                                                                    </div>
+                                                                                    <form id="exerciseXLSForm" action="/exercise/uploadFile" enctype="multipart/form-data" method="post" novalidate="true" data-toggle="validator" style="margin-bottom: 100px;">
+                                                                                        <div class="form-group">
+                                                                                            <input name="exerciseFile" id="exerciseFile" type="file">
+                                                                                            <a href="/download" style="color: #3498db;font-size: 1.15em;">下载模板</a>
+                                                                                        </div>
+                                                                                        <div class="form-group">
+                                                                                            <button class="btn btn-primary" type="submit">上传</button>
+                                                                                            <button class="btn btn-primary" type="button" onclick="toAddExerciseList()">返回</button>
+                                                                                        </div>
+                                                                                    </form>
+                                                                                </div>
+                                                                                <div id="AddExerciseForm">
+                                                                                    <div class="input-info">
+                                                                                        <h3 class="w3_inner_tittle two">手动编辑添加：</h3>
+                                                                                    </div>
+                                                                                    <div class="form-body form-body-info">
+                                                                                        <form id="exerciseForm" action="/exercise/addOrUpdate" method="post" novalidate="true" data-toggle="validator">
+                                                                                            <div class="form-group col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">学科：</label>
+                                                                                                <input id="modelInput" type="hidden" value="">
+                                                                                                <input name="exerciseEditId" id="id" type="hidden" value="">
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+                                                                                                    <select class="form-control" id="base" style="height: 50px;" onchange="showSubject(this.value)"></select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目分类：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+                                                                                                    <select name="subjectId" class="form-control" id="subjectId" style="height: 50px;"></select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目类型：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+
+                                                                                                    <select name="exerciseType" class="form-control" id="type" style="height: 50px;" onchange="changeCorrect(this.value)">
+                                                                                                        <option value="单选题">单选题</option>
+                                                                                                        <option value="多选题">多选题</option>
+                                                                                                        <option value="判断题">判断题</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+                                                                                                    <textarea name="title" id="title" style="width: 100%" required="" rows="4" cols="73"></textarea>
+                                                                                                    <div class="help-block with-errors"></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">选项：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8" id="opts">
+                                                                                                    <div class="option-div" id="A">
+                                                                                                        <label class="control-label" style="width: 5%;">A：</label>
+                                                                                                        <input name="answers" class="form-control" required="" type="text">
+                                                                                                        <button class="btn btn-danger option-button disabled" onclick="deleteOption('A')" type="button">
+                                                                                                            删除
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="option-div" id="B">
+                                                                                                        <label class="control-label" style="width: 5%;">B：</label>
+                                                                                                        <input name="answers" class="form-control" required="" type="text">
+                                                                                                        <button class="btn btn-danger option-button  disabled" onclick="deleteOption('B')" type="button">
+                                                                                                            删除
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="option-div" id="C">
+                                                                                                        <label class="control-label" style="width: 5%;">C：</label>
+                                                                                                        <input name="answers" class="form-control" required="" type="text">
+                                                                                                        <button class="btn btn-danger option-button  disabled" onclick="deleteOption('C')" type="button">
+                                                                                                            删除
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="option-div" id="D">
+                                                                                                        <label class="control-label" style="width: 5%;">D：</label>
+                                                                                                        <input name="answers" class="form-control" required="" type="text">
+                                                                                                        <button class="btn btn-danger option-button" onclick="deleteOption('D')" type="button">
+                                                                                                            删除
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">正确答案：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+                                                                                                    <div class="radio" id="correct">
+                                                                                                        <label class="correct-label"><input name="correct" required="" type="radio" value="A">A</label>
+                                                                                                        <label class="correct-label"><input name="correct" required="" type="radio" value="B">B</label>
+                                                                                                        <label class="correct-label"><input name="correct" required="" type="radio" value="C">C</label>
+                                                                                                        <label class="correct-label"><input name="correct" required="" type="radio" value="D">D</label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group  col-xs-12 col-md-12 col-sm-12">
+                                                                                                <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目解析：</label>
+                                                                                                <div class="col-xs-8 col-md-8 col-sm-8">
+                                                                                                    <textarea name="analysis" id="analysis" style="width: 100%" rows="4" cols="73"></textarea>
+                                                                                                    <div class="help-block with-errors"></div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group">
+                                                                                                <button class="btn btn-primary disabled" type="submit" onclick="return submitAddExercise()">确定</button>
+                                                                                                <button class="btn btn-primary" id="correct_button" onclick="addOption()" type="button">
+                                                                                                    添加选项
+                                                                                                </button>
+                                                                                                <button class="btn btn-primary" onclick="toAddExerciseList()" type="button">
+                                                                                                    返回
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                     <div class="tab-pane fade" id="t6">
                                     </div>
@@ -300,6 +452,51 @@
         </div>
     </footer>
 
+    <div class="modal fade" id="showAddExercise" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel2">习题</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <h4 class="list-group-item-heading" style="text-align: center" id="addExerciseTitle"></h4>
+                        <div id="addExerciseOption" style="text-align: center;margin: 20px auto;"></div>
+                        <div id="addExerciseSubject" style="text-align: left;margin: 20px 10%;"></div>
+                        <div id="addExerciseCorrect" style="text-align: left;margin: 20px 10%;"></div>
+                        <div id="addExerciseAnalysis" style="text-align: left;margin: 20px 10%;"></div>
+                    </div>
+                    <section class="kopa-area" style="padding: 20px 0">
+                        <div class="container">
+                            <div class="shop-content">
+                                <div class=" product has-post-thumbnail">
+                                    <div class="summary entry-summary" style="float: none;">
+                                        <div class="product_meta">
+                                            <span class="sku_wrapper">申请状态：
+                                                <span class="sku" id="addExercise_status"></span>
+                                            </span>
+                                            <span class="posted_in" id="addExercise_is">拒绝理由：
+                                               <span class="sku" id="addExercise_reason"></span>
+                                            </span>
+                                            <span class="tagged_as">申请日期:
+                                                <span class="sku" id="addExercise_date"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button id="modify" style="background: #3498db;display: none;float: left;" type="button" class="btn btn-default" data-dismiss="modal">修改</button>
+                    <button style="background: #3498db" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="showPermission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
@@ -321,10 +518,10 @@
                                         </div>
                                         <div class="product_meta">
                                             <span class="sku_wrapper">申请状态：
-                                                <span class="sku" id="permission_status">1</span>
+                                                <span class="sku" id="permission_status"></span>
                                             </span>
                                             <span class="posted_in" id="permission_is">拒绝理由：
-                                               <span class="sku" id="permission_reason">1</span>
+                                               <span class="sku" id="permission_reason"></span>
                                             </span>
                                             <span class="tagged_as">申请日期:
                                                 <span class="sku" id="permission_date"></span>
@@ -337,7 +534,7 @@
                     </section>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                    <button style="background: #3498db" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
                 </div>
             </div>
         </div>
@@ -409,7 +606,42 @@
 <!-- input-forms -->
 <script type="text/javascript" src="/js/valida.2.1.6.min.js"></script>
 <script src="/js/validator.min.js"></script>
+<script>
 
+    window.onload = function () {
+        var type = $("#type").find("option:selected").val();
+        if (type == "单选题" || type == "判断题") {
+            $("#correct > label").each(function () {
+                $(this).find(":input").attr('type','radio');
+                $(this).find(":input").attr('required','');
+            })
+        } else {
+            $("#correct > label").each(function () {
+                $(this).find(":input").attr('type','checkbox');
+                $(this).find(":input").removeAttr('required');
+            })
+        }
+
+        var modelInput = $("#modelInput").val();
+        if (modelInput != null && modelInput != "") {
+            return
+        }
+        $.ajax({
+            url: '/subject/base',
+            type: 'post',
+            contentType: "application/json",
+            success: function (data) {
+                if (data != null) {
+                    $('#base').html("");
+                    for (var i = 0; i < data.length; i++) {
+                        $('#base').append("<option>" + data[i] + "</option>");
+                    }
+                    showSubject(data[0]);
+                }
+            }
+        });
+    }
+</script>
 <script>
     window.onload = function () {
         personInformation()

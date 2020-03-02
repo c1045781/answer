@@ -14,10 +14,6 @@ public interface UserMapper {
 
     void insertUser(User user);
 
-    Page<User> getUserList(Query query);
-
-    Integer countUserList(Query query);
-
     int deleteById(Integer id);
 
     User getUserById(Integer id);
@@ -26,4 +22,11 @@ public interface UserMapper {
 
     List<User> getUserByUsername(String username);
 
+    List<User> getUserList0(Query query);
+
+    int countUserList0(Query query);
+
+    List<User> getUserList1(Query query);
+
+    int countUserList1(Query query);
 }

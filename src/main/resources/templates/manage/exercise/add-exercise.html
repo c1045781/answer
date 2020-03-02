@@ -227,7 +227,7 @@
                                                 <div class="form-group  col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">题目解析：</label>
                                                     <div class="col-xs-8 col-md-8 col-sm-8">
-                                                        <textarea style="width: 100%" name="analysis" id="analysis" cols="73" required="" rows="4"
+                                                        <textarea style="width: 100%" name="analysis" id="analysis" cols="73"  rows="4"
                                                                   th:text="${exerciseEditDTO?.analysis}"></textarea>
                                                         <div class="help-block with-errors"></div>
                                                     </div>
@@ -270,7 +270,6 @@
 </script>
 <!-- input-forms -->
 <script>
-    var input = $("#correct").children(":last-child").find(":input").val().charCodeAt();
     window.onload = function () {
         var type = $("#type").find("option:selected").val();
         if (type == "单选题" || type == "判断题") {

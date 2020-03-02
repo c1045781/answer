@@ -1,6 +1,7 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import top.qiyoung.answer.model.EIdAndMId;
 import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Query;
 
@@ -26,9 +27,13 @@ public interface ExerciseMapper {
 
     int deleteByUserId(Integer userId);
 
-    List<Exercise> getExerciseByReview(Query query);
+    List<EIdAndMId> getReviewExercise(Query query);
 
-    int countExerciseByReview(Query query);
+    int countReviewExercise(Query query);
 
     int updateById(@Param("id") Integer id,@Param("status") Integer status);
+
+    List<Exercise> getReviewExerciseByUserId(@Param("userId") Integer userId,@Param("index") int index,@Param("size") Integer size, @Param("status") Integer status);
+
+    int countReviewExerciseByUserId(@Param("userId") Integer userId,@Param("status") Integer status);
 }

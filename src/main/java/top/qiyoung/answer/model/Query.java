@@ -86,6 +86,12 @@ public class Query {
         this.exerciseType = exerciseType;
     }
 
+    public Query(String order, Integer index, Integer size) {
+        this.order = order;
+        this.index = index;
+        this.size = size;
+    }
+
     public Query() {
     }
 }

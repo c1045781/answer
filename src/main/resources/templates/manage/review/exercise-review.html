@@ -102,10 +102,10 @@
                                 <button th:onclick="viewExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
                                     查看
                                 </button>
-                                <button th:onclick="successExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="successExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]],[[${ExerciseVM.message.messageId}]]);" type="button" class="btn btn-danger">
                                     同意
                                 </button>
-                                <button th:onclick="failExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="reasonModal([[${ExerciseVM.message.messageId}]],[[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
                                     拒绝
                                 </button>
                             </td>
@@ -198,6 +198,7 @@
                         <h4 class="list-group-item-heading" style="text-align: center" id="title"></h4>
                         <div id="option" style="text-align: center;margin: 20px auto;"> </div>
                         <div id="correct" style="text-align: left;margin: 20px 10%;"></div>
+                        <div id="analysis" style="text-align: left;margin: 20px 10%;"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -224,6 +225,25 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="resultOK()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            拒绝理由：<textarea class="form-control" id="reason" rows="3"></textarea>
+                            <input type="hidden" id="reasonId">
+                            <input type="hidden" id="reasonUserId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="failExerciseReviewModal()">确认</button>
                 </div>
             </div>
         </div>
