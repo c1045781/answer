@@ -13,12 +13,13 @@
     <link rel="stylesheet" href="/css/owl.transitions.css">
     <link rel="stylesheet" href="/css/slick.css">
     <link rel="stylesheet" href="/css/slider-pro.min.css">
-    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <!--<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">-->
     <link rel="stylesheet" href="/css/woocommerce.css">
     <link rel="stylesheet" href="/css/woocommerce-layout.css">
     <link rel="stylesheet" href="/css/woocommerce-smallscreen.css" type="text/css" media="only screen and (max-width: 768px)">
     <link rel="stylesheet" href="/css/animate.css">
     <link rel="stylesheet" href="/css/index-style.css">
+    <link rel="stylesheet" href="/css/answer.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -130,12 +131,12 @@
 	                                <li class="product has-post-thumbnail" th:each="ExerciseVM:${paginationDTO.dataList}">
 	                                    <div class="content">
 											<div style="height: 55px;">
-												<h3 style="float: left;width: 75%;text-overflow: ellipsis;white-space: nowrap; overflow: hidden;" th:text="${ExerciseVM.exercise.exerciseTitle}"></h3>
+												<h3 class="history-left" th:text="${ExerciseVM.exercise.exerciseTitle}"></h3>
 												<h3 style="float: right" th:text="${ExerciseVM.exercise.exerciseType}"></h3>
                                                 <h3 class='history-right' style='padding-right:20px;' th:text="${ExerciseVM.subject.baseSubject} +'»'+${ExerciseVM.subject.name}"></h3>
 											</div>
 											<div style="height: 50px;">
-	                                        <p style="float: right">做题时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></span></p>
+	                                        <p style="float: right">做题时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd hh:mm:ss')}"></span></p>
 											</div>
 											<a style="float: right" th:href="@{/answer/viewHistoryExercise(answerId=${ExerciseVM.answerId})}" class="button-01">查看</a>
 	                                    </div>
@@ -325,9 +326,9 @@
     <script src="/js/owl.carousel.min.js"></script>
     <script src="/js/jquery.waypoints.min.js"></script>
     <script src="/js/jquery.counterup.min.js"></script>
-    <script src="/js/jquery.mCustomScrollbar.js"></script>
+    <!--<script src="/js/jquery.mCustomScrollbar.js"></script>-->
     <script src="/js/masonry.pkgd.min.js"></script>
-    <script src="/js/gmap3.min.js"></script>
+    <!--<script src="/js/gmap3.min.js"></script>-->
     <script src="/js/viewportchecker.min.js"></script>
     <script src="/js/custom.js"></script>
 	<script src="/js/answer.js"></script>
@@ -345,10 +346,10 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').html("<option></option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
+                    showSubject(data[0]);
                 }
             }
         });

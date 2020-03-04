@@ -1,7 +1,10 @@
 package top.qiyoung.answer.service;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import top.qiyoung.answer.DTO.ExerciseReviewDTO;
+import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
 import top.qiyoung.answer.DTO.ExerciseSetDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.*;
@@ -33,7 +36,11 @@ public class ExerciseSetService {
         exerciseSet.setCreateTime(new Date());
         exerciseSet.setModifyTime(new Date());
         List<Integer> exerciseIds = new ArrayList<>();
-
+        if ( setVM.getExerciseList() != null){
+            for (Exercise exercise : setVM.getExerciseList()) {
+                exerciseIds.add(exercise.getExerciseId());
+            }
+        }
         exerciseSet.setExerciseCount(exerciseIds.size());
         exerciseSet.setSubjectId(setVM.getSubject().getSubjectId());
         exerciseSet.setTitle(setVM.getTitle());
@@ -45,9 +52,6 @@ public class ExerciseSetService {
         exerciseSet.setExerciseSetId(exerciseSetId);
         result = setMapper.insert(exerciseSet);
         if (setVM.getExerciseList() != null) {
-            for (Exercise exercise : setVM.getExerciseList()) {
-                exerciseIds.add(exercise.getExerciseId());
-            }
             for (Integer exerciseId : exerciseIds) {
                 result = midMapper.insert(exerciseSetId, exerciseId);
             }
@@ -164,5 +168,44 @@ public class ExerciseSetService {
 
     public int countExerciseSet() {
         return setMapper.countExerciseSetList(new Query());
+    }
+
+    public PaginationDTO<ExerciseSetDTO> getExerciseListByUserId(Integer currentPage, Integer size, String orderBy, User user) {
+        List<ExerciseSet> exerciseSets = setMapper.getExerciseSetListByUserId((currentPage-1)*size,size,orderBy,user.getUserId());
+        int count = setMapper.countExerciseSetListByUserId(user.getUserId());
+        List<ExerciseSetDTO> exerciseSetDTOS = new ArrayList<>();
+        for (ExerciseSet exerciseSet : exerciseSets) {
+            Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
+            List<Exercise> list = midMapper.getExerciseListByExerciseSetId(exerciseSet.getExerciseSetId());
+            ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO(exerciseSet.getExerciseSetId(),exerciseSet.getTitle(),exerciseSet.getCreateTime(),subject,null,null,list,user);
+            exerciseSetDTOS.add(exerciseSetDTO);
+        }
+
+        PaginationDTO<ExerciseSetDTO> paginationDTO = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,null,exerciseSetDTOS);
+        return paginationDTO;
+    }
+
+    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage,User user) {
+        List<Integer> exerciseIdList = midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
+        ExerciseSet set = setMapper.getExerciseSetById(exerciseSetId);
+        List<ExerciseReviewDTO> exerciseReviewDTOS = new ArrayList<>();
+        int end;
+        if (exerciseIdList.size()>currentPage*2){
+            end = currentPage*2;
+        }else {
+            end = exerciseIdList.size();
+        }
+        for (int i=(currentPage-1)*2;i<end;i++){
+            Exercise exercise = exerciseMapper.getExerciseById(exerciseIdList.get(i));
+            Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
+            ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,null,subject,user, JSON.parseArray(exercise.getOptionContent(), Option.class));
+            exerciseReviewDTOS.add(exerciseReviewDTO);
+        }
+        ExerciseSetAndExercisesDTO dto = new ExerciseSetAndExercisesDTO(set,exerciseReviewDTOS);
+        List<ExerciseSetAndExercisesDTO> list = new ArrayList<>();
+        list.add(dto);
+        PaginationDTO<ExerciseSetAndExercisesDTO> paginationDTO = new PaginationDTO<>(currentPage,2,(int)Math.ceil((double)exerciseIdList.size()/(double)2),
+                exerciseIdList.size(),null,null,list);
+        return paginationDTO;
     }
 }

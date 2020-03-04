@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.qiyoung.answer.DTO.ExerciseReviewDTO;
-import top.qiyoung.answer.DTO.ExerciseEditDTO;
-import top.qiyoung.answer.DTO.ExerciseDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.DTO.*;
 import top.qiyoung.answer.mapper.PermissionMapper;
 import top.qiyoung.answer.model.*;
 import top.qiyoung.answer.service.ExerciseService;
@@ -22,6 +19,7 @@ import top.qiyoung.answer.utils.FileUpload;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,7 +173,7 @@ public class ExerciseController {
 
     // 添加或更新习题
     @RequestMapping("/addOrUpdate")
-    public String addexercise(ExerciseEditDTO edit, HttpServletRequest request, Model model) {
+    public String addexercise(ExerciseEditDTO edit, HttpServletRequest request, Model model, HttpServletResponse response) {
         User user = (User) request.getSession().getAttribute("user");
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
@@ -206,6 +204,16 @@ public class ExerciseController {
         }else{
             if (user.getRole() == 0 || user.getRole() == 1)
             return "redirect:/exercise/check";
+            response.setContentType("text/html; charset=utf-8");
+            try {
+                if (edit.getExerciseEditId() != null) {
+                    response.getWriter().println("<script language='javascript'>alert('更新成功!');</script>");
+                } else {
+                    response.getWriter().println("<script language='javascript'>alert('添加成功!');</script>");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return "redirect:/user/personal";
         }
     }

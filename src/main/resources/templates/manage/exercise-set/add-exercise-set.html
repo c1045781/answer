@@ -131,6 +131,7 @@
                                                                         <td th:text="${exercise.exerciseId}"></td>
                                                                         <td th:text="${exercise.exerciseType}"></td>
                                                                         <td th:text="${exercise.exerciseTitle}"></td>
+                                                                        <td><button type="button" th:onclick="|showExerciseForExerciseSet(${exercise?.exerciseId})|"  class="btn btn-primary"> 查看 </button></td>
                                                                         <td><button type="button" th:onclick="|deleteExerciseTbody(${exercise?.exerciseId})|"  class="btn btn-primary"> 删除 </button></td>
                                                                     </tr>
                                                                 </tbody>
@@ -154,7 +155,52 @@
     </div>
 </div>
 <div th:insert="~{foot :: foot}"></div>
-<div class="modal fade" id="addExercise" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+<div class="modal fade" id="showAddExercise" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel2">习题</h4>
+            </div>
+            <div class="modal-body" id="exerciseBody">
+                <div class="list-group">
+                    <h4 class="list-group-item-heading" style="text-align: center" id="addExerciseTitle"></h4>
+                    <div id="addExerciseOption" style="text-align: center;margin: 20px auto;"></div>
+                    <div id="addExerciseSubject" style="text-align: left;margin: 20px 10%;"></div>
+                    <div id="addExerciseCorrect" style="text-align: left;margin: 20px 10%;"></div>
+                    <div id="addExerciseAnalysis" style="text-align: left;margin: 20px 10%;"></div>
+                </div>
+                <section id="permission" class="kopa-area" style="padding: 20px 0">
+                    <div class="container">
+                        <div class="shop-content">
+                            <div class=" product has-post-thumbnail">
+                                <div class="summary entry-summary" style="float: none;">
+                                    <div class="product_meta">
+                                            <span class="sku_wrapper">申请状态：
+                                                <span class="sku" id="addExercise_status"></span>
+                                            </span>
+                                        <span class="posted_in" id="addExercise_is">拒绝理由：
+                                               <span class="sku" id="addExercise_reason"></span>
+                                            </span>
+                                        <span class="tagged_as">申请日期:
+                                                <span class="sku" id="addExercise_date"></span>
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="modal-footer">
+                <button id="modify" style="background: #3498db;display: none;float: left;" type="button" class="btn btn-default" data-dismiss="modal">修改</button>
+                <button style="background: #3498db" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addExerciseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -164,14 +210,15 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <select name="type" id="type" style="width: 100px;height: 33px;margin-right: 10px;">
-                        <option value=""></option>
+                    <input type="hidden" id="exerciseTypeHidden">
+                    <input type="hidden" id="searchHidden">
+                    <select name="type" id="exerciseType" style="width: 100px;height: 33px;margin-right: 10px;">
                         <option value="单选题">单选题</option>
                         <option value="多选题">多选题</option>
                         <option value="判断题">判断题</option>
                         <input type="text" id="search" name="search" style=" height: 33px;width: 200px;">
                         <!--<input type="hidden" name="subjectId" id="modalSubjectId">-->
-                        <button onclick="addExercise('button')" class="btn btn-primary">搜索</button>
+                        <button onclick="submitSearchExercise('button')" class="btn btn-primary">搜索</button>
                     </select>
                 </div>
                 <div class="table-responsive">
@@ -182,7 +229,7 @@
                             <th>ID</th>
                             <th>题型</th>
                             <th>题目</th>
-                            <th>选项</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="table-tbody">
@@ -214,7 +261,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">返回</button>
                 <button type="button" class="btn btn-primary" onclick="addExerciseToset()">确认</button>
             </div>
         </div>

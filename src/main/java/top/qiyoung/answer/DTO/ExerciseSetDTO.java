@@ -19,22 +19,6 @@ public class ExerciseSetDTO {
     private List<Exercise> exerciseList;
     private User user;
 
-    public List<String> getBaseList() {
-        return baseList;
-    }
-
-    public void setBaseList(List<String> baseList) {
-        this.baseList = baseList;
-    }
-
-    public List<Subject> getSubjectList() {
-        return subjectList;
-    }
-
-    public void setSubjectList(List<Subject> subjectList) {
-        this.subjectList = subjectList;
-    }
-
     public Integer getExerciseSetId() {
         return exerciseSetId;
     }
@@ -43,20 +27,12 @@ public class ExerciseSetDTO {
         this.exerciseSetId = exerciseSetId;
     }
 
-    public List<Exercise> getExerciseList() {
-        return exerciseList;
+    public String getTitle() {
+        return title;
     }
 
-    public void setExerciseList(List<Exercise> exerciseList) {
-        this.exerciseList = exerciseList;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Date getCreateTime() {
@@ -75,28 +51,49 @@ public class ExerciseSetDTO {
         this.subject = subject;
     }
 
-
-//    public Integer getSubjectId() {
-//        return subjectId;
-//    }
-//
-//    public void setSubjectId(Integer subjectId) {
-//        this.subjectId = subjectId;
-//    }
-
-    public String getTitle() {
-        return title;
+    public List<Subject> getSubjectList() {
+        return subjectList;
     }
 
-    public void setTitle(String title) {
+    public void setSubjectList(List<Subject> subjectList) {
+        this.subjectList = subjectList;
+    }
+
+    public List<String> getBaseList() {
+        return baseList;
+    }
+
+    public void setBaseList(List<String> baseList) {
+        this.baseList = baseList;
+    }
+
+    public List<Exercise> getExerciseList() {
+        return exerciseList;
+    }
+
+    public void setExerciseList(List<Exercise> exerciseList) {
+        this.exerciseList = exerciseList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public ExerciseSetDTO() {
+    }
+
+    public ExerciseSetDTO(Integer exerciseSetId, String title, Date createTime, Subject subject, List<Subject> subjectList, List<String> baseList, List<Exercise> exerciseList, User user) {
+        this.exerciseSetId = exerciseSetId;
         this.title = title;
+        this.createTime = createTime;
+        this.subject = subject;
+        this.subjectList = subjectList;
+        this.baseList = baseList;
+        this.exerciseList = exerciseList;
+        this.user = user;
     }
-
-//    public List<Integer> getExerciseIds() {
-//        return exerciseIds;
-//    }
-//
-//    public void setExerciseIds(List<Integer> exerciseIds) {
-//        this.exerciseIds = exerciseIds;
-//    }
 }

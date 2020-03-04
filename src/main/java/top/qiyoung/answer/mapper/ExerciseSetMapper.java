@@ -1,5 +1,6 @@
 package top.qiyoung.answer.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import top.qiyoung.answer.model.ExerciseSet;
 import top.qiyoung.answer.model.Query;
 
@@ -23,4 +24,8 @@ public interface ExerciseSetMapper {
     int update(ExerciseSet exerciseSet);
 
     int deleteByUserId(Integer userId);
+
+    List<ExerciseSet> getExerciseSetListByUserId(@Param("index") Integer index,@Param("pageSize") Integer size,@Param("orderBy") String orderBy,@Param("userId") Integer userId);
+
+    int countExerciseSetListByUserId(Integer userId);
 }

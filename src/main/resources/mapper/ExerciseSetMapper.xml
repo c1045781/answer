@@ -122,4 +122,28 @@
             </if>
         </where>
     </update>
+
+    <select id="getExerciseSetListByUserId" resultMap="BaseResultMap">
+        select * from exercise_set
+        <where>
+            <if test="userId != null">
+                create_user_id = #{userId}
+            </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            order by #{orderBy}
+        </if>
+        <if test="index != null and pageSize != null">
+            limit #{index},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countExerciseSetListByUserId" resultType="java.lang.Integer">
+        select count(1) from exercise_set
+        <where>
+            <if test="userId != null">
+                create_user_id = #{userId}
+            </if>
+        </where>
+    </select>
 </mapper>

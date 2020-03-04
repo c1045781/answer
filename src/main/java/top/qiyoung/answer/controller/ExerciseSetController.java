@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
+import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
 import top.qiyoung.answer.DTO.ExerciseSetDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.*;
@@ -14,6 +15,8 @@ import top.qiyoung.answer.service.SubjectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +66,7 @@ public class ExerciseSetController {
 
     // 添加或更新习题集
     @RequestMapping("/addOrUpdate")
-    public String addOrUpdate(HttpServletRequest request, ExerciseSetDTO setVM) {
+    public String addOrUpdate(HttpServletRequest request, ExerciseSetDTO setVM, HttpServletResponse response) {
         User user = (User) request.getSession().getAttribute("user");
         if (setVM.getExerciseSetId() != null) {
             setService.update(setVM);
@@ -71,7 +74,20 @@ public class ExerciseSetController {
             setService.insert(setVM, user);
         }
 
-        return "redirect:/manage/exerciseSet/check";
+        if (user.getRole() != 0 && user.getRole() != 1){
+            response.setContentType("text/html; charset=utf-8");
+            try {
+                if (setVM.getExerciseSetId() != null){
+                    response.getWriter().println("<script language='javascript'>alert('更新成功!');</script>");
+                }else {
+                    response.getWriter().println("<script language='javascript'>alert('添加成功!');</script>");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "redirect:/user/personal";
+        }
+        return "redirect:/exerciseSet/check";
     }
 
     // 删除习题集
@@ -85,6 +101,14 @@ public class ExerciseSetController {
         return "success";
     }
 
+    // 删除习题集
+    @RequestMapping("/deleteExerciseSetForUser")
+    @ResponseBody
+    public String deleteExerciseSetForUser(Integer exerciseSetId) {
+        setService.delete(exerciseSetId);
+        return "success";
+    }
+
     // 跳转更新页面
     @RequestMapping("/toUpdate")
     public String toUpdate(Integer exerciseSetId, Model model) {
@@ -94,4 +118,32 @@ public class ExerciseSetController {
         return "manage/exercise-set/add-exercise-set";
     }
 
+    // 获取ExerciseSetDTO
+    @RequestMapping("/toUpdateByUser")
+    @ResponseBody
+    public ExerciseSetDTO toUpdateByUser(Integer exerciseSetId) {
+//        setService.getExerciseSet(exerciseSetId);
+        ExerciseSetDTO exerciseSetDTO = setService.getExerciseSetVMById(exerciseSetId);
+        return exerciseSetDTO;
+    }
+
+    // 获取用户的套题list
+    @RequestMapping("/getExerciseSetByUserId")
+    @ResponseBody
+    public PaginationDTO<ExerciseSetDTO> getExerciseSetByUserId(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                                                                @RequestParam(value = "size", defaultValue = "2") Integer size,
+                                                                HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO<ExerciseSetDTO> paginationDTO = setService.getExerciseListByUserId(currentPage, size, "create_time desc", user);
+        return paginationDTO;
+    }
+
+    // 根据套题Id获取多个题目
+    @RequestMapping("/checkOfExerciseSet")
+    @ResponseBody
+    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO<ExerciseSetAndExercisesDTO> dto = setService.checkOfExerciseSet(exerciseSetId,currentPage,user);
+        return dto;
+    }
 }

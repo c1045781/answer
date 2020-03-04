@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.MidMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Exercise">
+        <id column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
+        <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+        <result column="correct" jdbcType="VARCHAR" property="correct"/>
+        <result column="exercise_title" jdbcType="VARCHAR" property="exerciseTitle"/>
+        <result column="analysis" jdbcType="VARCHAR" property="analysis"/>
+        <result column="option_content" jdbcType="VARCHAR" property="optionContent"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
+
     <insert id="insert" parameterType="java.lang.Integer">
         insert into exercise_set_mid (exercise_id, exercise_set_id)
            values(#{exerciseId},#{exerciseSetId})
@@ -21,6 +35,16 @@
             </if>
         </where>
     </delete>
+    <select id="getExerciseListByExerciseSetId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from exercise where exercise_id in (select exercise_id from exercise_set_mid
+        <where>
+            <if test="exerciseSetId != null">
+                and exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+        )
+    </select>
+
     <select id="getExerciseIdListByExerciseSetId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select exercise_id from exercise_set_mid
         <where>
