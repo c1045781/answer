@@ -24,25 +24,25 @@ function deleteCommentModal(id) {
 }
 
 function updateUserModal(id) {
-    window.location.href = "/user/toUpdate?userId=" + id;
+    window.location.href = "/manager/user/toUpdate?userId=" + id;
 }
 
 function updateExerciseModal(id) {
-    window.location.href = "/exercise/toUpdate?exerciseId=" + id;
+    window.location.href = "/manager/exercise/toUpdate?exerciseId=" + id;
 }
 
 function updateExerciseSetModal(id) {
-    window.location.href = "/exerciseSet/toUpdate?exerciseSetId=" + id;
+    window.location.href = "/manager/exerciseSet/toUpdate?exerciseSetId=" + id;
 }
 
 function updateSubjectModal(id) {
-    window.location.href = "/subject/toUpdate?subjectId=" + id;
+    window.location.href = "/manager/subject/toUpdate?subjectId=" + id;
 }
 
 function deleteUser() {
     var id = $('#deleteId').val();
     $.ajax({
-        url: '/user/delete',
+        url: '/manager/user/delete',
         type: 'post',
         data: {userId: id},
         dataType: "text",
@@ -53,7 +53,7 @@ function deleteUser() {
             }else{
                 $('#deleteResultErrorModal').modal();
             }
-            $('#resultUrl').val("/user/check");
+            $('#resultUrl').val("/manager/user/check");
         }
     });
 }
@@ -61,7 +61,7 @@ function deleteUser() {
 function deleteExercise() {
     var id = $('#deleteId').val();
     $.ajax({
-        url: '/exercise/delete',
+        url: '/manager/exercise/delete',
         type: 'post',
         data: {exerciseId: id},
         dataType: "text",
@@ -72,7 +72,7 @@ function deleteExercise() {
             }else{
                 $('#deleteResultErrorModal').modal();
             }
-            $('#resultUrl').val("/exercise/check");
+            $('#resultUrl').val("/manager/exercise/check");
         }
     });
 }
@@ -80,7 +80,7 @@ function deleteExercise() {
 function deleteExerciseSet() {
     var id = $('#deleteId').val();
     $.ajax({
-        url: '/exerciseSet/delete',
+        url: '/manager/exerciseSet/delete',
         type: 'post',
         data: {exerciseSetId: id},
         dataType: "text",
@@ -91,7 +91,7 @@ function deleteExerciseSet() {
             }else{
                 $('#deleteResultErrorModal').modal();
             }
-            $('#resultUrl').val("/exerciseSet/check");
+            $('#resultUrl').val("/manager/exerciseSet/check");
         },error:function(){
             alert("error");
         }
@@ -100,7 +100,7 @@ function deleteExerciseSet() {
 
 function deleteExerciseSetForUser(e) {
     $.ajax({
-        url: '/exerciseSet/deleteExerciseSetForUser',
+        url: '/user/exerciseSet/deleteExerciseSetForUser',
         type: 'post',
         data: {exerciseSetId: e},
         dataType: "text",
@@ -114,7 +114,7 @@ function deleteExerciseSetForUser(e) {
 function deleteSubject() {
     var id = $('#deleteId').val();
     $.ajax({
-        url: '/subject/delete',
+        url: '/manager/subject/delete',
         type: 'post',
         data: {subjectId: id},
         dataType: "text",
@@ -125,7 +125,7 @@ function deleteSubject() {
             }else{
                 $('#deleteResultErrorModal').modal();
             }
-            $('#resultUrl').val("/subject/check");
+            $('#resultUrl').val("/manager/subject/check");
         }
     });
 }
@@ -133,9 +133,9 @@ function deleteSubject() {
 function deleteComment() {
     var id = $('#deleteId').val();
     $.ajax({
-        url: '/comment/delete',
+        url: '/manager/comment/delete',
         type: 'post',
-        data: {id: id},
+        data: {commentId: id},
         dataType: "text",
         success: function (data) {
             $('#deleteCommentModal').modal('hide');
@@ -144,7 +144,7 @@ function deleteComment() {
             }else{
                 $('#deleteResultErrorModal').modal();
             }
-            $('#resultUrl').val("/comment/check");
+            $('#resultUrl').val("/manager/comment/check");
         }
     });
 }
@@ -156,7 +156,7 @@ function resultOK(){
 
 function viewExerciseReviewModal(id){
     $.ajax({
-        url: '/exercise/viewExercise',
+        url: '/manager/exercise/viewExercise',
         type: 'post',
         data: {id: id},
         dataType: "json",
@@ -177,13 +177,13 @@ function viewExerciseReviewModal(id){
 
 function successExerciseReviewModal(exerciseId,messageId) {
     $.ajax({
-        url: '/exercise/status',
+        url: '/manager/exercise/status',
         type: 'post',
         data: {exerciseId: exerciseId,status:1,messageId:messageId},
         dataType: "text",
         success: function (data) {
             $('#successModal').modal();
-            $('#resultUrl').val("/exercise/review");
+            $('#resultUrl').val("/manager/exercise/review");
         }
     });
 }
@@ -193,26 +193,26 @@ function failExerciseReviewModal() {
     var reasonId = $("#reasonId").val();
     var reason = $("#reason").val();
     $.ajax({
-        url: '/exercise/status',
+        url: '/manager/exercise/status',
         type: 'post',
         data: {exerciseId: id,status:2,reason:reason,messageId:reasonId},
         dataType: "text",
         success: function () {
             $('#reasonModal').modal("hide");
             $('#successModal').modal();
-            $('#resultUrl').val("/exercise/review");
+            $('#resultUrl').val("/manager/exercise/review");
         }
     });
 
 }function successPermissionReviewModal(id,userId) {
     $.ajax({
-        url: '/permission/role',
+        url: '/manager/permission/role',
         type: 'post',
-        data: {id: id,role:3,userId:userId,status:1},
+        data: {messageId: id,role:3,userId:userId,status:1},
         dataType: "text",
         success: function (data) {
             $('#successModal').modal();
-            $('#resultUrl').val("/permission/check");
+            $('#resultUrl').val("/manager/permission/check");
         }
     });
 }
@@ -228,14 +228,14 @@ function failPermissionReviewModal() {
     var id = $("#reasonId").val();
     var reason = $("#reason").val();
     $.ajax({
-        url: '/permission/role',
+        url: '/manager/permission/role',
         type: 'post',
         data: {id: id,role:2,userId:userId,reason:reason,status:2},
         dataType: "text",
         success: function (data) {
             $('#reasonModal').modal('hide');
             $('#successModal').modal();
-            $('#resultUrl').val("/permission/check");
+            $('#resultUrl').val("/manager/permission/check");
         }
     });
 
@@ -243,7 +243,7 @@ function failPermissionReviewModal() {
 
 function showAddExercise(e){
     $.ajax({
-        url: '/exercise/checkOfAddExercise',
+        url: '/user/exercise/checkOfAddExercise',
         type: 'post',
         data: {exerciseId: e},
         dataType: "json",
@@ -304,7 +304,7 @@ function showAddExercise(e){
 
 function showAddExerciseSet(e,page){
     $.ajax({
-        url: '/exerciseSet/checkOfExerciseSet',
+        url: '/user/exerciseSet/checkOfExerciseSet',
         type: 'post',
         data: {exerciseSetId: e,currentPage:page},
         dataType: "json",
@@ -363,7 +363,34 @@ function showAddExerciseSet(e,page){
 
 function showPermission(id){
     $.ajax({
-        url: '/permission/checkOfOne',
+        url: '/user/permission/checkOfOne',
+        type: 'post',
+        data: {messageId: id},
+        dataType: "json",
+        success: function (data) {
+            $("#permission_content").html(data.content);
+            if (data.status == 0){
+                $("#permission_status").html("未审核");
+            } else if (data.status == 1){
+                $("#permission_status").html("审核通过");
+            } else {
+                $("#permission_status").html("审核未通过");
+            }
+
+            $("#permission_date").html(Format(new Date(data.createTime),"yyyy-MM-dd hh:mm:ss"));
+            if (data.reason != null && data.reason != "") {
+                $("#permission_reason").html(data.reason);
+            }else {
+                $("#permission_is").css("display","none");
+            }
+            $('#showPermission').modal();
+        }
+    });
+}
+
+function showPermissionForManager(id){
+    $.ajax({
+        url: '/manager/permission/checkOfOne',
         type: 'post',
         data: {id: id},
         dataType: "json",

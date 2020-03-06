@@ -12,9 +12,9 @@ public interface PermissionMapper {
 
     List<Message> getMessageList(Query query);
 
-    void updateStatus(@Param("id") Integer id,@Param("reason") String reason,@Param("status") Integer status);
+    void updateStatus(@Param("messageId") Integer messageId,@Param("reason") String reason,@Param("status") Integer status);
 
-    Message getMessageById(Integer id);
+    Message getMessageByMessageId(Integer messageId);
 
     List<Message> getMessageListByUserId(@Param("userId") Integer userId,@Param("query") Query query);
 

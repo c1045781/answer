@@ -1,6 +1,7 @@
 package top.qiyoung.answer.service;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.DTO.CommentDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
@@ -42,17 +43,17 @@ public class CommentService {
         return paginationDTO;
     }
 
-    public int deleteById(Integer id) {
-        return commentMapper.deleteById(id);
+    public int deleteByCommentId(Integer commentId) {
+        return commentMapper.deleteByCommentId(commentId);
     }
 
     public int countComment() {
         return commentMapper.countCommentList(new Query());
     }
 
-    public List<CommentDTO> getCommentDTOListById(Integer id) {
+    public List<CommentDTO> getCommentDTOListById(Integer exerciseId) {
         List<CommentDTO> commentDTOList = new ArrayList<>();
-        List<Comment> commentList = commentMapper.getCommentListByExerciseId(id);
+        List<Comment> commentList = commentMapper.getCommentListByExerciseId(exerciseId);
         for (Comment comment : commentList) {
             User user = userMapper.getUserById(comment.getUserId());
             CommentDTO commentDTO = new CommentDTO();
@@ -65,7 +66,9 @@ public class CommentService {
         return commentDTOList;
     }
 
-    public void addComment(Comment comment) {
+    public void addComment(Comment comment, UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        comment.setUserId(user.getUserId());
         comment.setCreateTime(new Date());
         commentMapper.addComment(comment);
     }

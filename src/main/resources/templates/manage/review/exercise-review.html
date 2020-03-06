@@ -123,13 +123,13 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/review(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/review(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/review(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/review(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -138,26 +138,26 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
 
@@ -169,7 +169,7 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/exercise/review(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId})}">
+                                       th:href="@{/manager/exercise/review(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
@@ -275,7 +275,7 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').html("<option></option>");
+                    $('#base').html("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }

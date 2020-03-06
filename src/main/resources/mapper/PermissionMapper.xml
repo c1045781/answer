@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="countMessageList" parameterType="top.qiyoung.answer.model.Query" resultType="java.lang.Integer">
-        select count(*) from message where status = 0;
+        select count(*) from message where status = 0 and type = 1;
     </select>
 
     <select id="getMessageList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
@@ -35,17 +35,17 @@
             </if>
         </set>
         <where>
-            <if test="id != null">
-                message_id = #{id}
+            <if test="messageId != null">
+                message_id = #{messageId}
             </if>
         </where>
     </update>
 
-    <select id="getMessageById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getMessageByMessageId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select * from message
         <where>
-            <if test="id != null">
-                message_id =#{id}
+            <if test="messageId != null">
+                message_id =#{messageId}
             </if>
         </where>
     </select>

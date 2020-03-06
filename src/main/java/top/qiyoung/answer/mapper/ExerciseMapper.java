@@ -16,7 +16,7 @@ public interface ExerciseMapper {
 
     int deleteById(Integer id);
 
-    Exercise getExerciseById(Integer id);
+    Exercise getExerciseByExerciseId(Integer exerciseId);
 
     int update(Exercise exercise);
 

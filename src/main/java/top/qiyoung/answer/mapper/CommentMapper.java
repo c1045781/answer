@@ -10,9 +10,9 @@ public interface CommentMapper {
 
     int countCommentList(Query query);
 
-    int deleteById(Integer id);
+    int deleteByCommentId(Integer commentId);
 
-    List<Comment> getCommentListByExerciseId(Integer id);
+    List<Comment> getCommentListByExerciseId(Integer exerciseId);
 
     void addComment(Comment comment);
 }

@@ -1,5 +1,7 @@
 package top.qiyoung.answer.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +25,15 @@ public class IndexController {
     @Resource
     private PermissionService permissionService;
 
-    @RequestMapping("/answer.html")
+   /* @RequestMapping("/answer.html")
     public String exercise(){
         return "user/answer";
-    }
+    }*/
 
-    @RequestMapping("/manage")
+   /* @RequestMapping("/manage")
     public String manage(){
         return "manage/main-page";
-    }
+    }*/
 
     // 跳转登陆页面
     @RequestMapping("/toLogin")
@@ -46,10 +48,12 @@ public class IndexController {
     }
 
     // 首页根据用户跳转页面
-    @RequestMapping("/")
-    public String index(Model model, HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null){
+    @RequestMapping("/index")
+    public String index(Model model){
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userDetails!=null) {
+            User user = userService.getUserByUserDetails(userDetails);
             if(user.getRole() == 1 || user.getRole() == 0){
                 int userCount = userService.userCount();
                 int exerciseCount = exerciseService.countExercise();
@@ -64,6 +68,16 @@ public class IndexController {
                 return "manage/main-page";
             }
         }
+        return "user/index";
+    }
+
+    @RequestMapping("/user/personal")
+    public String personal(){
+        return "user/personal";
+    }
+
+    @RequestMapping("/")
+    public String index(){
         return "user/index";
     }
 }

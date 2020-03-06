@@ -1,6 +1,7 @@
-package top.qiyoung.answer.controller;
+package top.qiyoung.answer.controller.manager;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,22 +9,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.User;
-import top.qiyoung.answer.service.ExerciseService;
-import top.qiyoung.answer.service.ExerciseSetService;
 import top.qiyoung.answer.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/manager/user")
+public class ManagerUserController {
 
     @Resource
     private UserService userService;
@@ -31,15 +27,16 @@ public class UserController {
     // 查询用户
     @RequestMapping("/check")
     public String checkUser(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                            @RequestParam(value = "size", defaultValue = "2") Integer size,
+                            @RequestParam(value = "size", defaultValue = "10") Integer size,
                             @RequestParam(value = "search", required = false) String search,
                             @RequestParam(value = "type", required = false) String type,
                             @RequestParam(value = "role", required = false ) Integer role,
                             @RequestParam(value = "order", defaultValue = "user_id asc") String order,
                             Model model,
                             HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        PaginationDTO paginationDTO = userService.getUserList(currentPage, size, search, type, order,role,user.getRole());
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PaginationDTO paginationDTO = userService.getUserList(currentPage, size, search, type, order,role,userDetails);
         model.addAttribute("paginationDTO", paginationDTO);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
@@ -86,23 +83,23 @@ public class UserController {
                 model.addAttribute("message", "图片上传失败请重新上传");
                 return "manage/user/add-user";
             } else {
-                return "redirect:/user/check";
+                return "redirect:/manager/user/check";
             }
         } else {
             int result = userService.update(user, avatarImg);
             if (result <= 0){
-                User dbuser = userService.getUserById(user.getUserId());
+                User dbuser = userService.getUserByUserId(user.getUserId());
                 model.addAttribute("user", dbuser);
                 return "manage/user/add-user";
             }
-            return "redirect:/user/check";
+            return "redirect:/manager/user/check";
         }
     }
 
     // 跳转更新页面
     @RequestMapping("/toUpdate")
     public String toUpdate(Integer userId, Model model) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByUserId(userId);
         model.addAttribute("user", user);
         return "manage/user/add-user";
     }
@@ -118,59 +115,13 @@ public class UserController {
         return "success";
     }
 
-    @RequestMapping("/information")
-    @ResponseBody
-    public User information(HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        User dbUser = userService.getUserById(user.getUserId());
-        return dbUser;
-    }
-
-    @RequestMapping("/manager")
+    @RequestMapping("/info")
     public String manager(HttpServletRequest request,Model model){
-        User user = (User) request.getSession().getAttribute("user");
-        User dbUser = userService.getUserById(user.getUserId());
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User dbUser = userService.getUserById(userDetails);
         model.addAttribute("user",dbUser);
         return "/manage/manager-info";
     }
 
-    @RequestMapping("/personal")
-    public String personal(){
-        return "user/personal";
-    }
-
-    @RequestMapping("/personal/update")
-    public String personalUpdate(User user, Model model,
-                                 @RequestParam(value = "avatarImg", required = false) MultipartFile avatarImg,
-                                 HttpServletResponse response){
-        if (avatarImg != null && StringUtils.isNotBlank(avatarImg.getOriginalFilename())) {
-            String filename = avatarImg.getOriginalFilename();
-            String[] split = filename.split("\\.");
-            String suffix = split[split.length - 1];
-            if (!avatarImg.isEmpty() && !(suffix.equals("jpg") || suffix.equals("png") || suffix.equals("jpeg"))) {
-                response.setContentType("text/html; charset=utf-8");
-                try {
-                    response.getWriter().println("<script language='javascript'>alert('图片格式错误!');</script>");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "redirect:/user/personal";
-            }
-        }
-        String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(user.getPhone());
-        if (!m.matches()){
-            response.setContentType("text/html; charset=utf-8");
-            try {
-                response.getWriter().println("<script language='javascript'>alert('手机号格式错误!');</script>");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return "redirect:/user/personal";
-        }
-
-        userService.update(user, avatarImg);
-        return "redirect:/user/personal";
-    }
 }

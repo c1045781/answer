@@ -2,6 +2,7 @@ package top.qiyoung.answer.service;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
@@ -28,7 +29,8 @@ public class ExerciseSetService {
     @Resource
     private UserMapper userMapper;
 
-    public int insert(ExerciseSetDTO setVM, User user) {
+    public int insert(ExerciseSetDTO setVM, UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
         int result;
         ExerciseSet exerciseSet = new ExerciseSet();
 
@@ -170,7 +172,8 @@ public class ExerciseSetService {
         return setMapper.countExerciseSetList(new Query());
     }
 
-    public PaginationDTO<ExerciseSetDTO> getExerciseListByUserId(Integer currentPage, Integer size, String orderBy, User user) {
+    public PaginationDTO<ExerciseSetDTO> getExerciseListByUserId(Integer currentPage, Integer size, String orderBy, UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
         List<ExerciseSet> exerciseSets = setMapper.getExerciseSetListByUserId((currentPage-1)*size,size,orderBy,user.getUserId());
         int count = setMapper.countExerciseSetListByUserId(user.getUserId());
         List<ExerciseSetDTO> exerciseSetDTOS = new ArrayList<>();
@@ -185,7 +188,8 @@ public class ExerciseSetService {
         return paginationDTO;
     }
 
-    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage,User user) {
+    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage,UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
         List<Integer> exerciseIdList = midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
         ExerciseSet set = setMapper.getExerciseSetById(exerciseSetId);
         List<ExerciseReviewDTO> exerciseReviewDTOS = new ArrayList<>();
@@ -196,7 +200,7 @@ public class ExerciseSetService {
             end = exerciseIdList.size();
         }
         for (int i=(currentPage-1)*2;i<end;i++){
-            Exercise exercise = exerciseMapper.getExerciseById(exerciseIdList.get(i));
+            Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseIdList.get(i));
             Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
             ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,null,subject,user, JSON.parseArray(exercise.getOptionContent(), Option.class));
             exerciseReviewDTOS.add(exerciseReviewDTO);

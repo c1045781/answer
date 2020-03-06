@@ -87,8 +87,8 @@
         </where>
     </select>
 
-    <select id="getExerciseById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select * from exercise where exercise_id = #{id}
+    <select id="getExerciseByExerciseId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from exercise where exercise_id = #{exerciseId}
     </select>
 
     <delete id="deleteById" parameterType="java.lang.Integer">

@@ -19,7 +19,7 @@ public class AccountController {
     private UserService userService;
 
     // 用户登录
-    @PostMapping("/login")
+   /* @PostMapping("/login")
     public String login(User user, RedirectAttributesModelMap model, HttpServletResponse response){
         User dbuser = userService.login(user);
         if(dbuser != null){
@@ -28,7 +28,7 @@ public class AccountController {
         }
         model.addFlashAttribute("error","账号或密码错误");
         return "redirect:/toLogin";
-    }
+    }*/
 
     // 用户注册
     @RequestMapping("/register")
@@ -44,7 +44,7 @@ public class AccountController {
             model.addFlashAttribute("error","账号已存在");
             return "redirect:/toRegister";
         }
-        return "redirect:/";
+        return "redirect:/toLogin";
     }
 
 

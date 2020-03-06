@@ -30,11 +30,11 @@
     <header class="kopa-header-02">
         <div class="top-header">
             <div class="container">
-                <div class="right-top-header" th:if="${session.user == null}">
+                <div class="right-top-header" th:if="${#authentication} == null">
                     <a href="/toLogin">登录</a>
                     <a href="/toRegister">注册</a>
                 </div>
-                <div class="right-top-header" th:if="${session.user != null}">
+                <div class="right-top-header" th:if="${#authentication} != null">
                     <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
                 </div>
@@ -48,9 +48,9 @@
                     <nav class="kopa-main-menu style-02">
                         <ul>
                             <li><a href="/">首页</a></li>
-                            <li><a href="/exercise/check">试题库</a></li>
-                            <li><a href="/exerciseSet/check">套题库</a></li>
-                            <li><a href="/answer/wrongBook">错题本</a></li>
+                            <li><a href="/user/exercise/check">试题库</a></li>
+                            <li><a href="/user/exerciseSet/check">套题库</a></li>
+                            <li><a href="/user/answer/wrongBook">错题本</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -69,9 +69,9 @@
         <section class="widget kopa-widget-advanced_search answer-login-form">
             <div class="widget-content module-advanced_search-03">
                 <form action="/login" method="post">
-                    <span style="color: red;" th:text="${error}"></span>
+                    <span style="color: red;" th:if="${param.error}" th:text="用户或密码错误，请确认后重新输入！"></span>
                     <h2 class="widget-title">账号登录</h2>
-                    <p><input type="text" placeholder="账号" name="account" required></p>
+                    <p><input type="text" placeholder="账号" name="username" required></p>
                     <p><input type="password" placeholder="密码" name="password" required>
                         <a href="javascript:void(0)" onclick="changePasswdType()"><img src="/img/icon/eye.png"/></a>
                     </p>

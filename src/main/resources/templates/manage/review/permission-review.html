@@ -66,6 +66,9 @@
                             <td class="answer-table-td" th:title="${message.content}"  th:text="${message.content}"></td>
                             <td th:text="${#dates.format(message.createTime,'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
+                                <button th:onclick="showPermissionForManager([[${message.messageId}]])" type="button" class="btn btn-danger">
+                                    查看
+                                </button>
                                 <button th:onclick="successPermissionReviewModal([[${message.messageId}]],[[${message.userId}]])" type="button" class="btn btn-danger">
                                     同意
                                 </button>
@@ -87,13 +90,13 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/review(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/permission/review(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/review(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -102,44 +105,44 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/exercise/review(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/exercise/review(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
                                 <li>
                                     <input type="text" id="skip" name="skip" th:value="${skip}" class="input-skip">
-                                    <button onclick="submitReviewExerciseFrom($('#skip').val())" class="btn btn-primary" style="margin-bottom: 3px;">跳转</button>
+                                    <button onclick="submitReviewPermissionFrom($('#skip').val())" class="btn btn-primary" style="margin-bottom: 3px;">跳转</button>
                                 </li>
                             </ul>
                         </nav>
@@ -149,6 +152,38 @@
         </div>
     </div>
     <div th:insert="~{foot :: foot}"></div>
+    <div class="modal fade" id="showPermission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">申请内容</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <p id="permission_content" style="overflow-wrap: break-word;"></p>
+                    </div>
+                    <div class="product_meta">
+                                            <span style="width: 100%;float: left;margin: 10px 0;">申请状态：
+                                                <span class="sku" id="permission_status"></span>
+                                            </span>
+                        <span  id="permission_is">拒绝理由：
+                                               <span class="sku" id="permission_reason"></span>
+                                            </span>
+                        <span style="margin: 10px 0;">申请日期:
+                                                <span class="sku" id="permission_date"></span>
+                                            </span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button style="background: #3498db" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

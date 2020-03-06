@@ -62,7 +62,7 @@
                                         </div>
                                         <div class="form-body form-body-info">
                                             <form data-toggle="validator" novalidate="true"
-                                                  action="/subject/addOrUpdate"
+                                                  action="/manager/subject/addOrUpdate"
                                                   method="post">
                                                 <div class="form-group col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">学科：</label>
@@ -79,18 +79,6 @@
                                                         <input  list="base" style="height: 50px;" class="form-control" onchange="showSubject(this.value)" name="baseSubject" th:if='${baseList == null}'>
                                                         <datalist id="base" th:if='${baseList == null}'>
                                                         </datalist>
-
-                                                       <!-- <select id="base" name="baseSubject" onchange="showSubject(this.value)" class="form-control" style="height: 50px;"
-                                                                th:if='${baseList != null}'>
-                                                            <option th:each="base:${baseList}"
-                                                                    th:text="${base}" th:value="${base}"
-                                                                    th:selected='${subject.baseSubject == base}'></option>
-                                                        </select>
-
-                                                        <select id="base"  name="baseSubject"  onchange="showSubject(this.value)"
-                                                                class="form-control" style="height: 50px;"
-                                                                th:if='${baseList == null}'>
-                                                        </select>-->
                                                     </div>
                                                 </div>
                                                 <div class="form-group  col-xs-12 col-md-12 col-sm-12">

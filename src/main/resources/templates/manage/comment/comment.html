@@ -51,7 +51,6 @@
                     <h3 class="w3_inner_tittle two">评论列表</h3>
                     <div>
                         <select name="type" id="type"  class="answer-select">
-                            <option value=""></option>
                             <option th:selected="${type == 'user'}" value="user">用户ID</option>
                             <option th:selected="${type == 'exercise'}" value="exercise">习题ID</option>
                         </select> ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
@@ -93,13 +92,13 @@
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
-                                    <a href="#" aria-label="Previous" th:href="@{/user/check(currentPage=1 ,type=${type}, search=${search})}">
+                                    <a href="#" aria-label="Previous" th:href="@{/manager/user/check(currentPage=1 ,type=${type}, search=${search})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/comment/check(currentPage=${paginationDTO.currentPage-1},type=${type}, search=${search})}">
+                                       th:href="@{/manager/comment/check(currentPage=${paginationDTO.currentPage-1},type=${type}, search=${search})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -108,38 +107,38 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/comment/check(currentPage=${pageNo},type=${type}, search=${search})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/comment/check(currentPage=${paginationDTO.currentPage+1},type=${type}, search=${search})}">
+                                       th:href="@{/manager/comment/check(currentPage=${paginationDTO.currentPage+1},type=${type}, search=${search})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/comment/check(currentPage=${paginationDTO.totalPage},type=${type}, search=${search})}">
+                                       th:href="@{/manager/comment/check(currentPage=${paginationDTO.totalPage},type=${type}, search=${search})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>

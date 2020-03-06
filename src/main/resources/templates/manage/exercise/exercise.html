@@ -78,7 +78,7 @@
                         </select>
                         题目类型：
                         <select name="exerciseType" id="exerciseType" class="answer-select">
-                            <option ></option>
+                            <option value="">全部</option>
                             <option th:selected="${exerciseType == '单选题'}" >单选题</option>
                             <option th:selected="${exerciseType == '多选题'}">多选题</option>
                             <option th:selected="${exerciseType == '判断题'}">判断题</option>
@@ -132,13 +132,13 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/check(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -147,38 +147,38 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/exercise/check(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
@@ -287,7 +287,7 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').html("<option></option>");
+                    $('#base').html("<option>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }

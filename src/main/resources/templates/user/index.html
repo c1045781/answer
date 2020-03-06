@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head>
 		<meta charset="utf-8">
 		<title>Home</title>
@@ -24,7 +25,9 @@
 		<div id="main-container">
 			<header class="kopa-header-01">
 				<div class="container">
-					<div class="top-header" th:if="${session.user == null}">
+					<!--<div class="top-header" sec:authorize="!isAuthenticated()">-->
+					<!--<div class="top-header" th:if="${session.user == null}">-->
+					<div class="top-header" th:if="${#authentication} == null">
 						<div class="kopa-login">
 							<a href="/toLogin">
 								<i class="fa fa-sign-in"></i>
@@ -38,7 +41,8 @@
 							</a>
 						</div>
 					</div>
-					<div class="top-header" th:if="${session.user != null}">
+					<div class="top-header" th:if="${#authentication} != null">
+					<!--<div class="top-header" th:if="${session.user != null}">-->
 						<div class="kopa-login">
 							<a href="/logout">
 								<i class="fa fa-sign-in"></i>
@@ -63,9 +67,9 @@
 								<nav class="kopa-main-menu style-01">
 									<ul>
 										<li><a href="/">首页</a></li>
-										<li><a href="/exercise/check">试题库</a></li>
-										<li><a href="/exerciseSet/check">套题库</a></li>
-										<li><a href="/answer/wrongBook">错题本</a></li>
+										<li><a href="/user/exercise/check">试题库</a></li>
+										<li><a href="/user/exerciseSet/check">套题库</a></li>
+										<li><a href="/user/answer/wrongBook">错题本</a></li>
 									</ul>
 								</nav>
 							</div>
@@ -94,7 +98,7 @@
 							<div class="widget-content module-advanced_search-01">
 								<div class="custom-bg-0"></div>
 								<div class="custom-bg">
-									<form>
+									<form action="/user/exercise/check" method="post">
 										<p class="arrow-select">
 											<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 											<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"

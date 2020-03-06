@@ -95,7 +95,7 @@ function addExercise(e) {
         $("#totalPage").val('');
     }
     $.ajax({
-        url: '/exercise/getExerciseBySubjectId',
+        url: '/manager/exercise/getExerciseBySubjectId',
         type: 'post',
         data: {
             subjectId: $("#subjectId").val(), type: $("#exerciseTypeHidden").val()
@@ -111,7 +111,7 @@ function addExercise(e) {
                         "<td>" + list[i].exercise.exerciseId + "</td>" +
                         "<td>" + list[i].exercise.exerciseType + "</td>" +
                         "<td>" + list[i].exercise.exerciseTitle + "</td>" +
-                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForExerciseSet("+ list[i].exercise.exerciseId +")'>确认</button></td>" +
+                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForManager("+ list[i].exercise.exerciseId +")'>确认</button></td>" +
                         "</tr>");
                 }
                 if (data.totalPage == 0) {
@@ -140,7 +140,7 @@ function addExerciseForUser(e) {
         $("#totalPage").val('');
     }
     $.ajax({
-        url: '/exercise/getExerciseBySubjectId',
+        url: '/user/exercise/getExerciseBySubjectId',
         type: 'post',
         data: {
             subjectId: $("#exerciseSetSubjectId").val(), type: $("#exerciseTypeHidden").val()
@@ -156,7 +156,7 @@ function addExerciseForUser(e) {
                         "<td>" + list[i].exercise.exerciseId + "</td>" +
                         "<td>" + list[i].exercise.exerciseType + "</td>" +
                         "<td>" + list[i].exercise.exerciseTitle + "</td>" +
-                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForExerciseSet("+ list[i].exercise.exerciseId +")'>查看</button></td>" +
+                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForUser("+ list[i].exercise.exerciseId +")'>查看</button></td>" +
                         "</tr>");
                 }
                 if (data.totalPage == 0) {
@@ -247,11 +247,39 @@ function addExerciseToset() {
     $('#addExerciseModal').modal('hide');
 }
 
-function showExerciseForExerciseSet(id){
+function showExerciseForManager(id){
     $.ajax({
-        url: '/exercise/viewExercise',
+        url: '/manager/exercise/viewExercise',
         type: 'post',
-        data: {id: id},
+        data: {exerciseId: id},
+        dataType: "json",
+        success: function (data) {
+
+            var content = '';
+                content += "<div class='list-group'>" +
+                    "<h3 class='list-group-item-heading exercise-list-title'>"+data.exercise.exerciseTitle+"</h3>"+
+                    "<div class='exercise-list-info'>";
+                $.each(data.options,function(index,item){
+                    content += '<p class="list-group-item-text option-span">'+item.option + '.' + item.content + '</p>';
+                });
+                content += "</div>" +
+                    "<div class='exercise-list-info'>"+"题目分类："+data.subject.baseSubject +'»'+data.subject.name+"</div>" +
+                    "<div class='exercise-list-info'>"+"正确答案："+data.exercise.correct+"</div>" +
+                    "<div class='exercise-list-info'>"+"答案解析："+data.exercise.analysis+"</div>" +
+                    "</div>";
+            $('#exerciseBody').html(content);
+            $("#modify").css("display","none");
+            $('#permission').css("display","none");
+            $('#showAddExercise').modal();
+        }
+    });
+}
+
+function showExerciseForUser(id){
+    $.ajax({
+        url: '/user/exercise/viewExercise',
+        type: 'post',
+        data: {exerciseId: id},
         dataType: "json",
         success: function (data) {
 
@@ -319,7 +347,7 @@ function submitUserFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/user/check?currentPage=" + skip+"&role="+ role +"&type="+ type+"&search="+search;
+    window.location.href = "/manager/user/check?currentPage=" + skip+"&role="+ role +"&type="+ type+"&search="+search;
 }
 
 function submitExerciseFrom(e){
@@ -338,7 +366,7 @@ function submitExerciseFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType;
+    window.location.href = "/manager/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType;
 }
 
 function submitExerciseSetFrom(e){
@@ -356,7 +384,7 @@ function submitExerciseSetFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/exerciseSet/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search;
+    window.location.href = "/manager/exerciseSet/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search;
 }
 
 function submitSubjectFrom(e) {
@@ -370,7 +398,7 @@ function submitSubjectFrom(e) {
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/subject/check?currentPage=" + skip +"&type="+ type+"&search="+search;
+    window.location.href = "/manager/subject/check?currentPage=" + skip +"&type="+ type+"&search="+search;
 }
 
 function submitReviewExerciseFrom(e) {
@@ -386,7 +414,22 @@ function submitReviewExerciseFrom(e) {
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/exercise/review?currentPage=" + skip+"&subjectId="+ subjectId;
+    window.location.href = "/manager/exercise/review?currentPage=" + skip+"&subjectId="+ subjectId;
+}
+
+function submitReviewPermissionFrom(e) {
+    var skip = parseInt(e);
+    var total = parseInt($("#totalPage").val());
+    if (subjectId == null || isNaN(subjectId)){
+        subjectId = "";
+    }
+    if (isNaN(skip) || skip == null || skip < 1){
+        skip = 1;
+    }
+    if (skip > total) {
+        skip = total;
+    }
+    window.location.href = "/manager/permission/review?currentPage=" + skip;
 }
 
 function submitCommentFrom(e){
@@ -400,31 +443,27 @@ function submitCommentFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/comment/check?currentPage=" + skip +"&type="+ type+"&search="+search;
+    window.location.href = "/manager/comment/check?currentPage=" + skip +"&type="+ type+"&search="+search;
 }
 
 
 function exerciseTypeChange(e){
     var subjectId = $("#hidden_subjectId").val();
     var search = $("#hidden_search").val();
-    window.location.href = "/exercise/check?subjectId="+ subjectId+"&search="+search+"&exerciseType="+e;
+    window.location.href = "/user/exercise/check?subjectId="+ subjectId+"&search="+search+"&exerciseType="+e;
 }
 
 function orderbyChange(e){
     var subjectId = $("#hidden_subjectId").val();
     var search = $("#hidden_search").val();
-    window.location.href = "/exerciseSet/check?subjectId="+ subjectId+"&search="+search+"&orderby="+e;
+    window.location.href = "/user/exerciseSet/check?subjectId="+ subjectId+"&search="+search+"&orderby="+e;
 }
 
-function answer_Exercise(e){
-    window.open( "/exercise/exerciseToAnswer?exerciseId=" + e);
-}
-
-function answer_Exercise_set(e){
+/*function answer_Exercise_set(e){
     window.open("/exercise/exerciseSetToAnswer?exerciseSetId=" + e);
-}
+}*/
 
-function confirm_answer(){
+function confirmAnswer(){
 
     $("div[name=corrent_div]").css('display','block');
     $("input[type=radio]:checked").each(function() {
@@ -441,7 +480,7 @@ function confirm_answer(){
         }
 
         $.ajax({
-            url: '/answer/addOrUpdate',
+            url: '/user/answer/addOrUpdate',
             type: 'post',
             data: JSON.stringify({exerciseId: checked_name,answer: $(this).val()}),
             contentType: "application/json"
@@ -483,7 +522,7 @@ function confirm_answer(){
         }
 
         $.ajax({
-            url: '/answer/addOrUpdate',
+            url: '/user/answer/addOrUpdate',
             type: 'post',
             data: JSON.stringify({exerciseId: arr_id,answer: answer}),
             contentType: "application/json"
@@ -493,14 +532,15 @@ function confirm_answer(){
     }
 
     $("#a_confirm").css('display','none');
+    $("#correct_div").css('display','block');
 
 }
 
-function open_exercise_comment(e){
+function openExerciseComment(e){
     $.ajax({
-        url: '/comment/getCommentDTOList',
+        url: '/user/comment/getCommentDTOList',
         type: 'post',
-        data: {"id":e},
+        data: {"exerciseId":e},
         success:function(data){
             var content = "";
             for (var i=0;i<data.length;i++){
@@ -532,15 +572,15 @@ function open_exercise_comment(e){
     $("#a_open_comment"+e).css('display','none');
 }
 
-function close_exercise_comment(e) {
+function closeExerciseComment(e) {
     $("#a_close_comment"+e).css('display','none');
     $("#a_open_comment"+e).css('display','block');
     $("#comment_section"+e).css('display','none');
 }
 
-function open_exercise_note(e){
+function openExerciseNote(e){
     $.ajax({
-        url: '/note/getNote',
+        url: '/user/note/getNote',
         type: 'post',
         data: {"exerciseId":e},
         dataType:"json",
@@ -565,7 +605,7 @@ function open_exercise_note(e){
     $("#a_open_note"+e).css('display','none');
 }
 
-function close_exercise_note(e){
+function closeExerciseNote(e){
     $("#note_form"+e).css('display','none');
     $("#a_close_note"+e).css('display','none');
     $("#a_open_note"+e).css('display','block');
@@ -605,35 +645,35 @@ function Format(datetime,fmt) {
     return fmt;
 }
 
-function submit_comment(e){
+function submitComment(e){
     $.ajax({
         type: "POST",
         dataType: "text",
-        url: "/comment/addComment",
+        url: "/user/comment/addComment",
         data: $('#comment_form'+e).serialize(),
         success:function (data) {
-            open_exercise_comment(e);
+            openExerciseComment(e);
         }
     });
     $("#comment_form"+ e +" textarea").val('');
 }
 
-function submit_note(e){
+function submitNote(e){
     $.ajax({
         type: "POST",
-        url: "/note/addOrUpdateNote;charset=utf-8",
+        url: "/user/note/addOrUpdate",
         data: JSON.stringify({"content":$("#note_textarea"+e).val(),"exerciseId":e,"noteId":$("#noteId").val()}),
         contentType:"application/json",
         dataType: "text",
         success:function (data) {
-            open_exercise_note(e);
+            openExerciseNote(e);
         }
     });
 }
 
 function changeCollectIcon(e) {
     $.ajax({
-        url:"/collect/addCollect",
+        url:"/user/collect/addCollect",
         contentType:"text",
         dataType:"text",
         data:{"exerciseId":e},
@@ -646,7 +686,7 @@ function changeCollectIcon(e) {
 
 function changeCollectActiveIcon(e) {
     $.ajax({
-        url:"/collect/deleteCollect",
+        url:"/user/collect/deleteCollect",
         type:"post",
         dataType:"text",
         data:{"exerciseId":e},
@@ -659,7 +699,7 @@ function changeCollectActiveIcon(e) {
 
 function personInformation(){
     $.ajax({
-        url:"/user/information",
+        url:"/user/users/information",
         contentType:"application/json",
         success:function (data){
             $("#userId").val(data.userId);
@@ -677,7 +717,7 @@ function personInformation(){
 
 function historyAnswer(e){
     $.ajax({
-        url:"/answer/findAnswer",
+        url:"/user/answer/findAnswer",
         dataType:"json",
         data:{"currentPage":e},
         success:function(data){
@@ -694,7 +734,7 @@ function historyAnswer(e){
                     "<div class='history-div-50'>" +
                     "<p class='history-right'>答题时间：<span>"+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +"</span></p>" +
                     "</div>" +
-                    "<a target='_blank' href='/answer/viewHistoryExercise?answerId="+ list[i].answerId +"' class='button-01 history-right'>查看</a>" +
+                    "<a target='_blank' href='/user/answer/viewHistoryExercise?answerId="+ list[i].answerId +"' class='button-01 history-right'>查看</a>" +
                     "</div>" +
                     "</li>";
             }
@@ -774,7 +814,7 @@ function historyAnswer(e){
 
 function permissionList(currentPage){
     $.ajax({
-        url: '/permission/permissionList',
+        url: '/user/permission/permissionList',
         type: 'post',
         data:{currentPage:currentPage},
         dataType: "json",
@@ -861,10 +901,10 @@ function permissionList(currentPage){
     });
 }
 
-function submit_permission_add_from() {
-    var content = $("#permission_add_from textarea").val();
+function submitAddPermissionFrom() {
+    var content = $("#addPermissionFrom textarea").val();
     $.ajax({
-        url:"/permission/add",
+        url:"/user/permission/add",
         type:"post",
         data:{"content":content},
         success:function(data){
@@ -877,7 +917,7 @@ function submit_permission_add_from() {
 
 function collectList(e){
     $.ajax({
-        url:"/collect/findCollectList",
+        url:"/user/collect/findCollectList",
         dataType:"json",
         data:{"currentPage":e},
         success:function(data) {
@@ -894,7 +934,7 @@ function collectList(e){
                     "<div class='history-div-50'>" +
                     "<p class='history-right'>收藏时间：<span>" + Format(new Date(list[i].collect.createTime), "yyyy-MM-dd hh:mm:ss") + "</span></p>" +
                     "</div>" +
-                    "<a target='_blank' onclick='answer_Exercise(" + list[i].exercise.exerciseId + ");' href='javascript:void(0)' class='button-01 history-right'>查看</a>" +
+                    "<a target='_blank' href='/user/exercise/exerciseToAnswer?exerciseId="+list[i].exercise.exerciseId+"' class='button-01 history-right'>查看</a>" +
                     "</div>" +
                     "</li>";
             }
@@ -974,7 +1014,7 @@ function collectList(e){
 
 function noteList(e){
     $.ajax({
-        url:"/note/findNoteList",
+        url:"/user/note/findNoteList",
         type:"post",
         data:{"currentPage":e},
         dataType:"json",
@@ -985,7 +1025,7 @@ function noteList(e){
                 content += "<article class='entry-item'>" +
                     "<div class='entry-content'>" +
                     "<h4 class='entry-title'>" +
-                    "<a target='_blank' href='/answer/viewNoteExercise?noteId="+ list[i].noteId +"'>"+ list[i].content +"</a>" +
+                    "<a target='_blank' href='/user/answer/viewNoteExercise?noteId="+ list[i].noteId +"'>"+ list[i].content +"</a>" +
                     "</h4>" +
                     "<div class='entry-meta'>" +
                     "<span>"+ Format(list[i].modifyTime,'yyyy-MM-dd hh:mm:ss') +"</span>" +
@@ -1163,7 +1203,7 @@ function toExerciseSetList(){
 function AddExerciseList(page){
     var status = $("#status").val();
     $.ajax({
-        url: '/exercise/getReviewExerciseByUserId',
+        url: '/user/exercise/getReviewExerciseByUserId',
         type: 'post',
         data:{currentPage:page,status:status},
         dataType: "json",
@@ -1257,7 +1297,7 @@ function modifyExercise(id){
     $("#AddExerciseXLS").css("display","none");
     $("#AddExerciseForm").css("display","block");
     $.ajax({
-       url:"/exercise/userExerciseUpdate",
+       url:"/user/exercise/toUpdate",
        data:{exerciseId:id},
        dataType:"json",
        success:function (data) {
@@ -1344,7 +1384,7 @@ function modifyExercise(id){
 
 function modifyExerciseSet(e){
     $.ajax({
-        url:"/exerciseSet/toUpdateByUser",
+        url:"/user/exerciseSet/toUpdate",
         data:{exerciseSetId:e},
         dataType:"json",
         type:"post",
@@ -1395,7 +1435,7 @@ function submitAddExercise(){
 
 function AddExerciseSetList(page){
     $.ajax({
-        url: '/exerciseSet/getExerciseSetByUserId',
+        url: '/user/exerciseSet/getExerciseSetByUserId',
         type: 'post',
         data:{currentPage:page},
         dataType: "json",

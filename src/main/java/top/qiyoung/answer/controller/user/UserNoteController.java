@@ -1,5 +1,7 @@
-package top.qiyoung.answer.controller;
+package top.qiyoung.answer.controller.user;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,30 +17,32 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Controller
-@RequestMapping("/note")
-public class NoteController {
+@RequestMapping("/user/note")
+public class UserNoteController {
     @Resource
     private NoteService noteService;
 
     @RequestMapping("/getNote")
     @ResponseBody
     public Note getNote(Integer exerciseId, HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        Note note = noteService.getNote(exerciseId, user.getUserId());
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Note note = noteService.getNote(exerciseId, userDetails);
         return note;
     }
 
-    @RequestMapping("/addOrUpdateNote")
+    @RequestMapping("/addOrUpdate")
     @ResponseBody
     public String addNote(HttpServletRequest request,@RequestBody Note note){
-        User user = (User) request.getSession().getAttribute("user");
-        note.setUserId(user.getUserId());
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        note.setUserId(user.getUserId());
         note.setModifyTime(new Date());
         if (note.getNoteId() == null){
             note.setCreateTime(new Date());
-            noteService.addNote(note);
+            noteService.addNote(note,userDetails);
         }else{
-           noteService.updateNote(note);
+           noteService.updateNote(note,userDetails);
         }
         return "success";
     }
@@ -48,9 +52,10 @@ public class NoteController {
     @ResponseBody
     public PaginationDTO<Note> findNoteList(HttpServletRequest request,
                                            Integer currentPage,
-                                           @RequestParam(defaultValue = "3") Integer pageSize){
-        User user = (User) request.getSession().getAttribute("user");
-        PaginationDTO<Note> paginationDTO = noteService.findNoteList(user.getUserId(),currentPage,pageSize);
+                                           @RequestParam(defaultValue = "10") Integer pageSize){
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PaginationDTO<Note> paginationDTO = noteService.findNoteList(userDetails,currentPage,pageSize);
         return paginationDTO;
     }
 }

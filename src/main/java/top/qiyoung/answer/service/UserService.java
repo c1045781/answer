@@ -1,5 +1,6 @@
 package top.qiyoung.answer.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.qiyoung.answer.mapper.ExerciseMapper;
@@ -52,7 +53,8 @@ public class UserService {
         return 1;
     }
 
-    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role,Integer userRole) {
+    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role,UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
         PaginationDTO<User> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
@@ -63,7 +65,7 @@ public class UserService {
         query.setOrder(order);
         List<User> userList;
         int count;
-        if (userRole == 0){
+        if (user.getRole() == 0){
             userList = userMapper.getUserList0(query);
             paginationDTO.setDataList(userList);
             count = userMapper.countUserList0(query);
@@ -84,8 +86,9 @@ public class UserService {
         return reslut;
     }
 
-    public User getUserById(Integer id) {
-        return userMapper.getUserById(id);
+    public User getUserById(UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        return userMapper.getUserById(user.getUserId());
     }
 
     public int update(User user, MultipartFile avatarImg) {
@@ -111,4 +114,12 @@ public class UserService {
         return userMapper.countUserList1(query);
     }
 
+    public User getUserByUserId(Integer userId) {
+        return userMapper.getUserById(userId);
+    }
+
+    public User getUserByUserDetails(UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        return user;
+    }
 }

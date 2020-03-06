@@ -1,5 +1,7 @@
-package top.qiyoung.answer.controller;
+package top.qiyoung.answer.controller.user;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/answer")
-public class AnswerController {
+@RequestMapping("/user/answer")
+public class UserAnswerController {
 
     @Resource
     private AnswerService answerService;
@@ -42,10 +44,11 @@ public class AnswerController {
     @RequestMapping("/addOrUpdate")
     @ResponseBody
     public void addOrUpdate(@RequestBody Answer answer, HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("user");
-        answer.setUserId(user.getUserId());
-        answer.setCreateTime(new Date());
-        answerService.addOrUpdate(answer);
+//        User user = (User) request.getSession().getAttribute("user");
+//        answer.setUserId(user.getUserId());
+//        answer.setCreateTime(new Date());
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        answerService.addOrUpdate(answer,userDetails);
     }
 
     // 查找用户答题记录
@@ -53,9 +56,11 @@ public class AnswerController {
     @ResponseBody
     public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(HttpServletRequest request,
                                                              Integer currentPage,
-                                                             @RequestParam(defaultValue = "3") Integer pageSize){
-        User user = (User) request.getSession().getAttribute("user");
-        PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findHistoryAnswer(user.getUserId(),currentPage,pageSize);
+                                                             @RequestParam(defaultValue = "10") Integer pageSize){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User) request.getSession().getAttribute("user");
+        PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findHistoryAnswer(userDetails,currentPage,pageSize);
+
         return paginationDTO;
     }
 
@@ -74,18 +79,19 @@ public class AnswerController {
 
     @RequestMapping("/wrongBook")
     public String error(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                        @RequestParam(value = "pageSize", defaultValue = "2") Integer pageSize,
+                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                         @RequestParam(value = "search", required = false) String search,
                         @RequestParam(value = "subjectId", required = false) Integer subjectId,
                         HttpServletRequest request,
                         Model model,
                         RedirectAttributesModelMap redirectAttributesModelMap){
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null){
+//        User user = (User) request.getSession().getAttribute("user");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       /* if (user == null){
             redirectAttributesModelMap.addFlashAttribute("error","请先登录账号");
             return "redirect:/toLogin";
-        }
-        PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findWrongAnswer(user.getUserId(),currentPage,pageSize,search,subjectId);
+        }*/
+        PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findWrongAnswer(userDetails,currentPage,pageSize,search,subjectId);
 
         if (subjectId != null) {
             Subject subject = subjectService.getSubjectById(subjectId);

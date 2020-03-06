@@ -1,5 +1,6 @@
 package top.qiyoung.answer.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.PermissionMapper;
@@ -9,6 +10,7 @@ import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.User;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,32 +35,35 @@ public class PermissionService {
         return paginationDTO;
     }
 
-    public void updateRole(Integer id, Integer role, Integer userId, String reason,Integer status) {
+    public void updateRole(Integer messageId, Integer role, Integer userId, String reason,Integer status) {
         User user = new User();
         user.setUserId(userId);
         user.setRole(role);
         userMapper.update(user);
-        permissionMapper.updateStatus(id,reason,status);
+        permissionMapper.updateStatus(messageId,reason,status);
     }
 
     public int countPermission() {
         return permissionMapper.countMessageList(new Query());
     }
 
-    public Message getMessageById(Integer id) {
-        return permissionMapper.getMessageById(id);
+    public Message getMessageByMessageId(Integer messageId) {
+        return permissionMapper.getMessageByMessageId(messageId);
     }
 
-    public PaginationDTO<Message> getMessageListByUserId(Integer userId, Integer currentPage, Integer size) {
+    public PaginationDTO<Message> getMessageListByUserId(UserDetails userDetails, Integer currentPage, Integer size) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
         Query query = new Query("create_time desc",(currentPage-1)*size,size);
-        List<Message> messageList = permissionMapper.getMessageListByUserId(userId, query);
-        int count = permissionMapper.countMessageListByUserId(userId, query);
+        List<Message> messageList = permissionMapper.getMessageListByUserId(user.getUserId(), query);
+        int count = permissionMapper.countMessageListByUserId(user.getUserId(), query);
 
         PaginationDTO<Message> dto = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,null,messageList);
         return dto;
     }
 
-    public void add(Message message) {
+    public void add(String content,UserDetails userDetails) {
+        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        Message message = new Message(null,null,content,1,null,user.getUserId(),new Date(),0);
         permissionMapper.add(message);
     }
 }

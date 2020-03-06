@@ -30,11 +30,11 @@
     <header class="kopa-header-02">
         <div class="top-header">
             <div class="container">
-                <div class="right-top-header" th:if="${session.user == null}">
+                <div class="right-top-header" th:if="${#authentication} == null">
                     <a href="/toLogin">登录</a>
                     <a href="/toRegister">注册</a>
                 </div>
-                <div class="right-top-header" th:if="${session.user != null}">
+                <div class="right-top-header" th:if="${#authentication} != null">
                     <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
                 </div>

@@ -62,7 +62,7 @@
                                         </div>
                                         <div class="form-body form-body-info">
                                             <form data-toggle="validator" novalidate="true"
-                                                  action="/exerciseSet/addOrUpdate" method="post">
+                                                  action="/manager/exerciseSet/addOrUpdate" method="post">
                                                 <div class="form-group col-xs-12 col-md-12 col-sm-12">
                                                     <label class="col-xs-2 col-md-2 col-sm-2 control-label">学科：</label>
                                                     <input id="modelInput" type="hidden" th:if="${exerciseSetDTO != null}" th:value="${exerciseSetDTO.baseList}">
@@ -75,9 +75,7 @@
                                                                     th:selected='${exerciseSetDTO.subjectList[0].baseSubject== base}'></option>
                                                         </select>
 
-                                                        <select id="base" onchange="showSubject(this.value)"
-                                                                class="form-control" style="height: 50px;"
-                                                                th:if='${exerciseSetDTO == null}'>
+                                                        <select id="base" onchange="showSubject(this.value)" class="form-control" style="height: 50px;" th:if='${exerciseSetDTO == null}'>
                                                         </select>
                                                     </div>
                                                 </div>

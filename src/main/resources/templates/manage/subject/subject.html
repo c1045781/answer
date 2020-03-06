@@ -54,7 +54,7 @@
                         <input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
                         <select id="type" name="type" onchange="showSubject(this.value)" class="answer-select"
                                 th:if='${baseList != null}'>
-                            <option></option>
+                            <option value="">全部</option>
                             <option th:each="base:${baseList}"
                                     th:text="${base}" th:value="${base}"
                                     th:selected='${type == base}'></option>
@@ -103,13 +103,13 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/subject/check(currentPage=1 , type=${type},search=${search})}">
+                                       th:href="@{/manager/subject/check(currentPage=1 , type=${type},search=${search})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/subject/check(currentPage=${paginationDTO.currentPage-1},type=${type},search=${search})}">
+                                       th:href="@{/manager/subject/check(currentPage=${paginationDTO.currentPage-1},type=${type},search=${search})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -118,38 +118,38 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
+                                       th:href="@{/manager/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
+                                       th:href="@{/manager/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
+                                       th:href="@{/manager/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
+                                       th:href="@{/manager/subject/check(currentPage=${pageNo},type=${type},search=${search})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/subject/check(currentPage=${paginationDTO.currentPage+1},type=${type},search=${search})}">
+                                       th:href="@{/manager/subject/check(currentPage=${paginationDTO.currentPage+1},type=${type},search=${search})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/subject/check(currentPage=${paginationDTO.totalPage},type=${type},search=${search})}">
+                                       th:href="@{/manager/subject/check(currentPage=${paginationDTO.totalPage},type=${type},search=${search})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
