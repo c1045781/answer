@@ -83,6 +83,15 @@
                             <option th:selected="${exerciseType == '多选题'}">多选题</option>
                             <option th:selected="${exerciseType == '判断题'}">判断题</option>
                         </select>
+                        评分：
+                        <select name="score" id="score" class="answer-select">
+                            <option th:selected="${score == 5}" value="5">五分及以下</option>
+                            <option th:selected="${score == 4}" value="4">四分及以下</option>
+                            <option th:selected="${score == 3}" value="3">三分及以下</option>
+                            <option th:selected="${score == 2}" value="2">两分及以下</option>
+                            <option th:selected="${score == 1}" value="1">一分及以下</option>
+                            <option th:selected="${score == 0}" value="0">零分</option>
+                        </select>
                         <select name="type" id="type" class="answer-select">
                             <option th:selected="${type == 'title'}" value="title">题干</option>
                             <option th:selected="${type == 'createUser'}" value="createUser">创建人</option>
@@ -98,6 +107,8 @@
                             <th>题目类型</th>
                             <th>题干</th>
                             <th>创建人</th>
+                            <th>评分</th>
+                            <th>评分人数</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -109,13 +120,18 @@
                             <td th:text="${ExerciseVM.exercise.exerciseType}"></td>
                             <td class="answer-table-td" th:title="${ExerciseVM.exercise.exerciseTitle}" th:text="${ExerciseVM.exercise.exerciseTitle}"></td>
                             <td th:text="${ExerciseVM.user.username}"></td>
+                            <td th:text="${ExerciseVM.exercise.score}"></td>
+                            <td th:text="${ExerciseVM.exercise.people}"></td>
                             <td th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></td>
                             <td>
-                                <button th:onclick="deleteExerciseModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
-                                    删除
+                                <button th:onclick="viewExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
+                                    查看
                                 </button>
                                 <button th:onclick="updateExerciseModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
                                     修改
+                                </button>
+                                <button th:onclick="deleteExerciseModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
+                                    删除
                                 </button>
                             </td>
                         </tr>
@@ -132,13 +148,13 @@
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/manager/exercise/check(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -147,38 +163,38 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}"></a>
+                                       th:href="@{/manager/exercise/check(currentPage=${pageNo}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
+                                       th:href="@{/manager/exercise/check(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType},score=${score})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
@@ -194,6 +210,28 @@
         </div>
     </div>
     <div th:insert="~{foot :: foot}"></div>
+    <div class="modal fade" id="viewExerciseReview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">习题</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <h4 class="list-group-item-heading" style="text-align: center" id="title"></h4>
+                        <div id="option" style="text-align: center;margin: 20px auto;"> </div>
+                        <div id="correct" style="text-align: left;margin: 20px 10%;"></div>
+                        <div id="analysis" style="text-align: left;margin: 20px 10%;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="deleteResultSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

@@ -90,6 +90,15 @@
         select exercise_set_id from exercise_set order by exercise_set_id desc limit 0,1
     </select>
 
+    <delete id="deleteBySubjectId" parameterType="java.lang.Integer">
+        delete from exercise_set
+        <where>
+            <if test="subjectId != null">
+                subject_id = #{subjectId}
+            </if>
+        </where>
+    </delete>
+
     <select id="getExerciseSetById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select e.exercise_id,e.exercise_title,e.exercise_type,s.* from exercise_set s
         left outer join exercise_set_mid esm on s.exercise_set_id = esm.exercise_set_id
@@ -140,6 +149,15 @@
 
     <select id="countExerciseSetListByUserId" resultType="java.lang.Integer">
         select count(1) from exercise_set
+        <where>
+            <if test="userId != null">
+                create_user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findExerciseSetIdListByUser" resultType="java.lang.Integer">
+        select exercise_set_id from exercise_set
         <where>
             <if test="userId != null">
                 create_user_id = #{userId}

@@ -158,7 +158,7 @@ function viewExerciseReviewModal(id){
     $.ajax({
         url: '/manager/exercise/viewExercise',
         type: 'post',
-        data: {id: id},
+        data: {exerciseId: id},
         dataType: "json",
         success: function (data) {
             var content = '';
@@ -392,7 +392,7 @@ function showPermissionForManager(id){
     $.ajax({
         url: '/manager/permission/checkOfOne',
         type: 'post',
-        data: {id: id},
+        data: {messageId: id},
         dataType: "json",
         success: function (data) {
             $("#permission_content").html(data.content);

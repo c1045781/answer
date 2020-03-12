@@ -52,7 +52,7 @@
                     <div>
                         用户类型：<select name="role" id="role" class="answer-select">
                             <option value="">全部</option>
-                            <option th:if="${session.user.role == 0}" th:selected="${role == 1}" value="1">管理员</option>
+                            <option th:if="${#authentication.authorities == 0}" th:selected="${role == 1}" value="1">管理员</option>
                             <option th:selected="${role == 2}" value="2">一般用户</option>
                             <option th:selected="${role == 3}" value="3">特殊用户</option>
                         </select>
@@ -69,7 +69,6 @@
                         <tr>
                             <th>ID</th>
                             <th>账号</th>
-                            <th>密码</th>
                             <th>身份</th>
                             <th>昵称</th>
                             <th>头像</th>
@@ -82,7 +81,6 @@
                         <tr th:each="user:${paginationDTO.dataList}">
                             <td th:text="${user.userId}"></td>
                             <td th:text="${user.account}"></td>
-                            <td th:text="${user.password}"></td>
                             <td th:text="${user.role==2?'一般用户':'特殊用户'}"></td>
                             <td th:text="${user.username}"></td>
                             <td><img style="width: 50px;" th:src="${user.avatarImgUrl}"></td>

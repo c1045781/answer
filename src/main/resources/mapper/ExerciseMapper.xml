@@ -14,6 +14,21 @@
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
     </resultMap>
+    <resultMap id="ScoreResultMap" type="top.qiyoung.answer.model.Exercise">
+        <id column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="exercise_type" jdbcType="VARCHAR" property="exerciseType"/>
+        <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
+        <result column="correct" jdbcType="VARCHAR" property="correct"/>
+        <result column="exercise_title" jdbcType="VARCHAR" property="exerciseTitle"/>
+        <result column="analysis" jdbcType="VARCHAR" property="analysis"/>
+        <result column="option_content" jdbcType="VARCHAR" property="optionContent"/>
+        <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="people" jdbcType="INTEGER" property="people"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
+    </resultMap>
 
     <resultMap id="EIdAndMId" type="top.qiyoung.answer.model.EIdAndMId">
         <result column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
@@ -21,11 +36,11 @@
     </resultMap>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="exerciseId" keyColumn="exercise_id" parameterType="top.qiyoung.answer.model.Exercise">
-        insert into exercise (exercise_type, subject_id, correct, option_content, create_user_id, status, create_time, modify_time,exercise_title,analysis)
-           values(#{exerciseType},#{subjectId},#{correct},#{optionContent},#{createUserId},#{status},#{createTime},#{modifyTime},#{exerciseTitle},#{analysis})
+        insert into exercise (exercise_type, subject_id, correct, option_content, create_user_id, status, create_time, modify_time,exercise_title,analysis,score,people)
+           values(#{exerciseType},#{subjectId},#{correct},#{optionContent},#{createUserId},#{status},#{createTime},#{modifyTime},#{exerciseTitle},#{analysis},#{score},#{people})
     </insert>
 
-    <select id="getExerciseList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
+    <select id="getExerciseList" parameterType="top.qiyoung.answer.model.Query" resultMap="ScoreResultMap">
         select * from exercise
         <where>
             <if test="search != null and search != ''">
@@ -38,14 +53,17 @@
                     </if>
                 </if>
             </if>
-            <if test="role != null">
+            <!--<if test="role != null">
                 and role = #{role}
-            </if>
+            </if>-->
             <if test="id != null">
                 and subject_id = #{id}
             </if>
             <if test="exerciseType != null and exerciseType != ''">
                 and exercise_type = #{exerciseType}
+            </if>
+            <if test="score != null">
+                score &lt;= #{score}
             </if>
             <if test="1 == 1">
                 and status = 1
@@ -72,14 +90,17 @@
                     </if>
                 </if>
             </if>
-            <if test="role != null">
+            <!--<if test="role != null">
                 and role = #{role}
-            </if>
+            </if>-->
             <if test="id != null">
                 and subject_id = #{id}
             </if>
             <if test="exerciseType != null and exerciseType != ''">
                 and exercise_type = #{exerciseType}
+            </if>
+            <if test="score != null">
+                score &lt;= #{score}
             </if>
             <if test="1 == 1">
                 and status = 1
@@ -91,11 +112,19 @@
         select * from exercise where exercise_id = #{exerciseId}
     </select>
 
-    <delete id="deleteById" parameterType="java.lang.Integer">
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
         delete from exercise
         <where>
-            <if test="id != null">
-                exercise_id = #{id}
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteBySubjectId" parameterType="java.lang.Integer">
+        delete from exercise
+        <where>
+            <if test="subjectId != null">
+                subject_id = #{subjectId}
             </if>
         </where>
     </delete>
@@ -242,6 +271,30 @@
         <where>
             <if test="id != null">
                 exercise_id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <select id="findExerciseIdListByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select exercise_id from exercise
+        <where>
+            <if test="userId != null">
+                create_iser_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateScore">
+        update exercise
+        <set>
+            <if test="score != null">
+                score = #{score},
+            </if>
+            people = people + 1
+        </set>
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
             </if>
         </where>
     </update>

@@ -10,8 +10,12 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
-    <select id="countMessageList" parameterType="top.qiyoung.answer.model.Query" resultType="java.lang.Integer">
+    <select id="countMessageList" resultType="java.lang.Integer">
         select count(*) from message where status = 0 and type = 1;
+    </select>
+
+    <select id="countAllPermission" resultType="java.lang.Integer">
+        select count(*) from message where status = 0;
     </select>
 
     <select id="getMessageList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
@@ -91,4 +95,21 @@
             </if>
         </where>
     </select>
+
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
+        delete from message
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseid}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from message
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </delete>
 </mapper>

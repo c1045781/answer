@@ -9,7 +9,6 @@ import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class IndexController {
@@ -24,16 +23,6 @@ public class IndexController {
     private CommentService commentService;
     @Resource
     private PermissionService permissionService;
-
-   /* @RequestMapping("/answer.html")
-    public String exercise(){
-        return "user/answer";
-    }*/
-
-   /* @RequestMapping("/manage")
-    public String manage(){
-        return "manage/main-page";
-    }*/
 
     // 跳转登陆页面
     @RequestMapping("/toLogin")
@@ -74,6 +63,11 @@ public class IndexController {
     @RequestMapping("/user/personal")
     public String personal(){
         return "user/personal";
+    }
+
+    @RequestMapping("/user/modifyPassword")
+    public String modifyPassword(){
+        return "/user/modify-password";
     }
 
     @RequestMapping("/")

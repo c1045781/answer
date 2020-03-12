@@ -24,7 +24,7 @@ public class PermissionService {
     public PaginationDTO<Message> getMessageList(Integer currentPage, Integer size, String order) {
         PaginationDTO<Message> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
-        int count = permissionMapper.countMessageList(query);
+        int count = permissionMapper.countMessageList();
         query.setSize(size);
         query.setIndex((currentPage-1)*size);
         List<Message> messages = permissionMapper.getMessageList(query);
@@ -44,7 +44,7 @@ public class PermissionService {
     }
 
     public int countPermission() {
-        return permissionMapper.countMessageList(new Query());
+        return permissionMapper.countAllPermission();
     }
 
     public Message getMessageByMessageId(Integer messageId) {

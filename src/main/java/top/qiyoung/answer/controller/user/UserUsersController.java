@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 //import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,4 +72,24 @@ public class UserUsersController {
         userService.update(user, avatarImg);
         return "redirect:/user/personal";
     }
+
+    @RequestMapping("/modifyPassword")
+    public String modifyPassword(String oldPassword,String password,Model model){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.getUserByUserDetails(principal);
+        boolean checkpw = BCrypt.checkpw(oldPassword, user.getPassword());
+        if (checkpw){
+            userService.modifyPassword(principal,password);
+        }else {
+            model.addAttribute("error","旧密码错误，请重试");
+            return "user/modify-password";
+        }
+
+        if (password.length()<6 || password == null){
+            model.addAttribute("error","密码长度小于6，请重试");
+            return "user/modify-password";
+        }
+        return "redirect:/index";
+    }
+
 }

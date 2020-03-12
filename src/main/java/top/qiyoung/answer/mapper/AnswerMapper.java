@@ -21,4 +21,8 @@ public interface AnswerMapper {
     Answer findWrongAnswerByUserIdAndExerciseId(@Param("exerciseId") Integer id, @Param("userId") Integer userId);
 
     Answer findAnswerByExerciseIdAndUserId(@Param("exerciseId") Integer id, @Param("userId") Integer userId);
+
+    void deleteByExerciseId(Integer exerciseId);
+
+    void deleteByUserId(Integer userId);
 }

@@ -17,6 +17,7 @@ public class ExerciseEditDTO {
     private List<String> answers;
     private String analysis;
 
+
     public String getAnalysis() {
         return analysis;
     }

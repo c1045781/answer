@@ -51,6 +51,21 @@
             </if>
         </where>
     </delete>
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
+        delete from comment
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </delete><delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from comment
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </delete>
 
     <select id="getCommentListByExerciseId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select * from comment

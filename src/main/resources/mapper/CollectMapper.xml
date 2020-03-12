@@ -35,6 +35,22 @@
             </if>
         </where>
     </delete>
+    <delete id="deleteCollectByExerciseId" parameterType="java.lang.Integer">
+        delete from collect
+        <where>
+            <if test="exerciseId != null">
+                and exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from collect
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </delete>
 
     <select id="findCollectByUserId" resultMap="BaseResultMap">
         select * from collect

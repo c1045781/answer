@@ -1,11 +1,10 @@
 package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import top.qiyoung.answer.mapper.ExerciseMapper;
-import top.qiyoung.answer.mapper.ExerciseSetMapper;
-import top.qiyoung.answer.mapper.UserMapper;
+import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.User;
@@ -23,9 +22,21 @@ public class UserService {
     @Resource
     private UserMapper userMapper;
     @Resource
-    private ExerciseMapper exerciseMapper;
+    private ExerciseService exerciseService;
     @Resource
-    private ExerciseSetMapper exerciseSetMapper;
+    private ExerciseSetService exerciseSetService;
+    @Resource
+    private PermissionMapper permissionMapper;
+    @Resource
+    private EvaluationMapper evaluationMapper;
+    @Resource
+    private AnswerMapper answerMapper;
+    @Resource
+    private CollectMapper collectMapper;
+    @Resource
+    private CommentMapper commentMapper;
+    @Resource
+    private NoteMapper noteMapper;
 
     public User login(User user) {
         return userMapper.login(user);
@@ -49,6 +60,7 @@ public class UserService {
         }
         user.setCreateTime(new Date());
         user.setAvatarImgUrl(upload);
+        user.setPassword(BCrypt.hashpw(user.getPassword(),BCrypt.gensalt()));
         userMapper.insertUser(user);
         return 1;
     }
@@ -79,11 +91,19 @@ public class UserService {
         return paginationDTO;
     }
 
-    public int deleteById(Integer id){
-        exerciseMapper.deleteByUserId(id);
-        exerciseSetMapper.deleteByUserId(id);
-        int reslut = userMapper.deleteById(id);
-        return reslut;
+    public void deleteById(Integer userId){
+        answerMapper.deleteByUserId(userId);
+        collectMapper.deleteByUserId(userId);
+        commentMapper.deleteByUserId(userId);
+        evaluationMapper.deleteByUserId(userId);
+        permissionMapper.deleteByUserId(userId);
+        noteMapper.deleteByUserId(userId);
+
+
+        exerciseService.deleteByUserId(userId);
+        exerciseSetService.deleteByUserId(userId);
+
+        userMapper.deleteById(userId);
     }
 
     public User getUserById(UserDetails userDetails) {
@@ -106,6 +126,8 @@ public class UserService {
             }
             user.setAvatarImgUrl(upload);
         }
+        if (user.getPassword() != null)
+        user.setPassword(BCrypt.hashpw(user.getPassword(),BCrypt.gensalt()));
         return userMapper.update(user);
     }
 
@@ -121,5 +143,12 @@ public class UserService {
     public User getUserByUserDetails(UserDetails userDetails) {
         User user = userMapper.findUserByAccount(userDetails.getUsername());
         return user;
+    }
+
+    public void modifyPassword(UserDetails principal, String password) {
+        User user = userMapper.findUserByAccount(principal.getUsername());
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
+        user.setPassword(password);
+        userMapper.modifyPassword(user);
     }
 }

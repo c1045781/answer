@@ -15,10 +15,8 @@ import top.qiyoung.answer.DTO.ExerciseDTO;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.model.Exercise;
-import top.qiyoung.answer.model.Option;
-import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.*;
+import top.qiyoung.answer.service.EvaluationService;
 import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.SubjectService;
 import top.qiyoung.answer.utils.DeleteFile;
@@ -29,9 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user/exercise")
@@ -43,11 +39,14 @@ public class UserExerciseController {
     @Resource
     private SubjectService subjectService;
 
+    @Resource
+    private EvaluationService evaluationService;
+
 
     // 查询习题
     @RequestMapping("/check")
     public String checkexercise(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                                @RequestParam(value = "size", defaultValue = "2") Integer size,
+                                @RequestParam(value = "size", defaultValue = "10") Integer size,
                                 @RequestParam(value = "search", required = false) String search,
                                 @RequestParam(value = "type", defaultValue = "title") String type,
                                 @RequestParam(value = "exerciseType", required = false) String exerciseType,
@@ -55,7 +54,7 @@ public class UserExerciseController {
                                 @RequestParam(value = "order", defaultValue = "exercise_id asc") String orderby,
                                 HttpServletRequest request,
                                 Model model) {
-        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType);
+        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType,null);
         if (subjectId != null) {
             Subject subject = subjectService.getSubjectById(subjectId);
             List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
@@ -63,6 +62,16 @@ public class UserExerciseController {
             model.addAttribute("subjectList",subjects);
             model.addAttribute("baseList",baseList);
         }
+        Map<Integer,Integer> countMap = new HashMap<>();
+        Map<Integer,Double> AVGScores = new HashMap<>();
+        for (ExerciseDTO exerciseDTO : paginationDTO.getDataList()) {
+            Integer count = evaluationService.countByExerciseId(exerciseDTO.getExercise().getExerciseId());
+            Double score = evaluationService.findAVGScoreByExerciseId(exerciseDTO.getExercise().getExerciseId());
+            AVGScores.put(exerciseDTO.getExercise().getExerciseId(),score);
+            countMap.put(exerciseDTO.getExercise().getExerciseId(),count);
+        }
+        model.addAttribute("AVGScores", AVGScores);
+        model.addAttribute("countMap", countMap);
         model.addAttribute("paginationDTO", paginationDTO);
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("exerciseType", exerciseType);

@@ -74,4 +74,21 @@
             </if>
         </where>
     </select>
+
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
+        delete from note
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from note
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+        </where>
+    </delete>
 </mapper>

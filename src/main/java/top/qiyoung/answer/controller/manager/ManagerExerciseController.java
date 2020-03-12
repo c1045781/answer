@@ -15,7 +15,6 @@ import top.qiyoung.answer.DTO.ExerciseDTO;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Option;
 import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.model.User;
@@ -58,9 +57,10 @@ public class ManagerExerciseController {
                                 @RequestParam(value = "exerciseType", required = false) String exerciseType,
                                 @RequestParam(value = "subjectId", required = false) Integer subjectId,
                                 @RequestParam(value = "order", defaultValue = "exercise_id asc") String orderby,
+                                @RequestParam(value = "score", required = false) Integer score,
                                 HttpServletRequest request,
                                 Model model) {
-        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType);
+        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType,score);
         if (subjectId != null) {
             Subject subject = subjectService.getSubjectById(subjectId);
             List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
@@ -73,6 +73,7 @@ public class ManagerExerciseController {
         model.addAttribute("exerciseType", exerciseType);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
+        model.addAttribute("score", score);
 
         User user = (User) request.getSession().getAttribute("user");
         return "manage/exercise/exercise";
@@ -98,11 +99,24 @@ public class ManagerExerciseController {
         return "manage/review/exercise-review";
     }
 
-   /* // 跳转习题上传页面
+    // 跳转习题上传页面
     @RequestMapping("/toUpload")
     public String toUpload() {
         return "manage/exercise/upload";
-    }*/
+    }
+    // 跳转习题上传页面
+    @RequestMapping("/toTemplateUpload")
+    public String toTemplateUpload() {
+        return "manage/exercise/template-upload";
+    }
+
+    //模板文件上传
+    @RequestMapping("/templatesUpload")
+    public String templatesUpload(@RequestParam("exerciseFile") MultipartFile exerciseFile) throws IOException {
+        FileUpload fileUpload = new FileUpload();
+        fileUpload.uploadTempla(exerciseFile);
+        return "redirect:/index";
+    }
 
     // 习题文件上传
     @RequestMapping("/uploadFile")
@@ -168,7 +182,7 @@ public class ManagerExerciseController {
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, userDetails);
         }
-        return "redirect:/exercise/check";
+        return "redirect:/manager/exercise/check";
     }
 
     // 添加或更新习题
@@ -201,7 +215,7 @@ public class ManagerExerciseController {
             model.addAttribute("exerciseEditDTO", exerciseEditDTO);
             return "manage/exercise/add-exercise";
         }else{
-            return "redirect:/exercise/check";
+            return "redirect:/manager/exercise/check";
         }
     }
 
@@ -217,10 +231,7 @@ public class ManagerExerciseController {
     @RequestMapping("/delete")
     @ResponseBody
     public String delete(Integer exerciseId) {
-        int result = exerciseService.deleteById(exerciseId);
-        if (result <= 0){
-            return "failure";
-        }
+        exerciseService.deleteByExerciseId(exerciseId);
         return "success";
     }
 

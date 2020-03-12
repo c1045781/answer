@@ -79,10 +79,7 @@ public class ManagerExerciseSetController {
     @RequestMapping("/delete")
     @ResponseBody
     public String delete(Integer exerciseSetId) {
-        int result = setService.delete(exerciseSetId);
-        if (result <= 0) {
-            return "failure";
-        }
+        setService.delete(exerciseSetId);
         return "success";
     }
 

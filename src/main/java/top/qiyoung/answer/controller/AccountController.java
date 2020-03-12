@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,8 @@ public class AccountController {
     // 用户注册
     @RequestMapping("/register")
     public String register(User user, RedirectAttributesModelMap model){
+        String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(password);
         if (user.getPassword().length() < 6){
             model.addFlashAttribute("error","密码长度最少6个字符");
             return "redirect:/toRegister";
@@ -49,7 +52,7 @@ public class AccountController {
 
 
     // 用户登出
-    @RequestMapping("/logout")
+    /*@RequestMapping("/logout")
     public String signout(HttpServletRequest request,HttpServletResponse response){
         request.getSession().removeAttribute("user");
         for (Cookie cookie : request.getCookies()) {
@@ -60,7 +63,7 @@ public class AccountController {
             }
         }
         return "user/index";
-    }
+    }*/
 
 
 }

@@ -14,6 +14,40 @@ public class Exercise {
     private Date modifyTime;
     private Integer subjectId;
     private String analysis;
+    private Integer score;
+    private Integer people;
+
+    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId, String analysis, Integer score, Integer people) {
+        this.exerciseId = exerciseId;
+        this.exerciseType = exerciseType;
+        this.correct = correct;
+        this.exerciseTitle = exerciseTitle;
+        this.optionContent = optionContent;
+        this.createUserId = createUserId;
+        this.status = status;
+        this.createTime = createTime;
+        this.modifyTime = modifyTime;
+        this.subjectId = subjectId;
+        this.analysis = analysis;
+        this.score = score;
+        this.people = people;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Integer getPeople() {
+        return people;
+    }
+
+    public void setPeople(Integer people) {
+        this.people = people;
+    }
 
     public String getAnalysis() {
         return analysis;

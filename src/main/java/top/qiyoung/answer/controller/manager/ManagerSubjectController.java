@@ -1,8 +1,12 @@
 package top.qiyoung.answer.controller.manager;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +16,11 @@ import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.service.SubjectService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -48,10 +57,7 @@ public class ManagerSubjectController {
     @RequestMapping("/delete")
     @ResponseBody
     public String delete(Integer subjectId) {
-        int i = subjectService.delete(subjectId);
-        if (i <= 0) {
-            return "failure";
-        }
+        subjectService.delete(subjectId);
         return "success";
     }
 
@@ -91,5 +97,35 @@ public class ManagerSubjectController {
             return "manage/subject/add-subject";
         }
         return "redirect:/manager/subject/check";
+    }
+
+    @RequestMapping("/download")
+    public void download(HttpServletResponse response) throws IOException {
+        List<String> base = subjectService.getBase();
+        List<List<Subject>> all = new ArrayList();
+        for (String b : base) {
+            List<Subject> subjects = subjectService.getSubjectByBase(b);
+            all.add(subjects);
+        }
+        //创建工作文档对象
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet1 = wb.createSheet("sheet1");
+        for (int i = 0; i < all.size(); i++) {
+            Row row = sheet1.createRow(i);
+            for (int j = 0; j <= all.get(i).size(); j++) {
+                Cell cell = row.createCell(j);
+                if (j==0){
+                    cell.setCellValue(base.get(i));
+                }else {
+                    cell.setCellValue(all.get(i).get(j-1).getName());
+                }
+            }
+        }
+        response.reset();
+        OutputStream output=response.getOutputStream();
+        response.setHeader("Content-disposition", "attachment; filename="+ URLEncoder.encode("题目分类.xls", "UTF-8"));
+        response.setContentType("application/msexcel");
+        wb.write(output);
+        output.close();
     }
 }

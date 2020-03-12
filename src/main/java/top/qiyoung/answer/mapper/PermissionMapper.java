@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface PermissionMapper {
 
-    int countMessageList(Query query);
+    int countMessageList();
+
+    int countAllPermission();
 
     List<Message> getMessageList(Query query);
 
@@ -23,4 +25,8 @@ public interface PermissionMapper {
     int countMessageListByUserId(@Param("userId") Integer userId,@Param("query") Query query);
 
     Message getMessageByExerciseIdAndUserId(@Param("exerciseId") Integer exerciseId,@Param("userId") Integer userId);
+
+    void deleteByExerciseId(Integer exerciseId);
+
+    void deleteByUserId(Integer userId);
 }

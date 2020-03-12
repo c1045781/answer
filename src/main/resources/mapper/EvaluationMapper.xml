@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.EvaluationMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Evaluation">
+        <id jdbcType="INTEGER" property="evaluationId" column="evaluation_id"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="exercise_id" property="exerciseId" jdbcType="INTEGER"/>
+        <result column="score" property="score" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getEvaluationByUserIdAndExerciseId" resultMap="BaseResultMap">
+        select * from evaluation
+        <where>
+            <if test="userId != null and exerciseId != null">
+                user_id = #{userId} and exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAVGScoreByExerciseId" resultType="java.lang.Integer">
+        select avg(score) from evaluation
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="top.qiyoung.answer.model.Evaluation">
+        insert into evaluation(user_id,exercise_id,score) values (#{userId},#{exerciseId},#{score})
+    </insert>
+
+    <update id="update" parameterType="top.qiyoung.answer.model.Evaluation">
+        update evaluation
+        <set>
+              score = #{score}
+        </set>
+        <where>
+            <if test="evaluationId != null">
+                evaluation_id = #{evaluationId}
+            </if>
+        </where>
+    </update>
+
+    <select id="countByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from evaluation
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAVGScoreByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        select avg(score) from evaluation
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
+        delete from evaluation
+        <where>
+            <if test="exerciseId != null">
+                exercise_id  = #{exerciseId}
+            </if>
+        </where>
+    </delete>
+
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
+        delete from evaluation
+        <where>
+            <if test="userId != null">
+                user_id  = #{userId}
+            </if>
+        </where>
+    </delete>
+</mapper>

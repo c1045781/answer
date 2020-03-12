@@ -29,4 +29,6 @@ public interface UserMapper {
     List<User> getUserList1(Query query);
 
     int countUserList1(Query query);
+
+    void modifyPassword(User user);
 }

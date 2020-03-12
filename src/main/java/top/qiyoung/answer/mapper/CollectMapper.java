@@ -15,4 +15,8 @@ public interface CollectMapper {
     List<Collect> findCollectByUserId(@Param("userId") Integer userId,@Param("index") Integer index,@Param("size") Integer pageSize);
 
     int countCollectByUserId(Integer userId);
+
+    void deleteCollectByExerciseId(Integer exerciseId);
+
+    void deleteByUserId(Integer userId);
 }

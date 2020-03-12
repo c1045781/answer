@@ -2,6 +2,7 @@ package top.qiyoung.answer.controller.manager;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,14 +105,17 @@ public class ManagerUserController {
         return "manage/user/add-user";
     }
 
+    // 跳转密码更新页面
+    @RequestMapping("/toModifyPassword")
+    public String toModifyPassword() {
+        return "manage/user/modify-password";
+    }
+
     // 删除用户
     @RequestMapping("/delete")
     @ResponseBody
     public String delete(Integer userId) {
-        int result = userService.deleteById(userId);
-        if(result<=0){
-            return "failure";
-        }
+        userService.deleteById(userId);
         return "success";
     }
 
@@ -124,4 +128,23 @@ public class ManagerUserController {
         return "/manage/manager-info";
     }
 
+
+    @RequestMapping("/modifyPassword")
+    public String modifyPassword(String oldPassword,String password,Model model){
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.getUserByUserDetails(principal);
+        boolean checkpw = BCrypt.checkpw(oldPassword, user.getPassword());
+        if (checkpw){
+            userService.modifyPassword(principal,password);
+        }else {
+            model.addAttribute("error","旧密码错误，请重试");
+            return "manage/user/modify-password";
+        }
+
+        if (password.length()<6 || password == null){
+            model.addAttribute("error","密码长度小于6，请重试");
+            return "manage/user/modify-password";
+        }
+        return "redirect:/index";
+    }
 }

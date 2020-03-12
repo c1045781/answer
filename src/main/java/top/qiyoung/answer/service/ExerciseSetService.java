@@ -143,11 +143,9 @@ public class ExerciseSetService {
         return paginationDTO;
     }
 
-    public int delete(Integer exerciseSetId) {
-        int result;
-        result = midMapper.deleteByExerciseSetId(exerciseSetId);
-        result = setMapper.delete(exerciseSetId);
-        return result;
+    public void delete(Integer exerciseSetId) {
+        midMapper.deleteByExerciseSetId(exerciseSetId);
+        setMapper.delete(exerciseSetId);
     }
 
     public ExerciseSetDTO getExerciseSetVMById(Integer exerciseSetId) {
@@ -211,5 +209,12 @@ public class ExerciseSetService {
         PaginationDTO<ExerciseSetAndExercisesDTO> paginationDTO = new PaginationDTO<>(currentPage,2,(int)Math.ceil((double)exerciseIdList.size()/(double)2),
                 exerciseIdList.size(),null,null,list);
         return paginationDTO;
+    }
+
+    public void deleteByUserId(Integer userId) {
+        List<Integer> exerciseSetIds = setMapper.findExerciseSetIdListByUser(userId);
+        for (Integer exerciseSetId : exerciseSetIds) {
+            delete(exerciseSetId);
+        }
     }
 }

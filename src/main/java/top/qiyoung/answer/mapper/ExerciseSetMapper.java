@@ -28,4 +28,8 @@ public interface ExerciseSetMapper {
     List<ExerciseSet> getExerciseSetListByUserId(@Param("index") Integer index,@Param("pageSize") Integer size,@Param("orderBy") String orderBy,@Param("userId") Integer userId);
 
     int countExerciseSetListByUserId(Integer userId);
+
+    void deleteBySubjectId(Integer subjectId);
+
+    List<Integer> findExerciseSetIdListByUser(Integer userId);
 }

@@ -357,6 +357,7 @@ function submitExerciseFrom(e){
     var exerciseType = $("#exerciseType").val();
     var search = $("#search").val();
     var total = parseInt($("#totalPage").val());
+    var score = $("#score").val();
     if (subjectId == null || isNaN(subjectId)){
         subjectId = "";
     }
@@ -366,7 +367,7 @@ function submitExerciseFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/manager/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType;
+    window.location.href = "/manager/exercise/check?currentPage=" + skip+"&subjectId="+ subjectId +"&type="+ type+"&search="+search+"&exerciseType="+exerciseType+"&score="+score;
 }
 
 function submitExerciseSetFrom(e){
@@ -703,8 +704,6 @@ function personInformation(){
         contentType:"application/json",
         success:function (data){
             $("#userId").val(data.userId);
-            $("#password").val(data.password);
-            $("#passwordConfirm").val(data.password);
             $("#account").val(data.account);
             $("#avatarImgUrl").attr("src",data.avatarImgUrl);
             $("#phone").val(data.phone);
@@ -1523,4 +1522,16 @@ function AddExerciseSetList(page){
             }
         }
     })
+}
+
+function submitScore(id){
+    var score = $("#score"+id).rating().val();
+    $.ajax({
+        url:"/user/evaluation/addOrUpdate",
+        type:'post',
+        data:{score:score,exerciseId:id},
+        success:function(data){
+            alert("评分成功");
+        }
+    });
 }

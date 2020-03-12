@@ -26,11 +26,21 @@ public class ExerciseService {
     private MidMapper midMapper;
     @Resource
     private PermissionMapper permissionMapper;
+    @Resource
+    private EvaluationMapper evaluationMapper;
+    @Resource
+    private AnswerMapper answerMapper;
+    @Resource
+    private CollectMapper collectMapper;
+    @Resource
+    private CommentMapper commentMapper;
+    @Resource
+    private NoteMapper noteMapper;
 
     public int insert(ExerciseEditDTO edit, UserDetails userDetails) {
         User user = userMapper.findUserByAccount(userDetails.getUsername());
         Exercise exercise = new Exercise(null,edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),user.getUserId(),
-                null,new Date(),new Date(),edit.getSubjectId(),edit.getAnalysis());
+                null,new Date(),new Date(),edit.getSubjectId(),edit.getAnalysis(),0,0);
 
         // 插入的option
         /*exercise.setExerciseType(edit.getExerciseType());
@@ -43,8 +53,8 @@ public class ExerciseService {
         exercise.setModifyTime(new Date());*/
         int id;
         if (user.getRole() == 1 || user.getRole() == 0) {
-            id = exerciseMapper.insert(exercise);
             exercise.setStatus(1);
+            id = exerciseMapper.insert(exercise);
         } else {
             exercise.setStatus(0);
             id = exerciseMapper.insert(exercise);
@@ -78,37 +88,40 @@ public class ExerciseService {
     }
 
     public PaginationDTO<ExerciseDTO> getExerciseList(Integer currentPage, Integer size, String search,
-                                                      String type, String orderby, Integer subjectId, String exerciseType) {
+                                                      String type, String orderby, Integer subjectId, String exerciseType,Integer score) {
         List<Exercise> exercises = new ArrayList<>();
         int count = 0;
         PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage, size);
-        Query query = new Query();
+       /* Query query = new Query();
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
         query.setType(type);
         query.setExerciseType(exerciseType);
         query.setOrder(orderby);
-        query.setId(subjectId);
+        query.setId(subjectId);*/
+        int index = (currentPage - 1) * size;
         if (type != null && type.equals("createUser")) {
             List<User> users = userMapper.getUserByUsername(search);
             for (User dbuser : users) {
-                query.setIndex((currentPage - 1) * size);
+
+                search = dbuser.getUserId() + "";
+               /* query.setIndex(index);
                 query.setSize(size);
-                query.setSearch(dbuser.getUserId()+"");
-                List<Exercise> exerciseList = exerciseMapper.getExerciseList(query);
+                query.setSearch(search);*/
+                List<Exercise> exerciseList = exerciseMapper.getExerciseList(index,size,search,type,exerciseType,orderby,subjectId,score);
                 for (Exercise exercise : exerciseList) {
                     exercises.add(exercise);
                 }
-                query.setIndex(null);
-                query.setSize(null);
-                count += exerciseMapper.countExerciseList(query);
+                /*query.setIndex(null);
+                query.setSize(null);*/
+                count += exerciseMapper.countExerciseList(search,type,exerciseType,orderby,subjectId,score);
             }
         } else {
-            query.setSearch(search);
-            exercises = exerciseMapper.getExerciseList(query);
+            exercises = exerciseMapper.getExerciseList(index,size,search,type,exerciseType,orderby,subjectId,score);
+            /*query.setSearch(search);
             query.setIndex(null);
-            query.setSize(null);
-            count = exerciseMapper.countExerciseList(query);
+            query.setSize(null);*/
+            count = exerciseMapper.countExerciseList(search,type,exerciseType,orderby,subjectId,score);
         }
         List<ExerciseDTO> exerciseDTOS = exerciseToExerciseDTO(exercises);
         paginationDTO.setCurrentPage(currentPage);
@@ -119,11 +132,17 @@ public class ExerciseService {
         return paginationDTO;
     }
 
-    public int deleteById(Integer id) {
-        int result;
-        result =  midMapper.deleteByExerciseId(id);
-        result = exerciseMapper.deleteById(id);
-        return result;
+    public void deleteByExerciseId(Integer exerciseId) {
+        // 删除外键数据
+        collectMapper.deleteCollectByExerciseId(exerciseId);
+        permissionMapper.deleteByExerciseId(exerciseId);
+        evaluationMapper.deleteByExerciseId(exerciseId);
+        commentMapper.deleteByExerciseId(exerciseId);
+        answerMapper.deleteByExerciseId(exerciseId);
+        midMapper.deleteByExerciseId(exerciseId);
+        noteMapper.deleteByExerciseId(exerciseId);
+
+        exerciseMapper.deleteByExerciseId(exerciseId);
     }
 
     public ExerciseEditDTO getExerciseEdit(Integer exerciseId) {
@@ -258,7 +277,7 @@ public class ExerciseService {
     }
 
     public int countExercise() {
-        return exerciseMapper.countExerciseList(new Query());
+        return exerciseMapper.countExerciseList(null,null,null,null,null,null);
     }
 
     public List<Integer> getExerciseIdListByExerciseSetId(Integer exerciseSetId) {
@@ -282,4 +301,10 @@ public class ExerciseService {
         return exerciseReviewDTO;
     }
 
+    public void deleteByUserId(Integer userId) {
+        List<Integer> exerciseIds = exerciseMapper.findExerciseIdListByUserId(userId);
+        for (Integer exerciseId : exerciseIds) {
+            deleteByExerciseId(exerciseId);
+        }
+    }
 }

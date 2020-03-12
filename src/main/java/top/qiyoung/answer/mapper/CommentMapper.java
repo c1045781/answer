@@ -15,4 +15,8 @@ public interface CommentMapper {
     List<Comment> getCommentListByExerciseId(Integer exerciseId);
 
     void addComment(Comment comment);
+
+    void deleteByExerciseId(Integer exerciseId);
+
+    void deleteByUserId(Integer userId);
 }

@@ -3,6 +3,8 @@ package top.qiyoung.answer.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.mapper.ExerciseMapper;
+import top.qiyoung.answer.mapper.ExerciseSetMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;
 import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Query;
@@ -17,7 +19,9 @@ public class SubjectService {
     @Resource
     private SubjectMapper subjectMapper;
     @Resource
-    private ExerciseService exerciseService;
+    private ExerciseMapper exerciseMapper;
+    @Resource
+    private ExerciseSetMapper exerciseSetMapper;
 
 
     public List<Subject> getSubjectByBase(String baseSubject) {
@@ -59,15 +63,11 @@ public class SubjectService {
         return paginationDTO;
     }
 
-    @Transactional
-    public int delete(Integer subjectId) {
 
-        int result = subjectMapper.delete(subjectId);
-        List<Exercise> exerciseList = exerciseService.getExerciseListBySubjectId(subjectId);
-        for (Exercise exercise : exerciseList) {
-         result = exerciseService.deleteById(exercise.getExerciseId());
-        }
-        return result;
+    public void delete(Integer subjectId) {
+        exerciseMapper.deleteBySubjectId(subjectId);
+        exerciseSetMapper.deleteBySubjectId(subjectId);
+        subjectMapper.delete(subjectId);
     }
 
     public Integer update(Subject subject) {

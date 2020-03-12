@@ -17,4 +17,8 @@ public interface NoteMapper {
     List<Note> findNoteList(@Param("userId") Integer userId, @Param("index") Integer index,@Param("pageSize") Integer pageSize);
 
     int countNoteList(Integer userId);
+
+    void deleteByExerciseId(Integer exerciseId);
+
+    void deleteByUserId(Integer userId);
 }

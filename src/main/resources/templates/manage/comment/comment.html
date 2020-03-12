@@ -73,7 +73,7 @@
                             <td th:text="${comment.userId}"></td>
                             <td th:text="${comment.exerciseId}"></td>
                             <td th:title="${comment.content}" class="answer-table-td" th:text="${comment.content}"></td>
-                            <td th:text="${#dates.format(comment.createTime,'yyyy-MM-dd')}"></td>
+                            <td th:text="${#dates.format(comment.createTime,'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
                                 <button th:onclick="deleteCommentModal([[${comment.id}]]);" type="button" class="btn btn-danger">
                                     删除
