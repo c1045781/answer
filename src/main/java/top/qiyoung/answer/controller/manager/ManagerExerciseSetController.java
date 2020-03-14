@@ -7,18 +7,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
 import top.qiyoung.answer.DTO.ExerciseSetDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.ExerciseSetService;
 import top.qiyoung.answer.service.SubjectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -64,7 +62,7 @@ public class ManagerExerciseSetController {
     // 添加或更新习题集
     @RequestMapping("/addOrUpdate")
     public String addOrUpdate(HttpServletRequest request, ExerciseSetDTO setVM, HttpServletResponse response) {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (setVM.getExerciseSetId() != null) {
             setService.update(setVM);

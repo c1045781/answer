@@ -1,7 +1,7 @@
 package top.qiyoung.answer.DTO;
 
 import top.qiyoung.answer.model.Exercise;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 
 import java.util.Date;
 
@@ -9,7 +9,7 @@ public class CommentDTO {
     private Integer commentId;
     private String content;
     private Exercise exercise;
-    private User user;
+    private MyUser myUser;
     private Date createDate;
 
     public Integer getCommentId() {
@@ -36,12 +36,12 @@ public class CommentDTO {
         this.exercise = exercise;
     }
 
-    public User getUser() {
-        return user;
+    public MyUser getMyUser() {
+        return myUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setMyUser(MyUser myUser) {
+        this.myUser = myUser;
     }
 
     public Date getCreateDate() {

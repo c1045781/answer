@@ -1,6 +1,5 @@
 package top.qiyoung.answer.service;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.DTO.CommentDTO;
@@ -9,7 +8,7 @@ import top.qiyoung.answer.mapper.CommentMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Comment;
 import top.qiyoung.answer.model.Query;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -55,20 +54,20 @@ public class CommentService {
         List<CommentDTO> commentDTOList = new ArrayList<>();
         List<Comment> commentList = commentMapper.getCommentListByExerciseId(exerciseId);
         for (Comment comment : commentList) {
-            User user = userMapper.getUserById(comment.getUserId());
+            MyUser myUser = userMapper.getUserById(comment.getUserId());
             CommentDTO commentDTO = new CommentDTO();
             commentDTO.setCommentId(comment.getId());
             commentDTO.setContent(comment.getContent());
             commentDTO.setCreateDate(comment.getCreateTime());
-            commentDTO.setUser(user);
+            commentDTO.setMyUser(myUser);
             commentDTOList.add(commentDTO);
         }
         return commentDTOList;
     }
 
     public void addComment(Comment comment, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        comment.setUserId(user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        comment.setUserId(myUser.getUserId());
         comment.setCreateTime(new Date());
         commentMapper.addComment(comment);
     }

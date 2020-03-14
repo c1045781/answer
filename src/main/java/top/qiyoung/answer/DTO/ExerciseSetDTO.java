@@ -2,7 +2,7 @@ package top.qiyoung.answer.DTO;
 
 import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 
 import java.util.Date;
 import java.util.List;
@@ -11,13 +11,22 @@ public class ExerciseSetDTO {
     private Integer exerciseSetId;
 //    private Integer subjectId;
     private String title;
+    private Integer likeCount;
 //    private List<Integer> exerciseIds;
     private Date createTime;
     private Subject subject;
     private List<Subject> subjectList;
     private List<String> baseList;
     private List<Exercise> exerciseList;
-    private User user;
+    private MyUser myUser;
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
 
     public Integer getExerciseSetId() {
         return exerciseSetId;
@@ -75,18 +84,18 @@ public class ExerciseSetDTO {
         this.exerciseList = exerciseList;
     }
 
-    public User getUser() {
-        return user;
+    public MyUser getMyUser() {
+        return myUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setMyUser(MyUser myUser) {
+        this.myUser = myUser;
     }
 
     public ExerciseSetDTO() {
     }
 
-    public ExerciseSetDTO(Integer exerciseSetId, String title, Date createTime, Subject subject, List<Subject> subjectList, List<String> baseList, List<Exercise> exerciseList, User user) {
+    /*public ExerciseSetDTO(Integer exerciseSetId, String title, Date createTime, Subject subject, List<Subject> subjectList, List<String> baseList, List<Exercise> exerciseList, MyUser myUser) {
         this.exerciseSetId = exerciseSetId;
         this.title = title;
         this.createTime = createTime;
@@ -94,6 +103,18 @@ public class ExerciseSetDTO {
         this.subjectList = subjectList;
         this.baseList = baseList;
         this.exerciseList = exerciseList;
-        this.user = user;
+        this.myUser = myUser;
+    }*/
+
+    public ExerciseSetDTO(Integer exerciseSetId, String title, Date createTime, Subject subject, List<Subject> subjectList, List<String> baseList, List<Exercise> exerciseList, MyUser myUser, Integer likeCount) {
+        this.exerciseSetId = exerciseSetId;
+        this.title = title;
+        this.likeCount = likeCount;
+        this.createTime = createTime;
+        this.subject = subject;
+        this.subjectList = subjectList;
+        this.baseList = baseList;
+        this.exerciseList = exerciseList;
+        this.myUser = myUser;
     }
 }

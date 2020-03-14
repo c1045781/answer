@@ -13,9 +13,9 @@ import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.HistoryAnswerDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Answer;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Note;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.AnswerService;
 import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.NoteService;
@@ -24,7 +24,6 @@ import top.qiyoung.answer.service.SubjectService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -44,11 +43,11 @@ public class UserAnswerController {
     @RequestMapping("/addOrUpdate")
     @ResponseBody
     public void addOrUpdate(@RequestBody Answer answer, HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
-//        answer.setUserId(user.getUserId());
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+//        answer.setUserId(myUser.getUserId());
 //        answer.setCreateTime(new Date());
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        answerService.addOrUpdate(answer,userDetails);
+        answerService.addOrUpdate(answer, userDetails);
     }
 
     // 查找用户答题记录
@@ -58,7 +57,7 @@ public class UserAnswerController {
                                                              Integer currentPage,
                                                              @RequestParam(defaultValue = "10") Integer pageSize){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findHistoryAnswer(userDetails,currentPage,pageSize);
 
         return paginationDTO;
@@ -85,9 +84,9 @@ public class UserAnswerController {
                         HttpServletRequest request,
                         Model model,
                         RedirectAttributesModelMap redirectAttributesModelMap){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       /* if (user == null){
+       /* if (myUser == null){
             redirectAttributesModelMap.addFlashAttribute("error","请先登录账号");
             return "redirect:/toLogin";
         }*/

@@ -8,26 +8,26 @@ public class ExerciseReviewDTO {
     private Exercise exercise;
     private Message message;
     private Subject subject;
-    private User user;
+    private MyUser myUser;
     private List<Option> options;
 
     public ExerciseReviewDTO() {
     }
 
-    public ExerciseReviewDTO(Exercise exercise, Message message, Subject subject, User user, List<Option> options) {
+    public ExerciseReviewDTO(Exercise exercise, Message message, Subject subject, MyUser myUser, List<Option> options) {
         this.exercise = exercise;
         this.message = message;
         this.subject = subject;
-        this.user = user;
+        this.myUser = myUser;
         this.options = options;
     }
 
-    public User getUser() {
-        return user;
+    public MyUser getMyUser() {
+        return myUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setMyUser(MyUser myUser) {
+        this.myUser = myUser;
     }
 
     public List<Option> getOptions() {

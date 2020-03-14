@@ -58,8 +58,8 @@
                         </select>
                         <select name="type" id="type"  class="answer-select">
                             <option th:selected="${type == 'id'}" value="id">ID</option>
-                            <option th:selected="${type == 'account'}" value="account">账号</option>
-                            <option th:selected="${type == 'username'}" value="username">昵称</option>
+                            <option th:selected="${type == 'username'}" value="username">账号</option>
+                            <option th:selected="${type == 'account'}" value="account">昵称</option>
                         </select> ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
                         <button onclick="submitUserFrom(1)" class="btn btn-primary" style="margin-bottom: 3px;">搜索</button>
 
@@ -78,19 +78,19 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="user:${paginationDTO.dataList}">
-                            <td th:text="${user.userId}"></td>
-                            <td th:text="${user.account}"></td>
-                            <td th:text="${user.role==2?'一般用户':'特殊用户'}"></td>
-                            <td th:text="${user.username}"></td>
-                            <td><img style="width: 50px;" th:src="${user.avatarImgUrl}"></td>
-                            <td class="answer-table-td" th:title="${user.description}" th:text="${user.description}"></td>
-                            <td th:text="${#dates.format(user.createTime,'yyyy-MM-dd')}"></td>
+                        <tr th:each="myUser:${paginationDTO.dataList}">
+                            <td th:text="${myUser.userId}"></td>
+                            <td th:text="${myUser.username}"></td>
+                            <td th:text="${myUser.role==2?'一般用户':'特殊用户'}"></td>
+                            <td th:text="${myUser.nickname}"></td>
+                            <td><img style="width: 50px;" th:src="${myUser.avatarImgUrl}"></td>
+                            <td class="answer-table-td" th:title="${myUser.description}" th:text="${myUser.description}"></td>
+                            <td th:text="${#dates.format(myUser.createTime,'yyyy-MM-dd')}"></td>
                             <td>
-                                <button th:onclick="deleteUserModal([[${user.userId}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="deleteUserModal([[${myUser.userId}]]);" type="button" class="btn btn-danger">
                                     删除
                                 </button>
-                                <button th:onclick="updateUserModal([[${user.userId}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="updateUserModal([[${myUser.userId}]]);" type="button" class="btn btn-danger">
                                     修改
                                 </button>
                             </td>

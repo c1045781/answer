@@ -6,7 +6,7 @@ import top.qiyoung.answer.mapper.EvaluationMapper;
 import top.qiyoung.answer.mapper.ExerciseMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Evaluation;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ public class EvaluationService {
     private ExerciseMapper exerciseMapper;
 
     public void addOrUpdate(Integer score,Integer exerciseId, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        Evaluation evaluation = new Evaluation(null,user.getUserId(),exerciseId,score);
-        Evaluation dbEvaluation = evaluationMapper.getEvaluationByUserIdAndExerciseId(user.getUserId(),exerciseId);
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        Evaluation evaluation = new Evaluation(null, myUser.getUserId(),exerciseId,score);
+        Evaluation dbEvaluation = evaluationMapper.getEvaluationByUserIdAndExerciseId(myUser.getUserId(),exerciseId);
         if (dbEvaluation != null){
             evaluation.setEvaluationId(dbEvaluation.getEvaluationId());
             evaluationMapper.update(evaluation);
@@ -37,10 +37,10 @@ public class EvaluationService {
 
 
     public List<Evaluation> scoreByUserIdAndExerciseId(List<String> exerciseIdList, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         List<Evaluation> evaluations = new ArrayList<>();
         for (String exerciseId : exerciseIdList) {
-            Evaluation evaluation = evaluationMapper.getEvaluationByUserIdAndExerciseId(user.getUserId(), Integer.parseInt(exerciseId));
+            Evaluation evaluation = evaluationMapper.getEvaluationByUserIdAndExerciseId(myUser.getUserId(), Integer.parseInt(exerciseId));
             evaluations.add(evaluation);
         }
         return evaluations;

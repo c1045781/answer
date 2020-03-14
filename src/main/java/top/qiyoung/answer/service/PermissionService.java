@@ -6,8 +6,8 @@ import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.PermissionMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Message;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Query;
-import top.qiyoung.answer.model.User;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -36,10 +36,10 @@ public class PermissionService {
     }
 
     public void updateRole(Integer messageId, Integer role, Integer userId, String reason,Integer status) {
-        User user = new User();
-        user.setUserId(userId);
-        user.setRole(role);
-        userMapper.update(user);
+        MyUser myUser = new MyUser();
+        myUser.setUserId(userId);
+        myUser.setRole(role);
+        userMapper.update(myUser);
         permissionMapper.updateStatus(messageId,reason,status);
     }
 
@@ -52,18 +52,18 @@ public class PermissionService {
     }
 
     public PaginationDTO<Message> getMessageListByUserId(UserDetails userDetails, Integer currentPage, Integer size) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         Query query = new Query("create_time desc",(currentPage-1)*size,size);
-        List<Message> messageList = permissionMapper.getMessageListByUserId(user.getUserId(), query);
-        int count = permissionMapper.countMessageListByUserId(user.getUserId(), query);
+        List<Message> messageList = permissionMapper.getMessageListByUserId(myUser.getUserId(), query);
+        int count = permissionMapper.countMessageListByUserId(myUser.getUserId(), query);
 
         PaginationDTO<Message> dto = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,null,messageList);
         return dto;
     }
 
-    public void add(String content,UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        Message message = new Message(null,null,content,1,null,user.getUserId(),new Date(),0);
+    public void add(String content, UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        Message message = new Message(null,null,content,1,null, myUser.getUserId(),new Date(),0);
         permissionMapper.add(message);
     }
 }

@@ -1,6 +1,5 @@
 package top.qiyoung.answer.controller.manager;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,12 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Message;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.PermissionService;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
 @Controller
 @RequestMapping("/manager/permission")

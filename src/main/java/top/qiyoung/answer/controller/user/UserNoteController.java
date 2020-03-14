@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Note;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.NoteService;
 
 import javax.annotation.Resource;
@@ -25,7 +25,7 @@ public class UserNoteController {
     @RequestMapping("/getNote")
     @ResponseBody
     public Note getNote(Integer exerciseId, HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Note note = noteService.getNote(exerciseId, userDetails);
         return note;
@@ -34,15 +34,15 @@ public class UserNoteController {
     @RequestMapping("/addOrUpdate")
     @ResponseBody
     public String addNote(HttpServletRequest request,@RequestBody Note note){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        note.setUserId(user.getUserId());
+//        note.setUserId(myUser.getUserId());
         note.setModifyTime(new Date());
         if (note.getNoteId() == null){
             note.setCreateTime(new Date());
-            noteService.addNote(note,userDetails);
+            noteService.addNote(note, userDetails);
         }else{
-           noteService.updateNote(note,userDetails);
+           noteService.updateNote(note, userDetails);
         }
         return "success";
     }
@@ -53,7 +53,7 @@ public class UserNoteController {
     public PaginationDTO<Note> findNoteList(HttpServletRequest request,
                                            Integer currentPage,
                                            @RequestParam(defaultValue = "10") Integer pageSize){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PaginationDTO<Note> paginationDTO = noteService.findNoteList(userDetails,currentPage,pageSize);
         return paginationDTO;

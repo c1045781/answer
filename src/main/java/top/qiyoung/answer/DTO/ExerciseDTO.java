@@ -1,16 +1,16 @@
 package top.qiyoung.answer.DTO;
 
 import top.qiyoung.answer.model.Exercise;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Option;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
 
 import java.util.List;
 
 public class ExerciseDTO {
     private Exercise exercise;
     private Subject subject;
-    private User user;
+    private MyUser myUser;
     private List<Option> options;
 
     public List<Option> getOptions() {
@@ -37,12 +37,12 @@ public class ExerciseDTO {
         this.subject = subject;
     }
 
-    public User getUser() {
-        return user;
+    public MyUser getMyUser() {
+        return myUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setMyUser(MyUser myUser) {
+        this.myUser = myUser;
     }
 
 }

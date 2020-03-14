@@ -25,9 +25,9 @@
 		<div id="main-container">
 			<header class="kopa-header-01">
 				<div class="container">
-					<!--<div class="top-header" sec:authorize="!isAuthenticated()">-->
-					<!--<div class="top-header" th:if="${session.user == null}">-->
-					<div class="top-header" th:if="${#authentication} == null">
+					<div class="top-header" sec:authorize="!isAuthenticated()">
+					<!--<div class="top-header" th:if="${session.myUser == null}">-->
+					<!--<div class="top-header" th:if="${#authentication} == null">-->
 						<div class="kopa-login">
 							<a href="/toLogin">
 								<i class="fa fa-sign-in"></i>
@@ -41,26 +41,39 @@
 							</a>
 						</div>
 					</div>
-					<div class="top-header" th:if="${#authentication} != null">
-					<!--<div class="top-header" th:if="${session.user != null}">-->
+
+					<!--<div class="top-header" th:if="${#authentication} != null">-->
+					<div class="top-header" sec:authorize="isAuthenticated()">
+						<div class="btn-group" style="height: 66px;padding-top: 17px;">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: transparent;border: 0;padding-top: 2px;">
+								<a  style="background-color: transparent;border: 0;padding-top: 2px;max-width: 120px" href="#" class="thumbnail">
+									<img th:src="${myUser.avatarImgUrl}" alt="用户头像" style="height: 25px;width: 25px;float: left;margin-top: -4px">
+									<span th:text="${myUser.nickname}"></span>
+								</a>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="text-align: center;">
+								<li><a href="/user/personal">个人中心</a></li>
+								<li><a href="/user/modifyPassword">修改密码</a></li>
+							</ul>
+						</div>
 						<div class="kopa-login">
 							<a href="/logout">
 								<i class="fa fa-sign-in"></i>
 								退出
 							</a>
 						</div>
-						<div class="kopa-login">
-							<a href="/user/personal">
-								<i class="fa fa-user"></i>
+						<!--<div class="kopa-login">
+							<a href="/myUser/personal">
+								<i class="fa fa-myUser"></i>
 								个人中心
 							</a>
-						</div>
-						<div class="kopa-login">
-							<a href="/user/modifyPassword">
+						</div>-->
+						<!--<div class="kopa-login">
+							<a href="/myUser/modifyPassword">
 								<i class="fa fa-chain (alias)"></i>
 								修改密码
 							</a>
-						</div>
+						</div>-->
 					</div>
 
 					<div class="bottom-header style-01">

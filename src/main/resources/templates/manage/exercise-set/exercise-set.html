@@ -97,7 +97,7 @@
                             <td th:text="${exerciseSetDTO.exerciseSetId}"></td>
                             <td th:text="${exerciseSetDTO.subject.name}"></td>
                             <td class="answer-table-td" th:title="${exerciseSetDTO.title}"  th:text="${exerciseSetDTO.title}"></td>
-                            <td th:text="${exerciseSetDTO.user.username}"></td>
+                            <td th:text="${exerciseSetDTO.myUser.nickname}"></td>
                             <td th:text="${#dates.format(exerciseSetDTO.createTime,'yyyy-MM-dd')}"></td>
                             <td>
                                 <button th:onclick="deleteExerciseSetModal([[${exerciseSetDTO.exerciseSetId}]]);" type="button" class="btn btn-danger">
@@ -281,6 +281,7 @@
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
+                    showSubject("");
                 }
             }
         });

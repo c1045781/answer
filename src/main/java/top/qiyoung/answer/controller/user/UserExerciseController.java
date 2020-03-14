@@ -7,17 +7,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.qiyoung.answer.DTO.ExerciseDTO;
-import top.qiyoung.answer.DTO.ExerciseEditDTO;
-import top.qiyoung.answer.DTO.ExerciseReviewDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.DTO.*;
 import top.qiyoung.answer.model.*;
+import top.qiyoung.answer.schedule.ExcellentExerciseSchedule;
+import top.qiyoung.answer.schedule.HotExerciseSchedule;
 import top.qiyoung.answer.service.EvaluationService;
 import top.qiyoung.answer.service.ExerciseService;
+import top.qiyoung.answer.service.ExerciseSetService;
 import top.qiyoung.answer.service.SubjectService;
 import top.qiyoung.answer.utils.DeleteFile;
 import top.qiyoung.answer.utils.FileUpload;
@@ -36,11 +37,15 @@ public class UserExerciseController {
     @Resource
     private ExerciseService exerciseService;
 
+     @Resource
+    private ExerciseSetService exerciseSetService;
+
     @Resource
     private SubjectService subjectService;
 
     @Resource
     private EvaluationService evaluationService;
+
 
 
     // 查询习题
@@ -70,6 +75,10 @@ public class UserExerciseController {
             AVGScores.put(exerciseDTO.getExercise().getExerciseId(),score);
             countMap.put(exerciseDTO.getExercise().getExerciseId(),count);
         }
+        List<Exercise> hotExercise = exerciseService.getHotExercise(subjectId);
+        List<Exercise> excellentExercise = exerciseService.getExcellentExercise(subjectId);
+        model.addAttribute("hotExercise", hotExercise);
+        model.addAttribute("excellentExercise", excellentExercise);
         model.addAttribute("AVGScores", AVGScores);
         model.addAttribute("countMap", countMap);
         model.addAttribute("paginationDTO", paginationDTO);
@@ -84,10 +93,10 @@ public class UserExerciseController {
     @RequestMapping("/uploadFile")
     public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile, HttpServletRequest request,
                          Model model) throws IOException {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
+        upload = System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
@@ -135,7 +144,7 @@ public class UserExerciseController {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
-            exerciseService.insert(edit,userDetails);
+            exerciseService.insert(edit, userDetails);
         }
         return "redirect:/user/personal";
     }
@@ -143,7 +152,7 @@ public class UserExerciseController {
     // 添加或更新习题
     @RequestMapping("/addOrUpdate")
     public String addexercise(ExerciseEditDTO edit, HttpServletRequest request, Model model, HttpServletResponse response) {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
         byte[] bytes = {64};
@@ -159,9 +168,9 @@ public class UserExerciseController {
         int result;
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (edit.getExerciseEditId() != null) {
-            result = exerciseService.update(edit,userDetails);
+            result = exerciseService.update(edit, userDetails);
         } else {
-            result = exerciseService.insert(edit,userDetails);
+            result = exerciseService.insert(edit, userDetails);
         }
         if (result <= 0){
             ExerciseEditDTO exerciseEditDTO = edit;
@@ -210,12 +219,14 @@ public class UserExerciseController {
     @RequestMapping("/exerciseSetToAnswer")
     public String exerciseSetToAnswer(Integer exerciseSetId, Model model) {
         List<Integer> exerciseIdList = exerciseService.getExerciseIdListByExerciseSetId(exerciseSetId);
+        ExerciseSetDTO exerciseSetDTO = exerciseSetService.getExerciseSetVMById(exerciseSetId);
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList();
         for (Integer exerciseId : exerciseIdList) {
             ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(exerciseId);
             exerciseEditDTOList.add(exerciseEditDTO);
         }
         model.addAttribute("exerciseEditDTOList", exerciseEditDTOList);
+        model.addAttribute("exerciseSetDTO",exerciseSetDTO);
         return "user/answer";
     }
 
@@ -226,9 +237,9 @@ public class UserExerciseController {
                                                              @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                                                              @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                              @RequestParam(value = "status") Integer status){
-//        User user = (User) request.getSession().getAttribute("user");
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        PaginationDTO<Exercise> dto = exerciseService.getReviewExerciseByUserId(userDetails,currentPage,size,status);
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+        MyUser myUser = (MyUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PaginationDTO<Exercise> dto = exerciseService.getReviewExerciseByUserId(myUser,currentPage,size,status);
         return dto;
     }
 
@@ -236,9 +247,9 @@ public class UserExerciseController {
     @RequestMapping("/checkOfAddExercise")
     @ResponseBody
     public ExerciseReviewDTO checkOfAddExercise(Integer exerciseId,HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ExerciseReviewDTO dto = exerciseService.checkOfAddExercise(exerciseId,userDetails);
+        ExerciseReviewDTO dto = exerciseService.checkOfAddExercise(exerciseId, userDetails);
         return dto;
     }
 

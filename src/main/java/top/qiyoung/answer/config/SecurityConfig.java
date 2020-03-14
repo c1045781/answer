@@ -1,24 +1,32 @@
 package top.qiyoung.answer.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import top.qiyoung.answer.service.MyUserDetailsService;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-   /* @Bean
-    public UserDetailsService userDetailsService(){
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("zhangsan").password("123").authorities("p1").build());
-        manager.createUser(User.withUsername("lisi").password("456").authorities("p2").build());
-        return manager;
+    /*@Bean
+    public UserDetailsService  userDetailsService(){
+        return new MyUserDetailsService();
     }*/
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private MyUserDetailsService myUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -28,27 +36,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/manager/**").hasAnyAuthority("0","1")//所有/r/**的请求必须认证通过
+        http.authorizeRequests()
+                .antMatchers("/toLogin").permitAll()
+                .antMatchers("/user/exercise/check").permitAll()
+                .antMatchers("/user/exerciseSet/check").permitAll()
+                .antMatchers("/toRegister").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/subject/base").permitAll()
+                .antMatchers("/subject/subjectByBase").permitAll()
+                .antMatchers("/index").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/manager/**").hasAnyAuthority("0","1")
                 .antMatchers("/user/exercise/uploadFile").hasAuthority("3")
                 .antMatchers("/user/exercise/addOrUpdate").hasAuthority("3")
                 .antMatchers("/user/exercise/toUpdate").hasAuthority("3")
-                .antMatchers("/user/**").hasAnyAuthority("2","3")//所有/r/**的请求必须认证通过
-                .antMatchers("/**").authenticated()
-                .anyRequest().permitAll()//除了/r/**，其它的请求可以访问
+                .antMatchers("/user/**").hasAnyAuthority("2","3")
+                .anyRequest().authenticated()
                 .and()
-                .formLogin()//允许表单登录
-                .loginPage("/toLogin")//登录页面
-                .loginProcessingUrl("/login")
-                .successForwardUrl("/index")//自定义登录成功的页面地址
+                    .formLogin()
+                    .loginPage("/toLogin")//登录页面
+                    .loginProcessingUrl("/login")
+                    .successForwardUrl("/index")//自定义登录成功的页面地址
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                    .rememberMe()
+                    .tokenValiditySeconds(60*60*24*7)
+                    .userDetailsService(myUserDetailsService)
+                    .tokenRepository(persistentTokenRepository())
                 .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/toLogin");
+                    .logout()
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/toLogin")
+                .and()
+                    .csrf().disable();
     }
 
     /* 放行静态资源 */
@@ -60,19 +79,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/images/**");
         web.ignoring().antMatchers("/img/**");
         web.ignoring().antMatchers("/js/**");
-        web.ignoring().antMatchers("/uploa  d/**");
-        web.ignoring().antMatchers("/toLogin");
-        web.ignoring().antMatchers("/user/exercise/check");
-        web.ignoring().antMatchers("/user/exerciseSet/check");
-        web.ignoring().antMatchers("/toRegister");
-        web.ignoring().antMatchers("/register");
-        web.ignoring().antMatchers("/subject/base");
-        web.ignoring().antMatchers("/");
-        web.ignoring().antMatchers("/subject/subjectByBase");
+        web.ignoring().antMatchers("/upload/**");
 
         //解决服务注册url被拦截的问题
     }
 
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource); // 设置数据源
+//        tokenRepository.setCreateTableOnStartup(true); // 启动创建表，创建成功后注释掉
+        return tokenRepository;
+    }
 
 }
 

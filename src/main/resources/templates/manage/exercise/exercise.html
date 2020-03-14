@@ -119,7 +119,7 @@
                             <td th:text="${ExerciseVM.subject.name}"></td>
                             <td th:text="${ExerciseVM.exercise.exerciseType}"></td>
                             <td class="answer-table-td" th:title="${ExerciseVM.exercise.exerciseTitle}" th:text="${ExerciseVM.exercise.exerciseTitle}"></td>
-                            <td th:text="${ExerciseVM.user.username}"></td>
+                            <td th:text="${ExerciseVM.myUser.nickname}"></td>
                             <td th:text="${ExerciseVM.exercise.score}"></td>
                             <td th:text="${ExerciseVM.exercise.people}"></td>
                             <td th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></td>
@@ -329,6 +329,7 @@
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
+                    showSubject("");
                 }
             }
         });

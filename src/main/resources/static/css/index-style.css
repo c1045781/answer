@@ -5963,7 +5963,7 @@ aside.sidebar .kopa-widget-testimonials .widget-title:before {
 }
 
 aside.sidebar .widget_categories .widget-title:before, aside.sidebar .kopa-widget-links .module-links-03 .widget-title:before, .kopa-widget-links aside.sidebar .module-links-03 .widget-title:before {
-  content: '\f115';
+  content: '\f078';
 }
 
 aside.sidebar .kopa-widget-social .widget-title:before {
@@ -6034,7 +6034,7 @@ aside.sidebar .kopa-widget-advanced_search .widget-title:before {
 }
 
 .widget_categories ul li:before, .kopa-widget-links .module-links-03 ul li:before {
-  content: '\f0da';
+  content: '';
   font-size: 20px;
   margin-right: 15px;
 }

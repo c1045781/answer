@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.NoteMapper;
 import top.qiyoung.answer.mapper.UserMapper;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Note;
-import top.qiyoung.answer.model.User;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,19 +20,19 @@ public class NoteService {
     private UserMapper userMapper;
 
     public Note getNote(Integer exerciseId, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        return noteMapper.getNote(exerciseId,user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        return noteMapper.getNote(exerciseId, myUser.getUserId());
     }
 
     public void addNote(Note note,UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        note.setUserId(user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        note.setUserId(myUser.getUserId());
         noteMapper.addNote(note);
     }
 
-    public void updateNote(Note note,UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        note.setUserId(user.getUserId());
+    public void updateNote(Note note, UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        note.setUserId(myUser.getUserId());
         noteMapper.updateNote(note);
     }
 
@@ -41,9 +41,9 @@ public class NoteService {
     }
 
     public PaginationDTO<Note> findNoteList(UserDetails userDetails, Integer currentPage, Integer pageSize) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        List<Note> list = noteMapper.findNoteList(user.getUserId(),(currentPage-1)*pageSize,pageSize);
-        int count = noteMapper.countNoteList(user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        List<Note> list = noteMapper.findNoteList(myUser.getUserId(),(currentPage-1)*pageSize,pageSize);
+        int count = noteMapper.countNoteList(myUser.getUserId());
         PaginationDTO<Note> paginationDTO = new PaginationDTO<>(currentPage,pageSize,(int)Math.ceil((double) count /(double) pageSize),count,null,null,list);
         return paginationDTO;
     }

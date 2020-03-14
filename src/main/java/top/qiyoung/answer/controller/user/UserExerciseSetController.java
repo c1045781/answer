@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
 import top.qiyoung.answer.DTO.ExerciseSetDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.ExerciseSetService;
 import top.qiyoung.answer.service.SubjectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -47,7 +46,9 @@ public class UserExerciseSetController {
             model.addAttribute("subjectList", subjects);
             model.addAttribute("baseList", baseList);
         }
+        List<ExerciseSetDTO> highLikeExerciseSet = setService.getHighLikeExerciseSet(subjectId);
         model.addAttribute("paginationDTO", paginationDTO);
+        model.addAttribute("highLikeExerciseSet", highLikeExerciseSet);
         model.addAttribute("type", type);
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("search", search);
@@ -58,7 +59,7 @@ public class UserExerciseSetController {
     // 添加或更新习题集
     @RequestMapping("/addOrUpdate")
     public String addOrUpdate(HttpServletRequest request, ExerciseSetDTO setVM, HttpServletResponse response) {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (setVM.getExerciseSetId() != null) {
             setService.update(setVM);
@@ -92,7 +93,7 @@ public class UserExerciseSetController {
     public PaginationDTO<ExerciseSetDTO> getExerciseSetByUserId(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                                                                 @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                 HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PaginationDTO<ExerciseSetDTO> paginationDTO = setService.getExerciseListByUserId(currentPage, size, "create_time desc", userDetails);
         return paginationDTO;
@@ -102,9 +103,25 @@ public class UserExerciseSetController {
     @RequestMapping("/checkOfExerciseSet")
     @ResponseBody
     public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage, HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        PaginationDTO<ExerciseSetAndExercisesDTO> dto = setService.checkOfExerciseSet(exerciseSetId,currentPage,userDetails);
+        PaginationDTO<ExerciseSetAndExercisesDTO> dto = setService.checkOfExerciseSet(exerciseSetId,currentPage, userDetails);
         return dto;
+    }
+
+    @RequestMapping("/addLike")
+    @ResponseBody
+    public ExerciseSetDTO addLike(Integer exerciseSetId){
+        setService.addLike(exerciseSetId);
+        ExerciseSetDTO exerciseSetDTO = setService.getExerciseSetVMById(exerciseSetId);
+        return exerciseSetDTO;
+    }
+
+    @RequestMapping("/delLike")
+    @ResponseBody
+    public ExerciseSetDTO delLike(Integer exerciseSetId){
+        setService.delLike(exerciseSetId);
+        ExerciseSetDTO exerciseSetDTO = setService.getExerciseSetVMById(exerciseSetId);
+        return exerciseSetDTO;
     }
 }

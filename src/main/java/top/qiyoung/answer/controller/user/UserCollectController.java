@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.DTO.CollectDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.model.Collect;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.CollectService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -30,9 +28,9 @@ public class UserCollectController {
     @RequestMapping("/addCollect")
     @ResponseBody
     public String addCollect(Integer exerciseId,HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        collectService.addCollect(exerciseId,userDetails);
+        collectService.addCollect(exerciseId, userDetails);
         return "success";
     }
 
@@ -40,9 +38,9 @@ public class UserCollectController {
     @RequestMapping("/deleteCollect")
     @ResponseBody
     public String deleteCollect(Integer exerciseId,HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        collectService.deleteCollect(exerciseId,userDetails);
+        collectService.deleteCollect(exerciseId, userDetails);
         return "success";
     }
 
@@ -52,7 +50,7 @@ public class UserCollectController {
     public PaginationDTO<CollectDTO> findCollectList(HttpServletRequest request,
                                                  Integer currentPage,
                                                  @RequestParam(defaultValue = "10") Integer pageSize){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PaginationDTO<CollectDTO> paginationDTO = collectService.findCollectList(userDetails,currentPage,pageSize);
         return paginationDTO;
@@ -62,9 +60,9 @@ public class UserCollectController {
     @RequestMapping("/collection")
     @ResponseBody
     public List<Integer> collection(@RequestBody List<String> exerciseId, HttpServletRequest request){
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Integer> dbExerciseIdList = collectService.collection(exerciseId,userDetails);
+        List<Integer> dbExerciseIdList = collectService.collection(exerciseId, userDetails);
         return dbExerciseIdList;
     }
 }

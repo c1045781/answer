@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.*;
 
 import javax.annotation.Resource;
@@ -39,11 +39,16 @@ public class IndexController {
     // 首页根据用户跳转页面
     @RequestMapping("/index")
     public String index(Model model){
-//        User user = (User) request.getSession().getAttribute("user");
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userDetails!=null) {
-            User user = userService.getUserByUserDetails(userDetails);
-            if(user.getRole() == 1 || user.getRole() == 0){
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+        UserDetails userDetails;
+        try {
+            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return "user/index";
+        }
+        if (userDetails !=null) {
+            MyUser myUser = userService.getUserByUserDetails(userDetails);
+            if(myUser.getRole() == 1 || myUser.getRole() == 0){
                 int userCount = userService.userCount();
                 int exerciseCount = exerciseService.countExercise();
                 int exerciseSetCount = exerciseSetService.countExerciseSet();
@@ -55,6 +60,8 @@ public class IndexController {
                 model.addAttribute("commentCount",commentCount);
                 model.addAttribute("permissionCount",permissionCount);
                 return "manage/main-page";
+            }else {
+                model.addAttribute("myUser",myUser);
             }
         }
         return "user/index";
@@ -72,6 +79,6 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(){
-        return "user/index";
+        return "redirect:/index";
     }
 }

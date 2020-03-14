@@ -19,4 +19,6 @@ public interface CommentMapper {
     void deleteByExerciseId(Integer exerciseId);
 
     void deleteByUserId(Integer userId);
+
+    int countByExerciseId(Integer exerciseId);
 }

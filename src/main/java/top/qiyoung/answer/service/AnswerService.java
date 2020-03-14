@@ -2,7 +2,6 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import top.qiyoung.answer.DTO.HistoryAnswerDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.mapper.AnswerMapper;
@@ -12,7 +11,7 @@ import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Answer;
 import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
+import top.qiyoung.answer.model.MyUser;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,16 +30,17 @@ public class AnswerService {
     private UserMapper userMapper;
 
     public void addOrUpdate(Answer answer, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         answer.setCreateTime(new Date());
-        answer.setUserId(user.getUserId());
+        answer.setUserId(myUser.getUserId());
+        exerciseMapper.addDoCount(answer.getExerciseId());
         answerMapper.add(answer);
     }
 
     public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(UserDetails userDetails, Integer currentPage, Integer pageSize) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        List<Answer> list = answerMapper.findAnswerByUserId(user.getUserId(),(currentPage-1)*pageSize,pageSize);
-        int count = answerMapper.countAnswerByUserId(user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        List<Answer> list = answerMapper.findAnswerByUserId(myUser.getUserId(),(currentPage-1)*pageSize,pageSize);
+        int count = answerMapper.countAnswerByUserId(myUser.getUserId());
         List<HistoryAnswerDTO> historyAnswerDTOList = new ArrayList<>();
         for (Answer answer : list) {
             Exercise exercise = exerciseMapper.getExerciseByExerciseId(answer.getExerciseId());
@@ -59,11 +59,11 @@ public class AnswerService {
     }
 
     public PaginationDTO<HistoryAnswerDTO> findWrongAnswer(UserDetails userDetails, Integer currentPage, Integer pageSize, String search, Integer subjectId) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        List<Integer> idList = answerMapper.findExerciseIdByUserId(user.getUserId(),subjectId,search);
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        List<Integer> idList = answerMapper.findExerciseIdByUserId(myUser.getUserId(),subjectId,search);
         List<Answer> list = new ArrayList<>();
         for (Integer id : idList) {
-            Answer answer = answerMapper.findWrongAnswerByUserIdAndExerciseId(id, user.getUserId());
+            Answer answer = answerMapper.findWrongAnswerByUserIdAndExerciseId(id, myUser.getUserId());
             if (answer != null) list.add(answer);
         }
         int count = list.size();

@@ -1,6 +1,7 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import top.qiyoung.answer.DTO.ExerciseSetDTO;
 import top.qiyoung.answer.model.ExerciseSet;
 import top.qiyoung.answer.model.Query;
 
@@ -32,4 +33,11 @@ public interface ExerciseSetMapper {
     void deleteBySubjectId(Integer subjectId);
 
     List<Integer> findExerciseSetIdListByUser(Integer userId);
+
+    void addLike(Integer exerciseSetId);
+
+    void delLike(Integer exerciseSetId);
+
+    List<ExerciseSet> getHighLikeExerciseSet(Integer subject);
+
 }

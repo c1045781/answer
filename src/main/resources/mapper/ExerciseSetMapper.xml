@@ -7,6 +7,7 @@
         <result column="subject_id" jdbcType="INTEGER" property="subjectId"/>
         <result column="exercise_count" jdbcType="INTEGER" property="exerciseCount"/>
         <result column="create_user_id" jdbcType="INTEGER" property="createUserId"/>
+        <result column="like_count" jdbcType="INTEGER" property="likeCount"/>
         <result column="create_time" property="createTime"/>
         <result column="modify_time" property="modifyTime"/>
         <collection property="exerciseList" ofType="top.qiyoung.answer.model.Exercise">
@@ -163,5 +164,38 @@
                 create_user_id = #{userId}
             </if>
         </where>
+    </select>
+
+    <update id="addLike" parameterType="java.lang.Integer">
+        update exercise_set
+        <set>
+            like_count = like_count + 1
+        </set>
+        <where>
+            <if test="exerciseSetId != null">
+                exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </update>
+
+    <update id="delLike" parameterType="java.lang.Integer">
+        update exercise_set
+        <set>
+            like_count = like_count - 1
+        </set>
+        <where>
+            <if test="exerciseSetId != null">
+                exercise_set_id = #{exerciseSetId}
+            </if>
+        </where>
+    </update>
+
+    <select id="getHighLikeExerciseSet" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from exercise_set
+         <where>
+             <if test="subjectId != null">
+                 subject_id = #{subjectId}
+             </if>
+         </where>order by like_count desc limit 0,10
     </select>
 </mapper>

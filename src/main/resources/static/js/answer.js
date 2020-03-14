@@ -37,11 +37,13 @@ function showSubject(e) {
         data: JSON.stringify({baseSubject: e}),
         contentType: "application/json",
         success: function (data) {
-            if (data != null) {
+            if (data.length > 0) {
                 $('#subjectId').html(content);
                 for (var i = 0; i < data.length; i++) {
                     $('#subjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
                 }
+            }else{
+                $('#subjectId').append("<option>全部</option>");
             }
         }
     });
@@ -306,7 +308,6 @@ function showExerciseForUser(id){
 
 
 function deleteExerciseTbody(e) {
-    debugger;
     $.each($('#exercise-tbody').children(), function () {
         if (e == $(this).children(':first-child').find(':input').val()) {
             $(this).remove()
@@ -466,7 +467,7 @@ function orderbyChange(e){
 
 function confirmAnswer(){
 
-    $("div[name=corrent_div]").css('display','block');
+    $("div[name='correct_div']").css('display','block');
     $("input[type=radio]:checked").each(function() {
         checked_name = $(this).attr('name');
         correct = $("#"+checked_name).html();
@@ -533,7 +534,7 @@ function confirmAnswer(){
     }
 
     $("#a_confirm").css('display','none');
-    $("#correct_div").css('display','block');
+    // $("#correct_div").css('display','block');
 
 }
 
@@ -548,13 +549,13 @@ function openExerciseComment(e){
                 content += '<li class="comment">' +
                     '<article>' +
                     '<div class="comment-avatar ">' +
-                    '<img alt="" src="'+ data[i].user.avatarImgUrl +'">' +
+                    '<img alt="" src="'+ data[i].myUser.avatarImgUrl +'">' +
                     '</div>' +
                     '<div class="comment-content">' +
                     '<header>' +
                     '<div class="entry-meta ">' +
                     '<p class="entry-author">' +
-                    '<a href="#">'+ data[i].user.username +'</a>' +
+                    '<a href="#">'+ data[i].myUser.nickname +'</a>' +
                     '</p>' +
                     '<p class="entry-date">' +
                     '</p><div>'+ Format(new Date(data[i].createDate),"yyyy-MM-dd hh:mm:ss") +'</div>' +
@@ -565,6 +566,7 @@ function openExerciseComment(e){
                     '</article>' +
                     '</li>';
             }
+
             $("#comment_ol"+e).html(content);
         }
     });
@@ -704,11 +706,11 @@ function personInformation(){
         contentType:"application/json",
         success:function (data){
             $("#userId").val(data.userId);
-            $("#account").val(data.account);
+            $("#username").val(data.username);
             $("#avatarImgUrl").attr("src",data.avatarImgUrl);
             $("#phone").val(data.phone);
             $("#description").val(data.description);
-            $("#username").val(data.username);
+            $("#nickname").val(data.nickname);
             $("#sex").val(data.sex);
         }
     });
@@ -1532,6 +1534,34 @@ function submitScore(id){
         data:{score:score,exerciseId:id},
         success:function(data){
             alert("评分成功");
+        }
+    });
+}
+
+function validateExerciseSet(){
+    if ($('#exercise-tbody').children().length == 0){
+        alert("最少选择一道题目");
+        return false;
+    }
+    return true;
+}
+
+function addExerciseSetLike(e){
+    $.ajax({
+        url:"/user/exerciseSet/addLike",
+        data:{exerciseSetId:e},
+        success:function(data){
+            $("#likeSpan").html("<a class='fa fa-thumbs-o-up' href='javascript:void(0)' style='color:#3498db;' onclick='delExerciseSetLike("+ e +");'><span>（"+data.likeCount+"） </span></a>");
+        }
+    });
+}
+
+function delExerciseSetLike(e){
+    $.ajax({
+        url:"/user/exerciseSet/delLike",
+        data:{exerciseSetId:e},
+        success:function(data){
+            $("#likeSpan").html("<a class='fa fa-thumbs-o-up' href='javascript:void(0)' onclick='addExerciseSetLike("+ e +");'><span>（"+data.likeCount+"）</span></a>");
         }
     });
 }

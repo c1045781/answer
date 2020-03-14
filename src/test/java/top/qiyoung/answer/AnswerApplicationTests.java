@@ -8,22 +8,33 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.context.junit4.SpringRunner;
+import top.qiyoung.answer.mapper.CommentMapper;
+import top.qiyoung.answer.mapper.ExerciseMapper;
+import top.qiyoung.answer.model.Exercise;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.*;
+import java.util.stream.Stream;
 
 @SpringBootTest(classes=AnswerApplication.class)
 @RunWith(SpringRunner.class)
 class AnswerApplicationTests {
 
+    @Autowired
+    private ExerciseMapper exerciseMapper;
+    @Autowired
+    private CommentMapper commentMapper;
+
     @Test
     void contextLoads() throws IOException {
-        /*String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
+       /* String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
         System.out.println(hashpw);*/
         /*String path = "c:/software/";
         String fileName = "test";
@@ -58,6 +69,21 @@ class AnswerApplicationTests {
         wb.write(stream);
         //关闭文件流
         stream.close();*/
+
+        List<Exercise> exerciseList = exerciseMapper.getHotExercise(1);
+        Map<Exercise,Integer> map = new LinkedHashMap<>();
+        for (Exercise exercise : exerciseList) {
+            int count = commentMapper.countByExerciseId(exercise.getExerciseId());
+            map.put(exercise,count*10+exercise.getDoCount());
+        }
+        Map<Exercise,Integer> reslut = new LinkedHashMap<>();
+        Stream<Map.Entry<Exercise, Integer>> stream = map.entrySet().stream();
+        stream.sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).forEach(e ->reslut.put(e.getKey(),e.getValue()));
+        List<Map.Entry<Exercise,Integer>> list = new ArrayList<>(reslut.entrySet());
+        exerciseList.clear();
+        for (Map.Entry<Exercise, Integer> entry : list.subList(0,5)) {
+            exerciseList.add(entry.getKey());
+        }
     }
 
 }

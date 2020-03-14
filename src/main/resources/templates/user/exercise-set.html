@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <meta charset="utf-8">
@@ -30,11 +31,13 @@
         <header class="kopa-header-02">
                 <div class="top-header">
 					<div class="container">
-						<div class="right-top-header" th:if="${#authentication} == null">
-							<a href="/toLogin">登陆</a>
+						<!--<div class="right-top-header" th:if="${#authentication} == null">-->
+						<div class="right-top-header" sec:authorize="!isAuthenticated()">
+							<a href="/toLogin">登录</a>
 							<a href="/toRegister">注册</a>
 						</div>
-						<div class="right-top-header" th:if="${#authentication} != null">
+						<!--<div class="right-top-header" th:if="${#authentication} != null">-->
+						<div class="right-top-header" sec:authorize="isAuthenticated()">
 							<a href="/logout">退出</a>
 							<a href="/user/personal">个人中心</a>
 							<a href="/user/modifyPassword">修改密码</a>
@@ -87,7 +90,7 @@
 									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
 											th:if='${baseList != null}'>
-										<option></option>
+										<option value="">全部</option>
 										<option th:each="base:${baseList}"
 												th:text="${base}" th:value="${base}"
 												th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -141,7 +144,7 @@
 												<h3 class="history-right" th:text="${exerciseSetDTO.subject.baseSubject} +'»'+${exerciseSetDTO.subject.name}"></h3>
 											</div>
 											<div style="height: 50px;">
-	                                        <p style="float: left">创建人：<span th:text="${exerciseSetDTO.user.username}"></span></p>
+	                                        <p style="float: left">创建人：<span th:text="${exerciseSetDTO.myUser.nickname}"></span></p>
 	                                        <p style="float: right">创建时间：<span th:text="${#dates.format(exerciseSetDTO.createTime,'yyyy-MM-dd')}"></span></p>
 											</div>
 											<a target="_blank" th:href="@{/user/exercise/exerciseSetToAnswer(exerciseSetId = ${exerciseSetDTO.exerciseSetId})}" style="float: right" class="button-01">答题</a>
@@ -222,99 +225,15 @@
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
 							<aside class="sidebar">
-								<section class="widget kopa-widget-advanced_search">
-									<h2 class="widget-title">ABOUT UNIVERSITY</h2>
-									<div class="widget-content module-advanced_search-03">
-										<form>
-											<p><input type="text" placeholder="Course title"></p>
-											<p><input type="text" placeholder="Course ID"></p>
-											<p class="has-arrow">
-                                                <select name="category" id="category">
-                                                    <option value="1">All category</option>
-                                                    <option value="2">Front - End</option>
-                                                    <option value="3">Back - End</option>
-                                                    <option value="4">Full stack</option>
-                                                </select>                                 
-                                            </p>
-											<p class="has-arrow">
-                                                <select name="speaker" id="speaker">
-                                                    <option value="1">All speakers</option>
-                                                    <option value="2">john Doe</option>
-                                                    <option value="3">Ralph Garcia </option>
-                                                </select>                                 
-                                            </p>
-											<button type="submit">search</button>
-										</form>
-									</div>
-								</section>
-								<section class="widget kopa-widget-testimonials">
-									<h2 class="widget-title">TESTIMONIALS</h2>
-									<div class="widget-content module-testimonials-05 js-carousel">
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/4.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-									</div>
-								</section>
-								<section class="widget widget_categories">
-									<h2 class="widget-title">Categories</h2>		
-									<ul>
-										<li class="cat-item">
-											<a href="#">Biochemistry</a> (21)
-										</li>
-										<li class="cat-item">
-											<a href="#">Computer Science</a> (57)
-										</li>
-										<li class="cat-item">
-											<a href="#">Food Nutritions</a> (13)
-										</li>
-										<li class="cat-item">
-											<a href="#">Fashion Technology</a> (48)
-										</li>
-										<li class="cat-item">
-											<a href="#">Business Studies</a> (91)
-										</li>
-									</ul>
-								</section>
-								<section class="widget kopa-widget-social">
-									<h2 class="widget-title">Share This Course</h2>
-									<ul class="clearfix">
-										<li><a href="#" class="fa fa-twitter"></a></li>
-										<li><a href="#" class="fa fa-facebook"></a></li>
-										<li><a href="#" class="fa fa-dribbble"></a></li>
-										<li><a href="#" class="fa fa-instagram"></a></li>
-										<li><a href="#" class="fa fa-pinterest"></a></li>
-									</ul>
-								</section>
+                                <section class="widget widget_categories">
+                                    <h2 class="widget-title">高赞套题</h2>
+                                    <ul id="hotExercise">
+                                        <li class="cat-item" th:each="exerciseSet:${highLikeExerciseSet}">
+                                            <a target="_blank" style="cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;"
+                                               th:href="@{/user/exercise/exerciseSetToAnswer(exerciseSetId=${exerciseSet.exerciseSetId})}" th:text="${exerciseSet.title}"></a>
+                                        </li>
+                                    </ul>
+                                </section>
 							</aside>
 						</div>
                     </div>
@@ -356,10 +275,11 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
+                    $('#base').append("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
-                	showSubject(data[0]);
+                	showSubject("");
                 }
             }
         });

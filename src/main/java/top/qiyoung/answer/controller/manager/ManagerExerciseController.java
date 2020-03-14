@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,9 +16,9 @@ import top.qiyoung.answer.DTO.ExerciseDTO;
 import top.qiyoung.answer.DTO.ExerciseEditDTO;
 import top.qiyoung.answer.DTO.ExerciseReviewDTO;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Option;
 import top.qiyoung.answer.model.Subject;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.SubjectService;
 import top.qiyoung.answer.utils.DeleteFile;
@@ -75,7 +76,7 @@ public class ManagerExerciseController {
         model.addAttribute("type", type);
         model.addAttribute("score", score);
 
-        User user = (User) request.getSession().getAttribute("user");
+        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         return "manage/exercise/exercise";
     }
 
@@ -122,10 +123,10 @@ public class ManagerExerciseController {
     @RequestMapping("/uploadFile")
     public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile, HttpServletRequest request,
                          Model model) throws IOException {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
+        upload = System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
@@ -188,7 +189,7 @@ public class ManagerExerciseController {
     // 添加或更新习题
     @RequestMapping("/addOrUpdate")
     public String addexercise(ExerciseEditDTO edit, HttpServletRequest request, Model model, HttpServletResponse response) {
-//        User user = (User) request.getSession().getAttribute("user");
+//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
         byte[] bytes = {64};
@@ -204,7 +205,7 @@ public class ManagerExerciseController {
         int result;
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (edit.getExerciseEditId() != null) {
-            result = exerciseService.update(edit,userDetails);
+            result = exerciseService.update(edit, userDetails);
         } else {
             result = exerciseService.insert(edit, userDetails);
         }
@@ -265,5 +266,4 @@ public class ManagerExerciseController {
         exerciseService.updateSatus(exerciseId,status,reason,messageId);
         return "success";
     }
-
 }

@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <meta charset="utf-8">
@@ -30,11 +31,13 @@
         <header class="kopa-header-02">
                 <div class="top-header">
 					<div class="container">
-						<div class="right-top-header" th:if="${#authentication} == null">
+						<!--<div class="right-top-header" th:if="${#authentication} == null">-->
+						<div class="right-top-header" sec:authorize="!isAuthenticated()">
 							<a href="/toLogin">登陆</a>
 							<a href="/toRegister">注册</a>
 						</div>
-						<div class="right-top-header" th:if="${#authentication} != null">
+						<!--<div class="right-top-header" th:if="${#authentication} != null">-->
+						<div class="right-top-header" sec:authorize="isAuthenticated()">
 							<a href="/logout">退出</a>
 							<a href="/user/personal">个人中心</a>
 							<a href="/user/modifyPassword">修改密码</a>
@@ -87,7 +90,7 @@
 									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
 											th:if='${baseList != null}'>
-										<option></option>
+										<option value="">全部</option>
 										<option th:each="base:${baseList}"
 												th:text="${base}" th:value="${base}"
 												th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -121,7 +124,7 @@
             <section class="kopa-area">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-8 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="shop-content">
 	                            <form class="woocommerce-ordering" method="get">
 	                                <input type="hidden" id="hidden_subjectId" th:value="${subjectId}">
@@ -139,7 +142,7 @@
 											<div style="height: 50px;">
 	                                        <p style="float: right">做题时间：<span th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd hh:mm:ss')}"></span></p>
 											</div>
-											<a style="float: right" th:href="@{/answer/viewHistoryExercise(answerId=${ExerciseVM.answerId})}" class="button-01">查看</a>
+											<a style="float: right" th:href="@{/user/answer/viewHistoryExercise(answerId=${ExerciseVM.answerId})}" class="button-01">查看</a>
 	                                    </div>
 	                                </li>
 	                            </ul>
@@ -147,7 +150,7 @@
 									<ul class="page-numbers"  th:if="${paginationDTO.totalPage} > 0">
 										<li th:if="${paginationDTO.currentPage != 1} ">
 											<a class="prev page-numbers" href="#"
-											   th:href="@{/answer/wrongBook(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},search=${search})}">
+											   th:href="@{/user/answer/wrongBook(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},search=${search})}">
 												<i class="fa fa-angle-left"></i>
 											</a>
 										</li>
@@ -157,7 +160,7 @@
 											th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
+											   th:href="@{/user/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -166,7 +169,7 @@
 											th:each="pageNo : ${#numbers.sequence(1, 7)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
+											   th:href="@{/user/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -175,7 +178,7 @@
 											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}">
 											<a  class="page-numbers" href="#" th:text="${pageNo}"
 												th:if="${paginationDTO.currentPage != pageNo}"
-											   	th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
+											   	th:href="@{/user/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -184,7 +187,7 @@
 											th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}">
 											<a class="page-numbers" href="#" th:text="${pageNo}"
 											   th:if="${paginationDTO.currentPage != pageNo}"
-											   th:href="@{/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
+											   th:href="@{/user/answer/wrongBook(currentPage=${pageNo}, subjectId=${subjectId},search=${search})}"></a>
 											<span class="page-numbers current" th:text="${pageNo}" th:if="${paginationDTO.currentPage == pageNo}"></span>
 										</li>
 
@@ -200,7 +203,7 @@
 
 										<li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
 											<a href="#" class="next page-numbers"
-											   th:href="@{/answer/wrongBook(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},orderby=${orderby},search=${search})}">
+											   th:href="@{/user/answer/wrongBook(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId},orderby=${orderby},search=${search})}">
 												<i class="fa fa-angle-right"></i>
 											</a>
 										</li>
@@ -211,103 +214,6 @@
 								</nav>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-12 col-xs-12">
-							<aside class="sidebar">
-								<section class="widget kopa-widget-advanced_search">
-									<h2 class="widget-title">ABOUT UNIVERSITY</h2>
-									<div class="widget-content module-advanced_search-03">
-										<form>
-											<p><input type="text" placeholder="Course title"></p>
-											<p><input type="text" placeholder="Course ID"></p>
-											<p class="has-arrow">
-                                                <select name="category" id="category">
-                                                    <option value="1">All category</option>
-                                                    <option value="2">Front - End</option>
-                                                    <option value="3">Back - End</option>
-                                                    <option value="4">Full stack</option>
-                                                </select>                                 
-                                            </p>
-											<p class="has-arrow">
-                                                <select name="speaker" id="speaker">
-                                                    <option value="1">All speakers</option>
-                                                    <option value="2">john Doe</option>
-                                                    <option value="3">Ralph Garcia </option>
-                                                </select>                                 
-                                            </p>
-											<button type="submit">search</button>
-										</form>
-									</div>
-								</section>
-								<section class="widget kopa-widget-testimonials">
-									<h2 class="widget-title">TESTIMONIALS</h2>
-									<div class="widget-content module-testimonials-05 js-carousel">
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/4.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-										<div class="item-testi">
-											<div class="thumb">
-												<a href="#">
-													<img src="../../../../../../../Users/53246/Downloads/Compressed/templatesy_594/594/images/testimonial/3.jpg" alt="">
-												</a>
-											</div>
-											<div class="content">
-												<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egetvel lacus pretium rhoncus a quis</p>
-												<a href="#">Ashiful Pappu</a>
-											</div>
-										</div>
-									</div>
-								</section>
-								<section class="widget widget_categories">
-									<h2 class="widget-title">Categories</h2>		
-									<ul>
-										<li class="cat-item">
-											<a href="#">Biochemistry</a> (21)
-										</li>
-										<li class="cat-item">
-											<a href="#">Computer Science</a> (57)
-										</li>
-										<li class="cat-item">
-											<a href="#">Food Nutritions</a> (13)
-										</li>
-										<li class="cat-item">
-											<a href="#">Fashion Technology</a> (48)
-										</li>
-										<li class="cat-item">
-											<a href="#">Business Studies</a> (91)
-										</li>
-									</ul>
-								</section>
-								<section class="widget kopa-widget-social">
-									<h2 class="widget-title">Share This Course</h2>
-									<ul class="clearfix">
-										<li><a href="#" class="fa fa-twitter"></a></li>
-										<li><a href="#" class="fa fa-facebook"></a></li>
-										<li><a href="#" class="fa fa-dribbble"></a></li>
-										<li><a href="#" class="fa fa-instagram"></a></li>
-										<li><a href="#" class="fa fa-pinterest"></a></li>
-									</ul>
-								</section>
-							</aside>
-						</div>
                     </div>
                 </div>
             </section>
@@ -347,10 +253,11 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
+                    $('#base').append("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
-                    showSubject(data[0]);
+                    showSubject("");
                 }
             }
         });

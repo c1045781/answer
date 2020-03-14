@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Query;
-import top.qiyoung.answer.model.User;
 import top.qiyoung.answer.utils.DeleteFile;
 import top.qiyoung.answer.utils.FileUpload;
 
@@ -38,12 +38,12 @@ public class UserService {
     @Resource
     private NoteMapper noteMapper;
 
-    public User login(User user) {
-        return userMapper.login(user);
+    public MyUser login(MyUser myUser) {
+        return userMapper.login(myUser);
     }
 
-    public int insert(User user, MultipartFile avatarImg) {
-        User dbuser = userMapper.findUserByAccount(user.getAccount());
+    public int insert(MyUser myUser, MultipartFile avatarImg) {
+        MyUser dbuser = userMapper.findUserByAccount(myUser.getUsername());
         if (dbuser != null) {
             return 0;
         }
@@ -58,16 +58,16 @@ public class UserService {
                 return 2;
             }
         }
-        user.setCreateTime(new Date());
-        user.setAvatarImgUrl(upload);
-        user.setPassword(BCrypt.hashpw(user.getPassword(),BCrypt.gensalt()));
-        userMapper.insertUser(user);
+        myUser.setCreateTime(new Date());
+        myUser.setAvatarImgUrl(upload);
+        myUser.setPassword(BCrypt.hashpw(myUser.getPassword(),BCrypt.gensalt()));
+        userMapper.insertUser(myUser);
         return 1;
     }
 
-    public PaginationDTO<User> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role,UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        PaginationDTO<User> paginationDTO = new PaginationDTO<>(currentPage,size);
+    public PaginationDTO<MyUser> getUserList(Integer currentPage, Integer size, String search, String type, String order, Integer role, UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        PaginationDTO<MyUser> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
         query.setSize(size);
@@ -75,15 +75,15 @@ public class UserService {
         query.setSearch(search);
         query.setType(type);
         query.setOrder(order);
-        List<User> userList;
+        List<MyUser> myUserList;
         int count;
-        if (user.getRole() == 0){
-            userList = userMapper.getUserList0(query);
-            paginationDTO.setDataList(userList);
+        if (myUser.getRole() == 0){
+            myUserList = userMapper.getUserList0(query);
+            paginationDTO.setDataList(myUserList);
             count = userMapper.countUserList0(query);
         }else {
-            userList = userMapper.getUserList1(query);
-            paginationDTO.setDataList(userList);
+            myUserList = userMapper.getUserList1(query);
+            paginationDTO.setDataList(myUserList);
             count = userMapper.countUserList1(query);
         }
         paginationDTO.setTotalSize(count);
@@ -106,17 +106,17 @@ public class UserService {
         userMapper.deleteById(userId);
     }
 
-    public User getUserById(UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        return userMapper.getUserById(user.getUserId());
+    public MyUser getUserById(UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        return userMapper.getUserById(myUser.getUserId());
     }
 
-    public int update(User user, MultipartFile avatarImg) {
+    public int update(MyUser myUser, MultipartFile avatarImg) {
         if (!avatarImg.isEmpty()) {
-            User dbUser = userMapper.getUserById(user.getUserId());
+            MyUser dbMyUser = userMapper.getUserById(myUser.getUserId());
             DeleteFile deleteFile = new DeleteFile();
-            if (!dbUser.getAvatarImgUrl().equals("/upload/default.jpg"))
-            deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\"+dbUser.getAvatarImgUrl());
+            if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg"))
+            deleteFile.delFile(System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\"+ dbMyUser.getAvatarImgUrl());
             FileUpload fileUpload = new FileUpload();
             String upload = "/upload/default.jpg";
             try {
@@ -124,11 +124,11 @@ public class UserService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            user.setAvatarImgUrl(upload);
+            myUser.setAvatarImgUrl(upload);
         }
-        if (user.getPassword() != null)
-        user.setPassword(BCrypt.hashpw(user.getPassword(),BCrypt.gensalt()));
-        return userMapper.update(user);
+        if (myUser.getPassword() != null)
+        myUser.setPassword(BCrypt.hashpw(myUser.getPassword(),BCrypt.gensalt()));
+        return userMapper.update(myUser);
     }
 
     public int userCount() {
@@ -136,19 +136,19 @@ public class UserService {
         return userMapper.countUserList1(query);
     }
 
-    public User getUserByUserId(Integer userId) {
+    public MyUser getUserByUserId(Integer userId) {
         return userMapper.getUserById(userId);
     }
 
-    public User getUserByUserDetails(UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        return user;
+    public MyUser getUserByUserDetails(UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        return myUser;
     }
 
-    public void modifyPassword(UserDetails principal, String password) {
-        User user = userMapper.findUserByAccount(principal.getUsername());
+    public void modifyPassword(MyUser myUser, String password) {
+//        MyUser myUser = userMapper.findUserByAccount(principal.getUsername());
         password = BCrypt.hashpw(password, BCrypt.gensalt());
-        user.setPassword(password);
-        userMapper.modifyPassword(user);
+        myUser.setPassword(password);
+        userMapper.modifyPassword(myUser);
     }
 }

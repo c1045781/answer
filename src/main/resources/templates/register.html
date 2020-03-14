@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <meta charset="utf-8">
@@ -30,11 +31,13 @@
     <header class="kopa-header-02">
         <div class="top-header">
             <div class="container">
-                <div class="right-top-header" th:if="${#authentication} == null">
+                <!--<div class="right-top-header" th:if="${#authentication} == null">-->
+                <div class="right-top-header" sec:authorize="!isAuthenticated()">
                     <a href="/toLogin">登录</a>
                     <a href="/toRegister">注册</a>
                 </div>
-                <div class="right-top-header" th:if="${#authentication} != null">
+                <!--<div class="right-top-header" th:if="${#authentication} != null">-->
+                <div class="right-top-header" sec:authorize="isAuthenticated()">
                     <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
                 </div>
@@ -71,8 +74,8 @@
                 <form action="/register" method="post">
                     <span style="color: red;" th:text="${error}"></span>
                     <h2 class="widget-title">注册账号</h2>
-                    <p><input type="text" placeholder="账号" name="account" required></p>
-                    <p><input type="text" placeholder="昵称" name="username" required></p>
+                    <p><input type="text" placeholder="账号" name="username" required></p>
+                    <p><input type="text" placeholder="昵称" name="nickname" required></p>
                     <p><input type="password" placeholder="密码" name="password" required>
                         <a href="javascript:void(0)" onclick="changePasswdType()"><img src="/img/icon/eye.png"/></a>
                     </p>

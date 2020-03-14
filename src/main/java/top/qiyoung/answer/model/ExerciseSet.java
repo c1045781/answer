@@ -12,6 +12,15 @@ public class ExerciseSet {
     private Date modifyTime;
     List<Exercise> exerciseList;
     private Integer subjectId;
+    private Integer likeCount;
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
 
     public Integer getExerciseSetId() {
         return exerciseSetId;
@@ -79,7 +88,7 @@ public class ExerciseSet {
     }
 
 
-    public ExerciseSet(Integer exerciseSetId, String title, Integer exerciseCount, Integer createUserId, Date createTime, Date modifyTime, List<Exercise> exerciseList, Integer subjectId) {
+    /*public ExerciseSet(Integer exerciseSetId, String title, Integer exerciseCount, Integer createUserId, Date createTime, Date modifyTime, List<Exercise> exerciseList, Integer subjectId) {
         this.exerciseSetId = exerciseSetId;
         this.title = title;
         this.exerciseCount = exerciseCount;
@@ -88,6 +97,18 @@ public class ExerciseSet {
         this.modifyTime = modifyTime;
         this.exerciseList = exerciseList;
         this.subjectId = subjectId;
+    }*/
+
+    public ExerciseSet(Integer exerciseSetId, String title, Integer exerciseCount, Integer createUserId, Date createTime, Date modifyTime, List<Exercise> exerciseList, Integer subjectId, Integer likeCount) {
+        this.exerciseSetId = exerciseSetId;
+        this.title = title;
+        this.exerciseCount = exerciseCount;
+        this.createUserId = createUserId;
+        this.createTime = createTime;
+        this.modifyTime = modifyTime;
+        this.exerciseList = exerciseList;
+        this.subjectId = subjectId;
+        this.likeCount = likeCount;
     }
 
     public ExerciseSet() {

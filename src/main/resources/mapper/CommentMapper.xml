@@ -13,7 +13,7 @@
         select * from comment
         <where>
             <if test="type != null and type != ''">
-                <if test="type == 'user' and search != null and search != ''">
+                <if test="type == 'myUser' and search != null and search != ''">
                   user_id = #{search}
                 </if>
                 <if test="type == 'exercise' and search != null and search != ''">
@@ -33,7 +33,7 @@
         select count(*) from comment
         <where>
             <if test="type != null and type != ''">
-                <if test="type == 'user' and search != null and search != ''">
+                <if test="type == 'myUser' and search != null and search != ''">
                     user_id = #{search}
                 </if>
                 <if test="type == 'exercise' and search != null and search != ''">
@@ -79,4 +79,13 @@
     <insert id="addComment" parameterType="top.qiyoung.answer.model.Comment">
         insert into comment(user_id, exercise_id, content, create_time) values (#{userId},#{exerciseId},#{content},#{createTime})
     </insert>
+
+    <select id="countByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from comment
+        <where>
+            <if test="exerciseId != null">
+                exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
 </mapper>

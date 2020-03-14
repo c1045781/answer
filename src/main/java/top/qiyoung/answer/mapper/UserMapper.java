@@ -1,34 +1,33 @@
 package top.qiyoung.answer.mapper;
 
-import com.github.pagehelper.Page;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Query;
-import top.qiyoung.answer.model.User;
 
 import java.util.List;
 
 public interface UserMapper {
 
-    User login(User user);
+    MyUser login(MyUser myUser);
 
-    User findUserByAccount(String account);
+    MyUser findUserByAccount(String account);
 
-    void insertUser(User user);
+    void insertUser(MyUser myUser);
 
     int deleteById(Integer id);
 
-    User getUserById(Integer id);
+    MyUser getUserById(Integer id);
 
-    int update(User user);
+    int update(MyUser myUser);
 
-    List<User> getUserByUsername(String username);
+    List<MyUser> getUserByNickname(String username);
 
-    List<User> getUserList0(Query query);
+    List<MyUser> getUserList0(Query query);
 
     int countUserList0(Query query);
 
-    List<User> getUserList1(Query query);
+    List<MyUser> getUserList1(Query query);
 
     int countUserList1(Query query);
 
-    void modifyPassword(User user);
+    void modifyPassword(MyUser myUser);
 }

@@ -49,4 +49,11 @@ public interface ExerciseMapper {
 
     int countExerciseList(@Param("search") String search,@Param("type") String type,@Param("exerciseType") String exerciseType,
                             @Param("order") String orderby,@Param("id") Integer subjectId,@Param("score") Integer score);
+
+    void addDoCount(Integer exerciseId);
+
+    List<Exercise> getHotExercise(Integer subjectId);
+
+    List<Exercise> getExcellentExercise(Integer subjectId);
+
 }

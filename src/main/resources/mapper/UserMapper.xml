@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.User">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.MyUser">
         <id column="user_id" jdbcType="INTEGER" property="userId"/>
-        <result column="role" jdbcType="INTEGER" property="role"/>
-        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="role" jdbcType="VARCHAR" property="role"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
         <result column="username" jdbcType="VARCHAR" property="username"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
@@ -14,11 +14,11 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
-    <select id="login" parameterType="top.qiyoung.answer.model.User" resultMap="BaseResultMap">
+    <select id="login" parameterType="top.qiyoung.answer.model.MyUser" resultMap="BaseResultMap">
         select * from user
         <where>
-            <if test="account !=null and account != ''">
-                and account = #{account}
+            <if test="username !=null and username != ''">
+                and username = #{username}
             </if>
             <if test="password !=null and password != ''">
                 and password = #{password}
@@ -39,7 +39,7 @@
         select * from user
         <where>
             <if test="account !=null and account != ''">
-                and account = #{account}
+                and username = #{account}
             </if>
         </where>
     </select>
@@ -53,11 +53,11 @@
                     <if test="type == 'id'">
                         and user_id = #{search}
                     </if>
-                    <if test="type == 'account'">
-                        and account like "%"#{search}"%"
-                    </if>
                     <if test="type == 'username'">
                         and username like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'nickname'">
+                        and nickname like "%"#{search}"%"
                     </if>
                 </if>
             </if>
@@ -82,11 +82,11 @@
                     <if test="type == 'id'">
                         and user_id = #{search}
                     </if>
-                    <if test="type == 'account'">
-                        and account like "%"#{search}"%"
-                    </if>
                     <if test="type == 'username'">
                         and username like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'nickname'">
+                        and nickname like "%"#{search}"%"
                     </if>
                 </if>
             </if>
@@ -105,11 +105,11 @@
                     <if test="type == 'id'">
                         and user_id = #{search}
                     </if>
-                    <if test="type == 'account'">
-                        and account like "%"#{search}"%"
-                    </if>
                     <if test="type == 'username'">
                         and username like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'nickname'">
+                        and nickname like "%"#{search}"%"
                     </if>
                 </if>
             </if>
@@ -134,11 +134,11 @@
                     <if test="type == 'id'">
                         and user_id = #{search}
                     </if>
-                    <if test="type == 'account'">
-                        and account like "%"#{search}"%"
-                    </if>
                     <if test="type == 'username'">
                         and username like "%"#{search}"%"
+                    </if>
+                    <if test="type == 'nickname'">
+                        and nickname like "%"#{search}"%"
                     </if>
                 </if>
             </if>
@@ -148,9 +148,9 @@
         </where>
     </select>
 
-    <insert id="insertUser" parameterType="top.qiyoung.answer.model.User">
-        insert into user (account,password,role,username,description,avatar_img_url,create_time,phone,sex)
-          values (#{account},#{password},#{role},#{username},#{description},#{avatarImgUrl},#{createTime},#{phone},#{sex})
+    <insert id="insertUser" parameterType="top.qiyoung.answer.model.MyUser">
+        insert into user (username,password,role,nickname,description,avatar_img_url,create_time,phone,sex)
+          values (#{username},#{password},#{role},#{nickname},#{description},#{avatarImgUrl},#{createTime},#{phone},#{sex})
     </insert>
 
     <delete id="deleteById" parameterType="java.lang.Integer">
@@ -162,14 +162,14 @@
         </where>
     </delete>
 
-    <update id="update" parameterType="top.qiyoung.answer.model.User">
+    <update id="update" parameterType="top.qiyoung.answer.model.MyUser">
         update user
         <set>
-            <if test="account != null and account != ''">
-                account = #{account},
-            </if>
             <if test="username != null and username != ''">
                 username = #{username},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
             </if>
             <if test="password != null and password != ''">
                 password = #{password},
@@ -193,16 +193,16 @@
         where user_id = #{userId}
     </update>
 
-    <select id="getUserByUsername" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="getUserByNickname" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from user
         <where>
-            <if test="username != null and username != ''">
-                and username like "%"#{username}"%"
+            <if test="nickname != null and nickname != ''">
+                and nickname like "%"#{nickname}"%"
             </if>
         </where>
     </select>
 
-    <update id="modifyPassword" parameterType="top.qiyoung.answer.model.User">
+    <update id="modifyPassword" parameterType="top.qiyoung.answer.model.MyUser">
         update user
         <set>
             <if test="password != null and password != ''">

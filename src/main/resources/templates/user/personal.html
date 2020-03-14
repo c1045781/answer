@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="utf-8">
     <title>个人中心</title>
@@ -35,11 +36,13 @@
     <header class="kopa-header-02">
         <div class="top-header">
             <div class="container">
-                <div class="right-top-header" th:if="${#authentication} == null">
-                    <a href="/toLogin">登陆</a>
+                <!--<div class="right-top-header" th:if="${#authentication} == null">-->
+                <div class="right-top-header" sec:authorize="!isAuthenticated()">
+                    <a href="/toLogin">登录</a>
                     <a href="/toRegister">注册</a>
                 </div>
-                <div class="right-top-header" th:if="${#authentication} != null">
+                <!--<div class="right-top-header" th:if="${#authentication} != null">-->
+                <div class="right-top-header" sec:authorize="isAuthenticated()">
                     <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
                     <a href="/user/modifyPassword">修改密码</a>
@@ -107,13 +110,13 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a onclick="permissionList(1)" href="#t4" aria-controls="t4" role="tab"
+                                        <a onclick="permissionList(1)" sec:authorize="hasAuthority('2')" href="#t4" aria-controls="t4" role="tab"
                                            data-toggle="tab">
                                             权限申请
                                         </a>
                                     </li>
                                     <li>
-                                        <a onclick="AddExerciseList(1)" th:if="${#authentication.principal.authorities == '3'}" href="#t5" aria-controls="t5" role="tab"
+                                        <a onclick="AddExerciseList(1)" sec:authorize="hasAuthority('3')" href="#t5" aria-controls="t5" role="tab"
                                            data-toggle="tab">
                                             添加习题
                                         </a>
@@ -147,7 +150,7 @@
                                                                 <div class="col-xs-8 col-md-8 col-sm-8">
                                                                     <input type="hidden" id="userId" name="userId">
                                                                     <input readonly type="text" class="form-control"
-                                                                           id="account" name="account" placeholder="账号"
+                                                                           id="username" name="username" placeholder="账号"
                                                                            required="">
                                                                     <div class="help-block with-errors"></div>
                                                                 </div>
@@ -156,7 +159,7 @@
                                                                 <label class="col-xs-2 col-md-2 col-sm-2 control-label">昵称：</label>
                                                                 <div class="col-xs-8 col-md-8 col-sm-8">
                                                                     <input type="text" class="form-control"
-                                                                           id="username" name="username" required="">
+                                                                           id="nickname" name="nickname" required="">
                                                                     <div class="help-block with-errors"></div>
                                                                 </div>
                                                             </div>
@@ -478,7 +481,7 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="form-group">
-                                                                                            <button class="btn btn-primary" type="submit">确定</button>
+                                                                                            <button class="btn btn-primary" onclick="return validateExerciseSet()" type="submit">确定</button>
                                                                                             <button class="btn btn-primary" onclick="toExerciseSetList()" type="button">返回</button>
                                                                                         </div>
                                                                                     </form>

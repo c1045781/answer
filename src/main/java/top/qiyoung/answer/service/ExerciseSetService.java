@@ -30,11 +30,12 @@ public class ExerciseSetService {
     private UserMapper userMapper;
 
     public int insert(ExerciseSetDTO setVM, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         int result;
         ExerciseSet exerciseSet = new ExerciseSet();
 
-        exerciseSet.setCreateUserId(user.getUserId());
+        exerciseSet.setCreateUserId(myUser.getUserId());
+        exerciseSet.setLikeCount(0);
         exerciseSet.setCreateTime(new Date());
         exerciseSet.setModifyTime(new Date());
         List<Integer> exerciseIds = new ArrayList<>();
@@ -97,9 +98,9 @@ public class ExerciseSetService {
         List<ExerciseSet> exerciseSets = new ArrayList<>();
         int count = 0;
         if (type != null && type.equals("createUser")) {
-            List<User> users = userMapper.getUserByUsername(search);
+            List<MyUser> myUsers = userMapper.getUserByNickname(search);
             List<ExerciseSet> exerciseList = new ArrayList<>();
-            for (User dbuser : users) {
+            for (MyUser dbuser : myUsers) {
                 query.setIndex(null);
                 query.setSize(null);
                 query.setSearch(dbuser.getUserId() + "");
@@ -131,9 +132,9 @@ public class ExerciseSetService {
         for (ExerciseSet exerciseSet : exerciseSets) {
             ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO();
             Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
-            User user = userMapper.getUserById(exerciseSet.getCreateUserId());
+            MyUser myUser = userMapper.getUserById(exerciseSet.getCreateUserId());
             BeanUtils.copyProperties(exerciseSet, exerciseSetDTO);
-            exerciseSetDTO.setUser(user);
+            exerciseSetDTO.setMyUser(myUser);
             exerciseSetDTO.setSubject(subject);
             vms.add(exerciseSetDTO);
         }
@@ -154,14 +155,14 @@ public class ExerciseSetService {
             exerciseSet.setExerciseList(null);
         }
         ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO();
-        User user = userMapper.getUserById(exerciseSet.getCreateUserId());
+        MyUser myUser = userMapper.getUserById(exerciseSet.getCreateUserId());
         Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
         List<String> base = subjectMapper.getBase();
         BeanUtils.copyProperties(exerciseSet, exerciseSetDTO);
         exerciseSetDTO.setBaseList(base);
         exerciseSetDTO.setSubjectList(subjectList);
-        exerciseSetDTO.setUser(user);
+        exerciseSetDTO.setMyUser(myUser);
         exerciseSetDTO.setSubject(subject);
         return exerciseSetDTO;
     }
@@ -171,14 +172,14 @@ public class ExerciseSetService {
     }
 
     public PaginationDTO<ExerciseSetDTO> getExerciseListByUserId(Integer currentPage, Integer size, String orderBy, UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
-        List<ExerciseSet> exerciseSets = setMapper.getExerciseSetListByUserId((currentPage-1)*size,size,orderBy,user.getUserId());
-        int count = setMapper.countExerciseSetListByUserId(user.getUserId());
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        List<ExerciseSet> exerciseSets = setMapper.getExerciseSetListByUserId((currentPage-1)*size,size,orderBy, myUser.getUserId());
+        int count = setMapper.countExerciseSetListByUserId(myUser.getUserId());
         List<ExerciseSetDTO> exerciseSetDTOS = new ArrayList<>();
         for (ExerciseSet exerciseSet : exerciseSets) {
             Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
             List<Exercise> list = midMapper.getExerciseListByExerciseSetId(exerciseSet.getExerciseSetId());
-            ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO(exerciseSet.getExerciseSetId(),exerciseSet.getTitle(),exerciseSet.getCreateTime(),subject,null,null,list,user);
+            ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO(exerciseSet.getExerciseSetId(),exerciseSet.getTitle(),exerciseSet.getCreateTime(),subject,null,null,list, myUser,exerciseSet.getLikeCount());
             exerciseSetDTOS.add(exerciseSetDTO);
         }
 
@@ -186,8 +187,8 @@ public class ExerciseSetService {
         return paginationDTO;
     }
 
-    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage,UserDetails userDetails) {
-        User user = userMapper.findUserByAccount(userDetails.getUsername());
+    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage, UserDetails userDetails) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         List<Integer> exerciseIdList = midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
         ExerciseSet set = setMapper.getExerciseSetById(exerciseSetId);
         List<ExerciseReviewDTO> exerciseReviewDTOS = new ArrayList<>();
@@ -200,7 +201,7 @@ public class ExerciseSetService {
         for (int i=(currentPage-1)*2;i<end;i++){
             Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseIdList.get(i));
             Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
-            ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,null,subject,user, JSON.parseArray(exercise.getOptionContent(), Option.class));
+            ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,null,subject, myUser, JSON.parseArray(exercise.getOptionContent(), Option.class));
             exerciseReviewDTOS.add(exerciseReviewDTO);
         }
         ExerciseSetAndExercisesDTO dto = new ExerciseSetAndExercisesDTO(set,exerciseReviewDTOS);
@@ -216,5 +217,25 @@ public class ExerciseSetService {
         for (Integer exerciseSetId : exerciseSetIds) {
             delete(exerciseSetId);
         }
+    }
+
+    public void addLike(Integer exerciseSetId) {
+        setMapper.addLike(exerciseSetId);
+    }
+
+    public void delLike(Integer exerciseSetId) {
+        setMapper.delLike(exerciseSetId);
+    }
+
+    public List<ExerciseSetDTO> getHighLikeExerciseSet(Integer subjectId) {
+        List<ExerciseSet> exerciseSets = setMapper.getHighLikeExerciseSet(subjectId);
+        List<ExerciseSetDTO> exerciseSetDTOS = new ArrayList<>();
+        for (ExerciseSet exerciseSet : exerciseSets) {
+            Subject subject = subjectMapper.getSubjectById(exerciseSet.getSubjectId());
+            List<Exercise> list = midMapper.getExerciseListByExerciseSetId(exerciseSet.getExerciseSetId());
+            ExerciseSetDTO exerciseSetDTO = new ExerciseSetDTO(exerciseSet.getExerciseSetId(),exerciseSet.getTitle(),exerciseSet.getCreateTime(),subject,null,null,list, null,exerciseSet.getLikeCount());
+            exerciseSetDTOS.add(exerciseSetDTO);
+        }
+        return exerciseSetDTOS;
     }
 }

@@ -1,5 +1,6 @@
 package top.qiyoung.answer.model;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 
 public class Exercise {
@@ -14,10 +15,11 @@ public class Exercise {
     private Date modifyTime;
     private Integer subjectId;
     private String analysis;
-    private Integer score;
+    private Double score;
+    private Integer doCount;
     private Integer people;
 
-    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId, String analysis, Integer score, Integer people) {
+    public Exercise(Integer exerciseId, String exerciseType, String correct, String exerciseTitle, String optionContent, Integer createUserId, Integer status, Date createTime, Date modifyTime, Integer subjectId, String analysis, Double score, Integer people,Integer doCount) {
         this.exerciseId = exerciseId;
         this.exerciseType = exerciseType;
         this.correct = correct;
@@ -31,13 +33,14 @@ public class Exercise {
         this.analysis = analysis;
         this.score = score;
         this.people = people;
+        this.doCount = doCount;
     }
 
-    public Integer getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
@@ -152,5 +155,13 @@ public class Exercise {
     }
 
     public Exercise() {
+    }
+
+    public Integer getDoCount() {
+        return doCount;
+    }
+
+    public void setDoCount(Integer doCount) {
+        this.doCount = doCount;
     }
 }
