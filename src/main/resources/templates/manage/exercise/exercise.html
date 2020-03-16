@@ -312,7 +312,7 @@
 <!-- tables -->
 
 <script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
-<script>
+<script th:inline="javascript">
 
     window.onload = function () {
         var modelInput = $("#modelInput").val();
@@ -333,6 +333,10 @@
                 }
             }
         });
+        var msg = [[${msg}]];
+        if (msg != null && msg != ''){
+            alert(msg);
+        }
     }
 
 </script>

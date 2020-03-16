@@ -21,4 +21,6 @@ public interface CommentMapper {
     void deleteByUserId(Integer userId);
 
     int countByExerciseId(Integer exerciseId);
+
+    Comment getCommentByCommentId(Integer commentId);
 }

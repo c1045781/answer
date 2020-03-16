@@ -45,15 +45,21 @@ function deleteUser() {
         url: '/manager/user/delete',
         type: 'post',
         data: {userId: id},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#deleteUserModal').modal('hide');
-            if(data == 'success'){
+            /*if(data.code == 200){
                 $('#deleteResultSuccessModal').modal();
             }else{
                 $('#deleteResultErrorModal').modal();
+            }*/
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/user/check";
+            }else{
+                alert(data.message);
             }
-            $('#resultUrl').val("/manager/user/check");
+            // $('#resultUrl').val("/manager/user/check");
         }
     });
 }
@@ -64,15 +70,18 @@ function deleteExercise() {
         url: '/manager/exercise/delete',
         type: 'post',
         data: {exerciseId: id},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#deleteExerciseModal').modal('hide');
-            if(data == 'success'){
-                $('#deleteResultSuccessModal').modal();
+            if(data.code == 200){
+                // $('#deleteResultSuccessModal').modal();
+                alert(data.message);
+                window.location.href = "/manager/exercise/check";
             }else{
-                $('#deleteResultErrorModal').modal();
+                // $('#deleteResultErrorModal').modal();
+                alert(data.message);
             }
-            $('#resultUrl').val("/manager/exercise/check");
+            // $('#resultUrl').val("/manager/exercise/check");
         }
     });
 }
@@ -83,17 +92,21 @@ function deleteExerciseSet() {
         url: '/manager/exerciseSet/delete',
         type: 'post',
         data: {exerciseSetId: id},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#deleteExerciseSetModal').modal('hide');
-            if(data == 'success'){
+            /*if(data == 'success'){
                 $('#deleteResultSuccessModal').modal();
             }else{
                 $('#deleteResultErrorModal').modal();
+            }*/
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/exerciseSet/check";
+            }else{
+                alert(data.message);
             }
-            $('#resultUrl').val("/manager/exerciseSet/check");
-        },error:function(){
-            alert("error");
+            // $('#resultUrl').val("/manager/exerciseSet/check");
         }
     });
 }
@@ -103,10 +116,14 @@ function deleteExerciseSetForUser(e) {
         url: '/user/exerciseSet/deleteExerciseSetForUser',
         type: 'post',
         data: {exerciseSetId: e},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
-            alert("删除成功！");
-            window.location.href="/user/personal";
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href="/user/personal";
+            }else{
+                alert(data.message);
+            }
         }
     });
 }
@@ -117,15 +134,21 @@ function deleteSubject() {
         url: '/manager/subject/delete',
         type: 'post',
         data: {subjectId: id},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#deleteSubjectModal').modal('hide');
-            if(data == 'success'){
+           /* if(data == 'success'){
                 $('#deleteResultSuccessModal').modal();
             }else{
                 $('#deleteResultErrorModal').modal();
+            }*/
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/subject/check";
+            }else{
+                alert(data.message);
             }
-            $('#resultUrl').val("/manager/subject/check");
+            // $('#resultUrl').val("/manager/subject/check");
         }
     });
 }
@@ -136,15 +159,20 @@ function deleteComment() {
         url: '/manager/comment/delete',
         type: 'post',
         data: {commentId: id},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#deleteCommentModal').modal('hide');
-            if(data == 'success'){
+            /*if(data.code == 200){
                 $('#deleteResultSuccessModal').modal();
             }else{
                 $('#deleteResultErrorModal').modal();
+            }*/
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/comment/check";
+            }else{
+                alert(data.message);
             }
-            $('#resultUrl').val("/manager/comment/check");
         }
     });
 }
@@ -180,10 +208,17 @@ function successExerciseReviewModal(exerciseId,messageId) {
         url: '/manager/exercise/status',
         type: 'post',
         data: {exerciseId: exerciseId,status:1,messageId:messageId},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
-            $('#successModal').modal();
-            $('#resultUrl').val("/manager/exercise/review");
+            debugger;
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/exercise/review";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/exercise/review");
         }
     });
 }
@@ -196,11 +231,17 @@ function failExerciseReviewModal() {
         url: '/manager/exercise/status',
         type: 'post',
         data: {exerciseId: id,status:2,reason:reason,messageId:reasonId},
-        dataType: "text",
+        dataType: "json",
         success: function () {
             $('#reasonModal').modal("hide");
-            $('#successModal').modal();
-            $('#resultUrl').val("/manager/exercise/review");
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/exercise/review";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/exercise/review");
         }
     });
 
@@ -209,10 +250,16 @@ function failExerciseReviewModal() {
         url: '/manager/permission/role',
         type: 'post',
         data: {messageId: id,role:3,userId:userId,status:1},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
-            $('#successModal').modal();
-            $('#resultUrl').val("/manager/permission/check");
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/permission/check";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/permission/check");
         }
     });
 }
@@ -231,11 +278,17 @@ function failPermissionReviewModal() {
         url: '/manager/permission/role',
         type: 'post',
         data: {id: id,role:2,userId:userId,reason:reason,status:2},
-        dataType: "text",
+        dataType: "json",
         success: function (data) {
             $('#reasonModal').modal('hide');
-            $('#successModal').modal();
-            $('#resultUrl').val("/manager/permission/check");
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/permission/check";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/permission/check");
         }
     });
 

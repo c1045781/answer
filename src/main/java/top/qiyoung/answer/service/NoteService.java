@@ -2,7 +2,9 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.NoteMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.MyUser;
@@ -37,7 +39,11 @@ public class NoteService {
     }
 
     public Note findNoteByNoteId(Integer noteId) {
-        return noteMapper.findNoteByNoteId(noteId);
+        Note note = noteMapper.findNoteByNoteId(noteId);
+        if (note == null){
+            throw new CustomizeException(CustomizeErrorCode.NOTE_NOT_FOUND);
+        }
+        return note;
     }
 
     public PaginationDTO<Note> findNoteList(UserDetails userDetails, Integer currentPage, Integer pageSize) {

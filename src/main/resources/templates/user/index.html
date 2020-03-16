@@ -3,7 +3,7 @@
 	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head>
 		<meta charset="utf-8">
-		<title>Home</title>
+		<title>首页</title>
 		
 		<!-- Css Plugin -->
 		<link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -248,7 +248,7 @@
 		<script src="/js/custom.js"></script>
 		<script src="/js/answer.js"></script>
 	</body>
-	<script>
+	<script th:inline="javascript">
         window.onload = function () {
             var modelInput = $("#modelInput").val();
             if (modelInput != null && modelInput != "") {
@@ -267,6 +267,12 @@
                     }
                 }
             });
+
+            debugger;
+            var msg = [[${msg}]];
+            if (msg != null && msg != "") {
+                alert(msg);
+            }
         }
 
 	</script>

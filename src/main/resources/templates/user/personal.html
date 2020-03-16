@@ -784,9 +784,13 @@
         });
     }*/
 </script>
-<script>
+<script th:inline="javascript">
     window.onload = function () {
-        personInformation()
+        personInformation();
+        var msg = [[${msg}]];
+        if (msg != null && msg != ''){
+            alert(msg);
+        }
     }
 </script>
 </body>

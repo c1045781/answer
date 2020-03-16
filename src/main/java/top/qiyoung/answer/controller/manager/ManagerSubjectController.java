@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller.manager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -7,11 +8,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thymeleaf.util.StringUtils;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.dto.ResultDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.service.SubjectService;
 
@@ -43,6 +47,7 @@ public class ManagerSubjectController {
                         @RequestParam(value = "type", required = false) String type,
                         @RequestParam(value = "search", required = false) String search,
                         @RequestParam(value = "order", defaultValue = "subject_id asc") String order,
+                        @ModelAttribute("msg") String msg,
                         Model model) {
         PaginationDTO<Subject> paginationDTO = subjectService.getSubjectList(currentPage, size, type, search, order);
         List<String> baseList = subjectService.getBase();
@@ -50,15 +55,28 @@ public class ManagerSubjectController {
         model.addAttribute("paginationDTO", paginationDTO);
         model.addAttribute("type", type);
         model.addAttribute("search", search);
+
+        if (StringUtils.isNotBlank(msg)){
+            model.addAttribute("msg",msg);
+        }
         return "manage/subject/subject";
     }
 
     // 删除学科
     @RequestMapping("/delete")
     @ResponseBody
-    public String delete(Integer subjectId) {
-        subjectService.delete(subjectId);
-        return "success";
+    public ResultDTO delete(Integer subjectId) {
+        if (subjectId != null){
+            Subject sub = subjectService.getSubjectById(subjectId);
+            if (sub!=null){
+                subjectService.delete(sub.getSubjectId());
+            }else {
+                return ResultDTO.errorOf(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+            }
+        }else {
+            return ResultDTO.errorOf(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+        }
+        return ResultDTO.okOf();
     }
 
     // 跳转学科更新页面
@@ -73,7 +91,7 @@ public class ManagerSubjectController {
 
     // 添加或更新学科
     @RequestMapping("addOrUpdate")
-    public String addOrUpdate(Subject subject, Model model) {
+    public String addOrUpdate(Subject subject, Model model, RedirectAttributes redirectAttributes) {
         int result;
         if (StringUtils.isEmpty(subject.getName()) || StringUtils.isEmpty(subject.getBaseSubject())){
             List<String> base = subjectService.getBase();
@@ -96,6 +114,7 @@ public class ManagerSubjectController {
             model.addAttribute("baseList", base);
             return "manage/subject/add-subject";
         }
+        redirectAttributes.addFlashAttribute("msg","操作成功");
         return "redirect:/manager/subject/check";
     }
 

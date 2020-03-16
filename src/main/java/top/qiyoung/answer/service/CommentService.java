@@ -2,11 +2,14 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.CommentDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.CommentDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.CommentMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Comment;
+import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.MyUser;
 
@@ -22,6 +25,8 @@ public class CommentService {
     private CommentMapper commentMapper;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private ExerciseService exerciseService;
 
     public PaginationDTO<Comment> getCommentList(Integer currentPage, Integer size, String type, String search, String order) {
         PaginationDTO<Comment> paginationDTO = new PaginationDTO<>(currentPage,size);
@@ -52,6 +57,13 @@ public class CommentService {
 
     public List<CommentDTO> getCommentDTOListById(Integer exerciseId) {
         List<CommentDTO> commentDTOList = new ArrayList<>();
+        if (exerciseId == null ){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
+        Exercise exercise = exerciseService.getExerciseByExerciseId(exerciseId);
+        if (exercise == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
         List<Comment> commentList = commentMapper.getCommentListByExerciseId(exerciseId);
         for (Comment comment : commentList) {
             MyUser myUser = userMapper.getUserById(comment.getUserId());
@@ -70,5 +82,10 @@ public class CommentService {
         comment.setUserId(myUser.getUserId());
         comment.setCreateTime(new Date());
         commentMapper.addComment(comment);
+    }
+
+    public Comment getCommentByCommentId(Integer commentId) {
+        Comment comment = commentMapper.getCommentByCommentId(commentId);
+        return comment;
     }
 }

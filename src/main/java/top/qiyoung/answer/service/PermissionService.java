@@ -2,7 +2,9 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.PermissionMapper;
 import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.Message;
@@ -48,7 +50,11 @@ public class PermissionService {
     }
 
     public Message getMessageByMessageId(Integer messageId) {
-        return permissionMapper.getMessageByMessageId(messageId);
+        Message message = permissionMapper.getMessageByMessageId(messageId);
+        if (message == null){
+            throw new CustomizeException(CustomizeErrorCode.MESSAGE_NOT_FOUND);
+        }
+        return message;
     }
 
     public PaginationDTO<Message> getMessageListByUserId(UserDetails userDetails, Integer currentPage, Integer size) {

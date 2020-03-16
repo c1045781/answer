@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>登录</title>
+    <title>错误页面</title>
     <!-- Css Plugin -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
@@ -29,38 +29,6 @@
 
 <body class="woocommerce woocommerce-page">
 <div id="main-container">
-    <header class="kopa-header-02">
-        <div class="top-header">
-            <div class="container">
-                <!--<div class="right-top-header" th:if="${#authentication} == null">-->
-                <div class="right-top-header" sec:authorize="!isAuthenticated()">
-                    <a href="/toLogin">登录</a>
-                    <a href="/toRegister">注册</a>
-                </div>
-                <!--<div class="right-top-header" th:if="${#authentication} != null">-->
-                <div class="right-top-header" sec:authorize="isAuthenticated()">
-                    <a href="/logout">退出</a>
-                    <a href="/user/personal">个人中心</a>
-                </div>
-            </div>
-        </div>
-        <div class="bottom-header style-02">
-            <div class="container">
-                <div class="pull-left" style="height: 110px;">
-                </div>
-                <div class="pull-right">
-                    <nav class="kopa-main-menu style-02">
-                        <ul>
-                            <li><a href="/">首页</a></li>
-                            <li><a href="/user/exercise/check">试题库</a></li>
-                            <li><a href="/user/exerciseSet/check">套题库</a></li>
-                            <li><a href="/user/answer/wrongBook">错题本</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
     <div id="main-content" style="text-align: center;">
         <section class="kopa-area kopa-area-breadcrumb">
             <div class="container">
@@ -70,20 +38,15 @@
                 </div>
             </div>
         </section>
-        <section class="widget kopa-widget-advanced_search answer-login-form">
-            <div class="widget-content module-advanced_search-03">
-                <form action="/login" method="post">
-                    <span style="color: red;" th:if="${param.error}" th:text="用户或密码错误，请确认后重新输入！"></span>
-                    <h2 class="widget-title">账号登录</h2>
-                    <p><input type="text" placeholder="账号" name="username" required></p>
-                    <p><input type="password" placeholder="密码" name="password" required>
-                    </p>
-                    <div style="float:left;margin: 10px 0;">
-                        <input value="true" name="remember-me" type="checkbox" style="width: 20px;height: 20px;float: left;margin-right: 8px;">
-                        <span style="float: left;">记住我</span>
-                    </div>
-                    <button type="submit">登录</button>
-                </form>
+        <section class="kopa-area">
+            <div class="container">
+                <div class="widget kopa-widget-certifications">
+                    <header class="widget-header style-01">
+                        <h3 class="widget-title">出错了</h3>
+                        <h4>页面不存在，请返回<a href="/" style="color: red;">首页</a>重试</h4>
+                    </header>
+
+                </div>
             </div>
         </section>
     </div>

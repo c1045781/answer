@@ -3,7 +3,10 @@ package top.qiyoung.answer.service;
 import com.alibaba.fastjson.JSON;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.*;
+import org.springframework.transaction.annotation.Transactional;
+import top.qiyoung.answer.dto.*;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.model.*;
 
@@ -43,16 +46,6 @@ public class ExerciseService {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         Exercise exercise = new Exercise(null,edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()), myUser.getUserId(),
                 null,new Date(),new Date(),edit.getSubjectId(),edit.getAnalysis(),0d,0,0);
-
-        // 插入的option
-        /*exercise.setExerciseType(edit.getExerciseType());
-        exercise.setSubjectId(edit.getSubjectId());
-        exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
-        exercise.setCorrect(edit.getCorrect());
-        exercise.setExerciseTitle(edit.getTitle());
-        exercise.setCreateUserId(myUser.getUserId());
-        exercise.setCreateTime(new Date());
-        exercise.setModifyTime(new Date());*/
         int id;
         if (myUser.getRole() == 1 || myUser.getRole() == 0) {
             exercise.setStatus(1);
@@ -69,6 +62,9 @@ public class ExerciseService {
     public int update(ExerciseEditDTO edit, UserDetails userDetails ) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         Exercise exercise;
+        if (exerciseMapper.getExerciseByExerciseId(edit.getExerciseEditId()) == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
         if (myUser.getRole() == 1 || myUser.getRole() == 0) {
             exercise = new Exercise(edit.getExerciseEditId(),edit.getExerciseType(),edit.getCorrect(),edit.getTitle(),JSON.toJSONString(edit.getOptions()),null,
                     null,null,new Date(),null,edit.getAnalysis());
@@ -77,15 +73,6 @@ public class ExerciseService {
                     0,null,new Date(),null,edit.getAnalysis());
             permissionMapper.updateStatus(permissionMapper.getMessageByExerciseIdAndUserId(exercise.getExerciseId(), myUser.getUserId()).getMessageId(),"",0);
         }
-
-
-        //  content JSON
-        /*exercise.setOptionContent(JSON.toJSONString(edit.getOptions()));
-        exercise.setExerciseId(edit.getExerciseEditId());
-        exercise.setExerciseTitle(edit.getTitle());
-        exercise.setExerciseType(edit.getExerciseType());
-        exercise.setCorrect(edit.getCorrect());
-        exercise.setModifyTime(new Date());*/
         return exerciseMapper.update(exercise);
     }
 
@@ -94,35 +81,20 @@ public class ExerciseService {
         List<Exercise> exercises = new ArrayList<>();
         int count = 0;
         PaginationDTO<ExerciseDTO> paginationDTO = new PaginationDTO<>(currentPage, size);
-       /* Query query = new Query();
-        query.setIndex((currentPage - 1) * size);
-        query.setSize(size);
-        query.setType(type);
-        query.setExerciseType(exerciseType);
-        query.setOrder(orderby);
-        query.setId(subjectId);*/
         int index = (currentPage - 1) * size;
         if (type != null && type.equals("createUser")) {
             List<MyUser> myUsers = userMapper.getUserByNickname(search);
             for (MyUser dbuser : myUsers) {
 
                 search = dbuser.getUserId() + "";
-               /* query.setIndex(index);
-                query.setSize(size);
-                query.setSearch(search);*/
                 List<Exercise> exerciseList = exerciseMapper.getExerciseList(index,size,search,type,exerciseType,orderby,subjectId,score);
                 for (Exercise exercise : exerciseList) {
                     exercises.add(exercise);
                 }
-                /*query.setIndex(null);
-                query.setSize(null);*/
                 count += exerciseMapper.countExerciseList(search,type,exerciseType,orderby,subjectId,score);
             }
         } else {
             exercises = exerciseMapper.getExerciseList(index,size,search,type,exerciseType,orderby,subjectId,score);
-            /*query.setSearch(search);
-            query.setIndex(null);
-            query.setSize(null);*/
             count = exerciseMapper.countExerciseList(search,type,exerciseType,orderby,subjectId,score);
         }
         List<ExerciseDTO> exerciseDTOS = exerciseToExerciseDTO(exercises);
@@ -134,6 +106,7 @@ public class ExerciseService {
         return paginationDTO;
     }
 
+    @Transactional
     public void deleteByExerciseId(Integer exerciseId) {
         // 删除外键数据
         collectMapper.deleteCollectByExerciseId(exerciseId);
@@ -149,27 +122,20 @@ public class ExerciseService {
 
     public ExerciseEditDTO getExerciseEdit(Integer exerciseId) {
         Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseId);
+        if (exercise == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         List<Subject> subjectList = subjectMapper.getSubjectByBase(subject.getBaseSubject());
         List<String> base = subjectMapper.getBase();
         List<Option> options = JSON.parseArray(exercise.getOptionContent(), Option.class);
         List<String> answerList = new ArrayList<>();
-
         for (Option option : options) {
             answerList.add(option.getContent());
 
         }
         ExerciseEditDTO edit = new ExerciseEditDTO(exerciseId,exercise.getExerciseType(),base,exercise.getSubjectId(),subjectList,
                 exercise.getCorrect(),options,exercise.getExerciseTitle(),answerList,exercise.getAnalysis());
-       /* edit.setExerciseEditId(id);
-        edit.setExerciseType(exercise.getExerciseType());
-        edit.setBaseList(base);
-        edit.setSubjectList(subjectList);
-        edit.setSubjectId(exercise.getSubjectId());
-        edit.setCorrect(exercise.getCorrect());
-        edit.setOptions(options);
-        edit.setTitle(exercise.getExerciseTitle());
-        edit.setAnswers(answerList);*/
         return edit;
     }
 
@@ -188,6 +154,9 @@ public class ExerciseService {
         paginationDTO.setType(type);
         query.setOrder(order);
         List<Exercise> dbexerciseList = exerciseMapper.getExerciseBySubjectId(query, subjectId);
+        if (dbexerciseList == null){
+            throw new CustomizeException(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+        }
         List<Exercise> exerciseList = new ArrayList<>();
         for (Exercise exercise : dbexerciseList) {
             if (exercise.getExerciseTitle().contains(search)) {
@@ -264,6 +233,9 @@ public class ExerciseService {
     public ExerciseDTO getExerciseDTOByExerciseId(Integer exerciseId) {
         ExerciseDTO exerciseDTO = new ExerciseDTO();
         Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseId);
+        if (exercise == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
         MyUser myUser = userMapper.getUserById(exercise.getCreateUserId());
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         exerciseDTO.setExercise(exercise);
@@ -273,9 +245,10 @@ public class ExerciseService {
         return exerciseDTO;
     }
 
-    public void updateSatus(Integer id, Integer status, String reason, Integer messageId) {
+    @Transactional
+    public void updateStatus(Integer exerciseId, Integer status, String reason, Integer messageId) {
         permissionMapper.updateStatus(messageId,reason,status);
-        exerciseMapper.updateById(id,status);
+        exerciseMapper.updateById(exerciseId, status);
     }
 
     public int countExercise() {
@@ -286,8 +259,8 @@ public class ExerciseService {
         return midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
     }
 
-    public PaginationDTO<Exercise> getReviewExerciseByUserId(MyUser myUser, Integer currentPage, Integer size, Integer status) {
-//        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+    public PaginationDTO<Exercise> getReviewExerciseByUserId(UserDetails userDetails, Integer currentPage, Integer size, Integer status) {
+        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         List<Exercise> exerciseList = exerciseMapper.getReviewExerciseByUserId(myUser.getUserId(),(currentPage-1)*size,size,status);
         int count = exerciseMapper.countReviewExerciseByUserId(myUser.getUserId(),status);
         PaginationDTO dto = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,""+status,exerciseList);
@@ -297,6 +270,9 @@ public class ExerciseService {
     public ExerciseReviewDTO checkOfAddExercise(Integer exerciseId, UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseId);
+        if (exercise == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
         Subject subject = subjectMapper.getSubjectById(exercise.getSubjectId());
         Message message = permissionMapper.getMessageByExerciseIdAndUserId(exerciseId, myUser.getUserId());
         ExerciseReviewDTO exerciseReviewDTO = new ExerciseReviewDTO(exercise,message,subject, myUser,JSON.parseArray(exercise.getOptionContent(), Option.class));
@@ -339,5 +315,10 @@ public class ExerciseService {
     public List<Exercise> getExcellentExercise(Integer subjectId) {
         List<Exercise> exerciseList = exerciseMapper.getExcellentExercise(subjectId);
         return exerciseList;
+    }
+
+    public Exercise getExerciseByExerciseId(Integer exerciseId) {
+        Exercise ex = exerciseMapper.getExerciseByExerciseId(exerciseId);
+        return ex;
     }
 }

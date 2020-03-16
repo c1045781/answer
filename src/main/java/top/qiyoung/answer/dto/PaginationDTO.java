@@ -1,4 +1,4 @@
-package top.qiyoung.answer.DTO;
+package top.qiyoung.answer.dto;
 
 import java.util.List;
 

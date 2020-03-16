@@ -3,9 +3,12 @@ package top.qiyoung.answer.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.*;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.utils.DeleteFile;
@@ -53,7 +56,7 @@ public class UserService {
             upload = "/upload/default.jpg";
         }else {
             try {
-                upload = fileUpload.upload(avatarImg);
+                upload = fileUpload.uploadImg(avatarImg);
             } catch (IOException e) {
                 return 2;
             }
@@ -91,6 +94,7 @@ public class UserService {
         return paginationDTO;
     }
 
+    @Transactional
     public void deleteById(Integer userId){
         answerMapper.deleteByUserId(userId);
         collectMapper.deleteByUserId(userId);
@@ -108,27 +112,39 @@ public class UserService {
 
     public MyUser getUserById(UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
-        return userMapper.getUserById(myUser.getUserId());
+        MyUser user = userMapper.getUserById(myUser.getUserId());
+        if (user == null){
+            throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
+        }
+        return user;
     }
 
     public int update(MyUser myUser, MultipartFile avatarImg) {
         if (!avatarImg.isEmpty()) {
             MyUser dbMyUser = userMapper.getUserById(myUser.getUserId());
+            if (dbMyUser == null){
+                throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
+            }
             DeleteFile deleteFile = new DeleteFile();
             if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg"))
             deleteFile.delFile(System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\"+ dbMyUser.getAvatarImgUrl());
             FileUpload fileUpload = new FileUpload();
-            String upload = "/upload/default.jpg";
-            try {
-                upload = fileUpload.upload(avatarImg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            String upload;
+            if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
+                upload = "/upload/default.jpg";
+            }else {
+                try {
+                    upload = fileUpload.uploadImg(avatarImg);
+                } catch (IOException e) {
+                    return 2;
+                }
             }
             myUser.setAvatarImgUrl(upload);
         }
         if (myUser.getPassword() != null)
         myUser.setPassword(BCrypt.hashpw(myUser.getPassword(),BCrypt.gensalt()));
-        return userMapper.update(myUser);
+        userMapper.update(myUser);
+        return 1;
     }
 
     public int userCount() {
@@ -137,16 +153,22 @@ public class UserService {
     }
 
     public MyUser getUserByUserId(Integer userId) {
-        return userMapper.getUserById(userId);
+        MyUser user = userMapper.getUserById(userId);
+        if (user == null){
+            throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
+        }
+        return user;
     }
 
     public MyUser getUserByUserDetails(UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+        if (myUser == null){
+            throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
+        }
         return myUser;
     }
 
     public void modifyPassword(MyUser myUser, String password) {
-//        MyUser myUser = userMapper.findUserByAccount(principal.getUsername());
         password = BCrypt.hashpw(password, BCrypt.gensalt());
         myUser.setPassword(password);
         userMapper.modifyPassword(myUser);

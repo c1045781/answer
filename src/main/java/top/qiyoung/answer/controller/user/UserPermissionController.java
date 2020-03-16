@@ -7,9 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.dto.ResultDTO;
 import top.qiyoung.answer.model.Message;
-import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.PermissionService;
 
 import javax.annotation.Resource;
@@ -32,8 +32,7 @@ public class UserPermissionController {
 
     @RequestMapping("/permissionList")
     @ResponseBody
-    public PaginationDTO<Message> permissionList(HttpServletRequest request,
-                                        @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+    public PaginationDTO<Message> permissionList(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                                         @RequestParam(value = "size", defaultValue = "10") Integer size){
 //        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,13 +41,11 @@ public class UserPermissionController {
 
     @RequestMapping("/add")
     @ResponseBody
-    public String add(HttpServletRequest request,String content){
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+    public ResultDTO add(String content){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (StringUtils.isNotBlank(content)){
-//            Message message = new Message(null,null,content,1,null,null,new Date(),0);
             permissionService.add(content, userDetails);
         }
-        return "success";
+        return ResultDTO.okOf();
     }
 }

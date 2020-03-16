@@ -2,8 +2,10 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.HistoryAnswerDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.HistoryAnswerDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.AnswerMapper;
 import top.qiyoung.answer.mapper.ExerciseMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;
@@ -55,7 +57,11 @@ public class AnswerService {
 
 
     public Answer findAnswerByAnswerId(Integer answerId) {
-        return answerMapper.findAnswerByAnswerId(answerId);
+        Answer answer = answerMapper.findAnswerByAnswerId(answerId);
+        if (answer == null){
+            throw new CustomizeException(CustomizeErrorCode.ANSWER_NOT_FOUND);
+        }
+        return answer;
     }
 
     public PaginationDTO<HistoryAnswerDTO> findWrongAnswer(UserDetails userDetails, Integer currentPage, Integer pageSize, String search, Integer subjectId) {

@@ -243,7 +243,14 @@
     new gnMenu(document.getElementById('gn-menu'));
 </script>
 <!-- tables -->
-
+<script th:inline="javascript">
+    window.onload = function (){
+        var msg = [[${msg}]];
+        if (msg != null && msg != ''){
+            alert(msg)
+        }
+    }
+</script>
 <script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {

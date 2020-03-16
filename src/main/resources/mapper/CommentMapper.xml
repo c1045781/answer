@@ -83,9 +83,11 @@
     <select id="countByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select count(1) from comment
         <where>
-            <if test="exerciseId != null">
-                exercise_id = #{exerciseId}
-            </if>
+              exercise_id = #{exerciseId}
         </where>
+    </select>
+
+    <select id="getCommentByCommentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from comment where comment_id = #{commentId}
     </select>
 </mapper>

@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -19,10 +17,7 @@ import javax.sql.DataSource;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /*@Bean
-    public UserDetailsService  userDetailsService(){
-        return new MyUserDetailsService();
-    }*/
+
     @Autowired
     private DataSource dataSource;
     @Autowired
@@ -30,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-//        return NoOpPasswordEncoder.getInstance();
         return new BCryptPasswordEncoder();
     }
 
@@ -46,11 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/subject/subjectByBase").permitAll()
                 .antMatchers("/index").permitAll()
                 .antMatchers("/").permitAll()
-                .antMatchers("/manager/**").hasAnyAuthority("0","1")
                 .antMatchers("/user/exercise/uploadFile").hasAuthority("3")
                 .antMatchers("/user/exercise/addOrUpdate").hasAuthority("3")
                 .antMatchers("/user/exercise/toUpdate").hasAuthority("3")
                 .antMatchers("/user/**").hasAnyAuthority("2","3")
+                .antMatchers("/manager/**").hasAnyAuthority("0","1")
                 .anyRequest().authenticated()
                 .and()
                     .formLogin()
@@ -84,13 +78,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //解决服务注册url被拦截的问题
     }
 
+    // 设置记住我功能
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         tokenRepository.setDataSource(dataSource); // 设置数据源
-//        tokenRepository.setCreateTableOnStartup(true); // 启动创建表，创建成功后注释掉
         return tokenRepository;
     }
+
 
 }
 

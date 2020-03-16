@@ -2,8 +2,8 @@ package top.qiyoung.answer.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.CollectDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.CollectDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.mapper.CollectMapper;
 import top.qiyoung.answer.mapper.ExerciseMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;

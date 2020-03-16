@@ -649,13 +649,24 @@ function Format(datetime,fmt) {
 }
 
 function submitComment(e){
+    var content = $('#comment_form' + e + ' textarea').val();
+    debugger;
+    if (content == ""){
+        alert("评论内容不能为空");
+        return;
+    }
     $.ajax({
         type: "POST",
-        dataType: "text",
+        dataType: "json",
         url: "/user/comment/addComment",
         data: $('#comment_form'+e).serialize(),
         success:function (data) {
-            openExerciseComment(e);
+            if (data.code == 200){
+                openExerciseComment(e);
+            } else {
+                alert(data.message);
+            }
+
         }
     });
     $("#comment_form"+ e +" textarea").val('');
@@ -666,10 +677,14 @@ function submitNote(e){
         type: "POST",
         url: "/user/note/addOrUpdate",
         data: JSON.stringify({"content":$("#note_textarea"+e).val(),"exerciseId":e,"noteId":$("#noteId").val()}),
-        contentType:"application/json",
-        dataType: "text",
+        contentType:"application/json;charset=utf-8",
+        dataType: "json",
         success:function (data) {
-            openExerciseNote(e);
+            if (data.code == 200){
+                openExerciseNote(e);
+            } else {
+                alert(data.message);
+            }
         }
     });
 }
@@ -678,11 +693,15 @@ function changeCollectIcon(e) {
     $.ajax({
         url:"/user/collect/addCollect",
         contentType:"text",
-        dataType:"text",
+        dataType:"json",
         data:{"exerciseId":e},
         success:function(data){
-            $("#collectActiveIcon" +e).css("display","block");
-            $("#collectIcon" + e).css("display","none");
+            if (data.code == 200){
+                $("#collectActiveIcon" +e).css("display","block");
+                $("#collectIcon" + e).css("display","none");
+            }else {
+                alert(data.message);
+            }
         }
     })
 }
@@ -691,11 +710,16 @@ function changeCollectActiveIcon(e) {
     $.ajax({
         url:"/user/collect/deleteCollect",
         type:"post",
-        dataType:"text",
+        dataType:"json",
         data:{"exerciseId":e},
         success:function(data){
-            $("#collectActiveIcon" +e).css("display","none");
-            $("#collectIcon" + e).css("display","block");
+            if (data.code == 200){
+                $("#collectActiveIcon" +e).css("display","none");
+                $("#collectIcon" + e).css("display","block");
+            }else {
+                alert(data.message);
+            }
+
         }
     });
 }
@@ -904,14 +928,24 @@ function permissionList(currentPage){
 
 function submitAddPermissionFrom() {
     var content = $("#addPermissionFrom textarea").val();
+    if (content == ""){
+        alert("内容不能为空");
+        return;
+    }
     $.ajax({
         url:"/user/permission/add",
         type:"post",
         data:{"content":content},
+        dataType:"json",
         success:function(data){
-            $('#addPermission').modal('hide');
-            alert("添加成功！");
-            permissionList();
+            if (data.code == 200){
+                $('#addPermission').modal('hide');
+                alert(data.message);
+                permissionList();
+            }else {
+                alert(data.message);
+            }
+
         }
     });
 }
@@ -1209,7 +1243,6 @@ function AddExerciseList(page){
         data:{currentPage:page,status:status},
         dataType: "json",
         success: function (data) {
-
             var content = "";
             var list = data.dataList;
             for (var i = 0;i<list.length;i++){
@@ -1532,8 +1565,14 @@ function submitScore(id){
         url:"/user/evaluation/addOrUpdate",
         type:'post',
         data:{score:score,exerciseId:id},
+        dataType:"json",
         success:function(data){
-            alert("评分成功");
+            debugger;
+            if (data.code == 200){
+                alert(data.message);
+            }else {
+                alert(data.message);
+            }
         }
     });
 }

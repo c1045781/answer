@@ -1,12 +1,12 @@
 package top.qiyoung.answer.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.ExerciseMapper;
 import top.qiyoung.answer.mapper.ExerciseSetMapper;
 import top.qiyoung.answer.mapper.SubjectMapper;
-import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.Query;
 import top.qiyoung.answer.model.Subject;
 
@@ -41,6 +41,9 @@ public class SubjectService {
 
     public Subject getSubjectById(Integer subjectId) {
         Subject subject = subjectMapper.getSubjectById(subjectId);
+        if (subject == null){
+            throw new CustomizeException(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+        }
         return subject;
     }
 
@@ -71,6 +74,10 @@ public class SubjectService {
     }
 
     public Integer update(Subject subject) {
+        Subject dbSubject = subjectMapper.getSubjectById(subject.getSubjectId());
+        if (dbSubject == null){
+            throw new CustomizeException(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+        }
         return subjectMapper.update(subject);
     }
 

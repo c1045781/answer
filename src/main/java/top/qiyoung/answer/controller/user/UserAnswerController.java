@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
-import top.qiyoung.answer.DTO.ExerciseEditDTO;
-import top.qiyoung.answer.DTO.HistoryAnswerDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.ExerciseEditDTO;
+import top.qiyoung.answer.dto.HistoryAnswerDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.model.Answer;
-import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Note;
 import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.service.AnswerService;
@@ -42,10 +41,7 @@ public class UserAnswerController {
     // 添加用户答题记录
     @RequestMapping("/addOrUpdate")
     @ResponseBody
-    public void addOrUpdate(@RequestBody Answer answer, HttpServletRequest request){
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
-//        answer.setUserId(myUser.getUserId());
-//        answer.setCreateTime(new Date());
+    public void addOrUpdate(@RequestBody Answer answer){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         answerService.addOrUpdate(answer, userDetails);
     }
@@ -53,20 +49,16 @@ public class UserAnswerController {
     // 查找用户答题记录
     @RequestMapping("/findAnswer")
     @ResponseBody
-    public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(HttpServletRequest request,
-                                                             Integer currentPage,
+    public PaginationDTO<HistoryAnswerDTO> findHistoryAnswer(Integer currentPage,
                                                              @RequestParam(defaultValue = "10") Integer pageSize){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findHistoryAnswer(userDetails,currentPage,pageSize);
-
         return paginationDTO;
     }
 
     // 查找用户答题记录
     @RequestMapping("/viewHistoryExercise")
     public String viewHistoryExercise(Integer answerId, Model model){
-
         Answer answer = answerService.findAnswerByAnswerId(answerId);
         ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(answer.getExerciseId());
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList();
@@ -81,15 +73,8 @@ public class UserAnswerController {
                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                         @RequestParam(value = "search", required = false) String search,
                         @RequestParam(value = "subjectId", required = false) Integer subjectId,
-                        HttpServletRequest request,
-                        Model model,
-                        RedirectAttributesModelMap redirectAttributesModelMap){
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+                        Model model){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       /* if (myUser == null){
-            redirectAttributesModelMap.addFlashAttribute("error","请先登录账号");
-            return "redirect:/toLogin";
-        }*/
         PaginationDTO<HistoryAnswerDTO> paginationDTO = answerService.findWrongAnswer(userDetails,currentPage,pageSize,search,subjectId);
 
         if (subjectId != null) {
@@ -99,7 +84,6 @@ public class UserAnswerController {
             model.addAttribute("subjectList",subjects);
             model.addAttribute("baseList",baseList);
         }
-
         model.addAttribute("paginationDTO",paginationDTO);
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("search", search);

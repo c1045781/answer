@@ -1,13 +1,9 @@
 package top.qiyoung.answer.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thymeleaf.util.StringUtils;
-import top.qiyoung.answer.DTO.PaginationDTO;
 import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.service.SubjectService;
 

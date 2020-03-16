@@ -1,9 +1,11 @@
 package top.qiyoung.answer.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.*;
@@ -38,7 +40,10 @@ public class IndexController {
 
     // 首页根据用户跳转页面
     @RequestMapping("/index")
-    public String index(Model model){
+    public String index(Model model,@ModelAttribute("msg") String msg){
+        if (StringUtils.isNotBlank(msg)){
+            model.addAttribute("msg",msg);
+        }
 //        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         UserDetails userDetails;
         try {
@@ -68,7 +73,10 @@ public class IndexController {
     }
 
     @RequestMapping("/user/personal")
-    public String personal(){
+    public String personal(@ModelAttribute("msg") String msg,Model model){
+        if (StringUtils.isNotBlank(msg)){
+            model.addAttribute("msg",msg);
+        }
         return "user/personal";
     }
 

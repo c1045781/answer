@@ -108,6 +108,15 @@
 
 <!-- //js -->
 <script src="/js/screenfull.js"></script>
+<script th:inline="javascript">
+    window.onload = function () {
+        var msg = [[${msg}]];
+        if (msg != null && msg != "") {
+            alert(msg);
+        }
+    }
+
+</script>
 <script>
     $(function () {
         $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);

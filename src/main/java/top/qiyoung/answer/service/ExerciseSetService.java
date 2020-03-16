@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import top.qiyoung.answer.DTO.ExerciseReviewDTO;
-import top.qiyoung.answer.DTO.ExerciseSetAndExercisesDTO;
-import top.qiyoung.answer.DTO.ExerciseSetDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import org.springframework.transaction.annotation.Transactional;
+import top.qiyoung.answer.dto.ExerciseReviewDTO;
+import top.qiyoung.answer.dto.ExerciseSetAndExercisesDTO;
+import top.qiyoung.answer.dto.ExerciseSetDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.*;
 import top.qiyoung.answer.model.*;
 
@@ -64,7 +67,10 @@ public class ExerciseSetService {
 
     public int update(ExerciseSetDTO setVM) {
         int result;
-
+        ExerciseSet dbExerciseSet = setMapper.getExerciseSetById(setVM.getExerciseSetId());
+        if (dbExerciseSet == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_SET_NOT_FOUND);
+        }
         midMapper.deleteByExerciseSetId(setVM.getExerciseSetId());
 
         ExerciseSet exerciseSet = new ExerciseSet();
@@ -93,6 +99,12 @@ public class ExerciseSetService {
         query.setIndex((currentPage - 1) * size);
         query.setSize(size);
         query.setOrder(order);
+        if (subjectId != null) {
+            Subject dbSubject = subjectMapper.getSubjectById(subjectId);
+            if (dbSubject == null) {
+                throw new CustomizeException(CustomizeErrorCode.SUBJECT_NOT_FOUND);
+            }
+        }
         query.setId(subjectId);
         query.setType(type);
         List<ExerciseSet> exerciseSets = new ArrayList<>();
@@ -144,6 +156,7 @@ public class ExerciseSetService {
         return paginationDTO;
     }
 
+    @Transactional
     public void delete(Integer exerciseSetId) {
         midMapper.deleteByExerciseSetId(exerciseSetId);
         setMapper.delete(exerciseSetId);
@@ -151,6 +164,9 @@ public class ExerciseSetService {
 
     public ExerciseSetDTO getExerciseSetVMById(Integer exerciseSetId) {
         ExerciseSet exerciseSet = setMapper.getExerciseSetById(exerciseSetId);
+        if (exerciseSet == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_SET_NOT_FOUND);
+        }
         if(exerciseSet.getExerciseList().get(0).getExerciseId() == null){
             exerciseSet.setExerciseList(null);
         }
@@ -189,8 +205,11 @@ public class ExerciseSetService {
 
     public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage, UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
-        List<Integer> exerciseIdList = midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
         ExerciseSet set = setMapper.getExerciseSetById(exerciseSetId);
+        if (set == null){
+            throw new CustomizeException(CustomizeErrorCode.EXERCISE_SET_NOT_FOUND);
+        }
+        List<Integer> exerciseIdList = midMapper.getExerciseIdListByExerciseSetId(exerciseSetId);
         List<ExerciseReviewDTO> exerciseReviewDTOS = new ArrayList<>();
         int end;
         if (exerciseIdList.size()>currentPage*2){
@@ -237,5 +256,9 @@ public class ExerciseSetService {
             exerciseSetDTOS.add(exerciseSetDTO);
         }
         return exerciseSetDTOS;
+    }
+
+    public ExerciseSet getExerciseSetByExerciseSetId(Integer exerciseSetId) {
+        return setMapper.getExerciseSetById(exerciseSetId);
     }
 }

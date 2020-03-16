@@ -14,7 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.context.junit4.SpringRunner;
 import top.qiyoung.answer.mapper.CommentMapper;
 import top.qiyoung.answer.mapper.ExerciseMapper;
+import top.qiyoung.answer.model.Comment;
 import top.qiyoung.answer.model.Exercise;
+import top.qiyoung.answer.service.ExerciseService;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,9 +33,14 @@ class AnswerApplicationTests {
     private ExerciseMapper exerciseMapper;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private ExerciseService exerciseService;
 
     @Test
     void contextLoads() throws IOException {
+        Comment comment = new Comment(null,null,null,"",new Date());
+
+        /*exerciseService.updateStatus(100,1,"123",1);*/
        /* String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
         System.out.println(hashpw);*/
         /*String path = "c:/software/";
@@ -70,7 +77,7 @@ class AnswerApplicationTests {
         //关闭文件流
         stream.close();*/
 
-        List<Exercise> exerciseList = exerciseMapper.getHotExercise(1);
+       /* List<Exercise> exerciseList = exerciseMapper.getHotExercise(1);
         Map<Exercise,Integer> map = new LinkedHashMap<>();
         for (Exercise exercise : exerciseList) {
             int count = commentMapper.countByExerciseId(exercise.getExerciseId());
@@ -83,7 +90,7 @@ class AnswerApplicationTests {
         exerciseList.clear();
         for (Map.Entry<Exercise, Integer> entry : list.subList(0,5)) {
             exerciseList.add(entry.getKey());
-        }
+        }*/
     }
 
 }

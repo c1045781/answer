@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller.manager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -7,19 +8,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import top.qiyoung.answer.DTO.ExerciseDTO;
-import top.qiyoung.answer.DTO.ExerciseEditDTO;
-import top.qiyoung.answer.DTO.ExerciseReviewDTO;
-import top.qiyoung.answer.DTO.PaginationDTO;
-import top.qiyoung.answer.model.MyUser;
-import top.qiyoung.answer.model.Option;
-import top.qiyoung.answer.model.Subject;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import top.qiyoung.answer.dto.*;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
+import top.qiyoung.answer.model.*;
 import top.qiyoung.answer.service.ExerciseService;
+import top.qiyoung.answer.service.PermissionService;
 import top.qiyoung.answer.service.SubjectService;
 import top.qiyoung.answer.utils.DeleteFile;
 import top.qiyoung.answer.utils.FileUpload;
@@ -28,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +43,9 @@ public class ManagerExerciseController {
     @Resource
     private SubjectService subjectService;
 
+    @Resource
+    private PermissionService permissionService;
+
     // 跳转习题添加页面
     @RequestMapping("/toAdd")
     public String toAdd() {
@@ -51,7 +54,7 @@ public class ManagerExerciseController {
 
     // 查询习题
     @RequestMapping("/check")
-    public String checkexercise(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+    public String checkExercise(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                                 @RequestParam(value = "size", defaultValue = "10") Integer size,
                                 @RequestParam(value = "search", required = false) String search,
                                 @RequestParam(value = "type", defaultValue = "title") String type,
@@ -59,7 +62,7 @@ public class ManagerExerciseController {
                                 @RequestParam(value = "subjectId", required = false) Integer subjectId,
                                 @RequestParam(value = "order", defaultValue = "exercise_id asc") String orderby,
                                 @RequestParam(value = "score", required = false) Integer score,
-                                HttpServletRequest request,
+                                @ModelAttribute("msg") String msg,
                                 Model model) {
         PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType,score);
         if (subjectId != null) {
@@ -76,7 +79,9 @@ public class ManagerExerciseController {
         model.addAttribute("type", type);
         model.addAttribute("score", score);
 
-        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+        if (StringUtils.isNotBlank(msg)){
+            model.addAttribute("msg",msg);
+        }
         return "manage/exercise/exercise";
     }
 
@@ -113,17 +118,22 @@ public class ManagerExerciseController {
 
     //模板文件上传
     @RequestMapping("/templatesUpload")
-    public String templatesUpload(@RequestParam("exerciseFile") MultipartFile exerciseFile) throws IOException {
+    public String templatesUpload(@RequestParam("exerciseFile") MultipartFile exerciseFile,RedirectAttributes redirectAttributes,Model model){
         FileUpload fileUpload = new FileUpload();
-        fileUpload.uploadTempla(exerciseFile);
-        return "redirect:/index";
+        try {
+            fileUpload.uploadTemplate(exerciseFile);
+        } catch (IOException e) {
+            model.addAttribute("message","文件上传失败，请重新上传");
+            return "manage/exercise/template-upload";
+        }
+        redirectAttributes.addFlashAttribute("msg","上传成功");
+        return "redirect:/manager/exercise/toTemplateUpload";
     }
 
     // 习题文件上传
     @RequestMapping("/uploadFile")
-    public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile, HttpServletRequest request,
-                         Model model) throws IOException {
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+    public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile,
+                         Model model,RedirectAttributes redirectAttributes) throws IOException {
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
         upload = System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\" + upload;
@@ -178,17 +188,18 @@ public class ManagerExerciseController {
         }
 
         DeleteFile deleteFile = new DeleteFile();
-        String s = deleteFile.delFile(upload);
+        deleteFile.delFile(upload);
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, userDetails);
         }
+        redirectAttributes.addFlashAttribute("msg","上传成功");
         return "redirect:/manager/exercise/check";
     }
 
     // 添加或更新习题
     @RequestMapping("/addOrUpdate")
-    public String addexercise(ExerciseEditDTO edit, HttpServletRequest request, Model model, HttpServletResponse response) {
+    public String addexercise(ExerciseEditDTO edit, Model model, RedirectAttributes redirectAttributes) {
 //        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
@@ -216,6 +227,7 @@ public class ManagerExerciseController {
             model.addAttribute("exerciseEditDTO", exerciseEditDTO);
             return "manage/exercise/add-exercise";
         }else{
+            redirectAttributes.addFlashAttribute("msg","操作成功");
             return "redirect:/manager/exercise/check";
         }
     }
@@ -231,9 +243,18 @@ public class ManagerExerciseController {
     // 删除习题
     @RequestMapping("/delete")
     @ResponseBody
-    public String delete(Integer exerciseId) {
-        exerciseService.deleteByExerciseId(exerciseId);
-        return "success";
+    public ResultDTO delete(Integer exerciseId) {
+        if (exerciseId != null) {
+            Exercise exercise = exerciseService.getExerciseByExerciseId(exerciseId);
+            if (exercise != null) {
+                exerciseService.deleteByExerciseId(exercise.getExerciseId());
+            } else {
+                return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+            }
+        }else {
+            return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
+        return ResultDTO.okOf();
     }
 
     // 根据基础学科获取习题
@@ -262,8 +283,26 @@ public class ManagerExerciseController {
     // 修改习题状态
     @RequestMapping("/status")
     @ResponseBody
-    public String updateStatus(Integer exerciseId,Integer status,String reason,Integer messageId){
-        exerciseService.updateSatus(exerciseId,status,reason,messageId);
-        return "success";
+    public ResultDTO updateStatus(Integer exerciseId,Integer status,String reason,Integer messageId){
+        if (exerciseId != null && messageId != null) {
+            Exercise ex = exerciseService.getExerciseByExerciseId(exerciseId);
+            Message message = permissionService.getMessageByMessageId(messageId);
+            if (ex != null && message != null) {
+                exerciseService.updateStatus(ex.getExerciseId(), status, reason, message.getMessageId());
+            } else {
+                if (ex == null) {
+                    return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+                } else {
+                    return ResultDTO.errorOf(CustomizeErrorCode.MESSAGE_NOT_FOUND);
+                }
+            }
+        }else {
+            if (exerciseId == null) {
+                return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+            } else {
+                return ResultDTO.errorOf(CustomizeErrorCode.MESSAGE_NOT_FOUND);
+            }
+        }
+        return ResultDTO.okOf();
     }
 }

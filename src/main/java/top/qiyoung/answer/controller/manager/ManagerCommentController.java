@@ -5,7 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import top.qiyoung.answer.DTO.PaginationDTO;
+import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.dto.ResultDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Comment;
 import top.qiyoung.answer.service.CommentService;
 
@@ -34,13 +36,19 @@ public class ManagerCommentController {
     }
 
     // 删除评论
-    @RequestMapping("delete")
+    @RequestMapping("/delete")
     @ResponseBody
-    public String delete(Integer commentId){
-        int result = commentService.deleteByCommentId(commentId);
-        if(result<=0){
-            return "failure";
+    public ResultDTO delete(Integer commentId){
+        if (commentId != null) {
+            Comment comment = commentService.getCommentByCommentId(commentId);
+            if (comment!=null) {
+                commentService.deleteByCommentId(comment.getId());
+            }else {
+                return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+        }else {
+            return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
         }
-        return "success";
+        return ResultDTO.okOf();
     }
 }

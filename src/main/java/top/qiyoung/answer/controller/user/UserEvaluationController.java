@@ -6,9 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.qiyoung.answer.dto.ResultDTO;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Evaluation;
+import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.EvaluationService;
+import top.qiyoung.answer.service.ExerciseService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,13 +23,25 @@ public class UserEvaluationController {
 
     @Resource
     private EvaluationService evaluationService;
+    @Resource
+    private ExerciseService exerciseService;
 
     @RequestMapping("/addOrUpdate")
     @ResponseBody
-    public String addOrUpdate(Integer score,Integer exerciseId) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        evaluationService.addOrUpdate(score,exerciseId, userDetails);
-        return "success";
+    public ResultDTO addOrUpdate(Integer score, Integer exerciseId) {
+        if (exerciseId != null){
+            Exercise exercise = exerciseService.getExerciseByExerciseId(exerciseId);
+            if (exercise != null){
+                UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                evaluationService.addOrUpdate(score,exercise.getExerciseId(), userDetails);
+            }else {
+                return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+            }
+        }else {
+            return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
+
+        return ResultDTO.okOf();
     }
 
     // 查找用户收藏
