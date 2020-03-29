@@ -52,7 +52,7 @@
                     <div>
                         <select name="type" id="type"  class="answer-select">
                             <option th:selected="${type == 'user'}" value="user">用户ID</option>
-                            <option th:selected="${type == 'exercise'}" value="exercise">习题ID</option>
+                            <option th:selected="${type == 'exercise'}" value="exercise">试题ID</option>
                         </select> ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
                         <button onclick="submitCommentFrom(1)" class="btn btn-primary" style="margin-bottom: 3px;">搜索</button>
                     </div>
@@ -61,7 +61,7 @@
                         <tr>
                             <th>ID</th>
                             <th>评论人ID</th>
-                            <th>习题ID</th>
+                            <th>试题ID</th>
                             <th>评论内容</th>
                             <th>评论时间</th>
                             <th>操作</th>

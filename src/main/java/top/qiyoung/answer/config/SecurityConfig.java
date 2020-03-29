@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .successForwardUrl("/index")//自定义登录成功的页面地址
                 .and()
                     .rememberMe()
-                    .tokenValiditySeconds(60*60*24*7)
+                    .tokenValiditySeconds(7 * 24 * 60 * 60)
                     .userDetailsService(myUserDetailsService)
                     .tokenRepository(persistentTokenRepository())
                 .and()

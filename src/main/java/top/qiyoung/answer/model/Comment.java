@@ -5,9 +5,38 @@ import java.util.Date;
 public class Comment{
     private Integer id;
     private Integer userId;
-    private Integer exerciseId;
+    private Integer receiverId;
+    private Integer parentId;
+    private Integer likeCount;
+    private Integer type;
     private String content;
     private Date createTime;
+
+    public Integer getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Comment() {
+    }
+
+    public Comment(Integer id, Integer userId, Integer receiverId, Integer parentId, Integer likeCount, Integer type, String content, Date createTime) {
+        this.id = id;
+        this.userId = userId;
+        this.receiverId = receiverId;
+        this.parentId = parentId;
+        this.likeCount = likeCount;
+        this.type = type;
+        this.content = content;
+        this.createTime = createTime;
+    }
 
     public Integer getId() {
         return id;
@@ -25,12 +54,24 @@ public class Comment{
         this.userId = userId;
     }
 
-    public Integer getExerciseId() {
-        return exerciseId;
+    public Integer getParentId() {
+        return parentId;
     }
 
-    public void setExerciseId(Integer exerciseId) {
-        this.exerciseId = exerciseId;
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getContent() {
@@ -48,17 +89,4 @@ public class Comment{
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
-    public Comment(Integer id, Integer userId, Integer exerciseId, String content, Date createTime) {
-        this.id = id;
-        this.userId = userId;
-        this.exerciseId = exerciseId;
-        this.content = content;
-        this.createTime = createTime;
-    }
-
-    public Comment(){
-
-    }
-
 }

@@ -1,14 +1,13 @@
 package top.qiyoung.answer.advice;
 
 import com.alibaba.fastjson.JSON;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import top.qiyoung.answer.dto.ResultDTO;
 import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.exception.CustomizeException;
@@ -48,6 +47,12 @@ public class CustomizeExceptionHandler {
             if (e instanceof CustomizeException) {
                 model.addAttribute("message", e.getMessage());
             } else {
+                if (e instanceof MaxUploadSizeExceededException){
+                    //指定错误信息
+                    model.addAttribute("msg", "请选择1M以内的图片");
+                    //设置跳转视图
+                    return new ModelAndView("user/personal");
+                }
                 model.addAttribute("message", CustomizeErrorCode.SYS_ERROR.getMessage());
             }
             if (userDetails.getAuthorities().equals("0") || userDetails.getAuthorities().equals("1")) {
@@ -56,12 +61,4 @@ public class CustomizeExceptionHandler {
             return new ModelAndView("user/error");
         }
     }
-
-
-
-    /*@ExceptionHandler(value = NoHandlerFoundException.class)
-    public ModelAndView NoHandlerFoundExceptionHandler(HttpServletRequest req, Exception e,Model model) throws Exception {
-        model.addAttribute("message", CustomizeErrorCode.SYS_ERROR.getMessage());
-        return new ModelAndView("user/error");
-    }*/
 }

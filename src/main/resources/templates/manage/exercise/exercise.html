@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>习题管理</title>
+    <title>试题管理</title>
     <!-- custom-theme -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -38,8 +38,8 @@
             <div class="w3l_agileits_breadcrumbs_inner">
                 <ul>
                     <li>首页<span>»</span></li>
-                    <li>习题管理<span>»</span></li>
-                    <li>查询习题</li>
+                    <li>试题管理<span>»</span></li>
+                    <li>试题列表</li>
                 </ul>
             </div>
         </div>
@@ -48,7 +48,7 @@
         <div class="inner_content_w3_agile_info two_in">
             <div class="agile-tables">
                 <div class="w3l-table-info agile_info_shadow">
-                    <h3 class="w3_inner_tittle two">习题列表</h3>
+                    <h3 class="w3_inner_tittle two">试题列表</h3>
                     <div>
                         学科：
                         <input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
@@ -216,7 +216,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">习题</h4>
+                    <h4 class="modal-title" id="exampleModalLabel">试题</h4>
                 </div>
                 <div class="modal-body">
                     <div class="list-group">
@@ -287,7 +287,7 @@
                     <form>
                         <div class="form-group">
                             <input type="hidden" id="deleteId" name="id">
-                            <label class="control-label">确定要删除习题？</label>
+                            <label class="control-label">确定要删除试题？</label>
                         </div>
                     </form>
                 </div>

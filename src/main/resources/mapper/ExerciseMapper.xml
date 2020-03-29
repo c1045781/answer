@@ -316,6 +316,7 @@
     <select id="getHotExercise" resultMap="BaseResultMap">
         select * from exercise
         <where>
+            status = 1
             <if test="subjectId != null">
                 and subject_id = #{subjectId}
             </if>
@@ -325,6 +326,7 @@
     <select id="getExcellentExercise" resultMap="BaseResultMap">
         select * from exercise
         <where>
+            status = 1
             <if test="subjectId != null">
                 and subject_id = #{subjectId}
             </if>

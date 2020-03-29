@@ -38,6 +38,7 @@
                 <div class="right-top-header" sec:authorize="isAuthenticated()">
                     <a href="/logout">退出</a>
                     <a href="/user/personal">个人中心</a>
+                    <a href="/user/notification/message">消息中心<span class="badge" style="color: #fff;background-color: #fa5a57;position: absolute;" name="num"></span></a>
                     <a href="/user/modifyPassword">修改密码</a>
                 </div>
             </div>
@@ -115,7 +116,7 @@
                                         </div>
                                         <div style="clear: both;margin-top: 66px;width: 80%;"><p><span th:id="${exerciseEditDTO.exerciseEditId}" th:text="'正确答案：'+${exerciseEditDTO.correct}"></span></p>
                                             <p style="word-break:break-all" th:utext="${'<span>答案解析：</span>'+exerciseEditDTO.analysis}"></p></div>
-                                        <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="openExerciseComment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">进入讨论区</a>
+                                        <a th:id="a_open_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right" th:onclick="openExerciseComment([[${exerciseEditDTO.exerciseEditId}]],1);" class="button-01">进入讨论区</a>
                                         <a th:id="a_close_comment + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none" th:onclick="closeExerciseComment([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭讨论区</a>
                                         <a th:id="a_open_note + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;margin-right: 20px" th:onclick="openExerciseNote([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">打开笔记</a>
                                         <a th:id="a_close_note + ${exerciseEditDTO.exerciseEditId}" href="javascript:void(0)" style="float: right;display: none;margin-right: 20px" th:onclick="closeExerciseNote([[${exerciseEditDTO.exerciseEditId}]]);" class="button-01">关闭笔记</a>
@@ -152,6 +153,7 @@
                                     <h3 class="comments-title">讨论区</h3>
                                     <div class="single-comment-list">
                                         <ol class="comments-list" th:id="comment_ol + ${exerciseEditDTO.exerciseEditId}">
+
                                         </ol>
                                     </div>
                                     <div class="single-comment-form">
@@ -166,7 +168,7 @@
                                                         <p class="textarea-block">
                                                             <textarea aria-required="true" name="content" rows="10" placeholder=""></textarea>
                                                         </p>
-                                                        <input type="hidden" name="exerciseId" th:value="${exerciseEditDTO.exerciseEditId}">
+                                                        <input type="hidden" name="parentId" th:value="${exerciseEditDTO.exerciseEditId}">
                                                         <p class="post-comment input-block">
                                                             <button id="submit-comment" th:onclick="submitComment([[${exerciseEditDTO.exerciseEditId}]]);" name="submit" type="submit" class="button-01">发布</button>
                                                         </p>
@@ -224,13 +226,15 @@
             contentType: 'application/json',
             data:JSON.stringify(exerciseId),
             success:function (data) {
-                for (var i = 0;i<data.length;i++){
-                    $("#score"+data[i].exerciseId).rating();
-                    $("#score"+data[i].exerciseId).rating('showStars',data[i].score);
+                if (data.length>0){
+                    for (var i = 0;i<data.length;i++){
+                        $("#score"+data[i].exerciseId).rating();
+                        $("#score"+data[i].exerciseId).rating('showStars',data[i].score);
+                    }
                 }
             }
         });
-
+        allNotification();
     }
 </script>
 <script src="/js/jquery-2.2.4.min.js"></script>

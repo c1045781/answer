@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller.user;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import top.qiyoung.answer.dto.*;
+import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Exercise;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Option;
 import top.qiyoung.answer.model.Subject;
 import top.qiyoung.answer.service.EvaluationService;
@@ -24,7 +27,6 @@ import top.qiyoung.answer.utils.DeleteFile;
 import top.qiyoung.answer.utils.FileUpload;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -89,11 +91,12 @@ public class UserExerciseController {
 
     // 习题文件上传
     @RequestMapping("/uploadFile")
-    public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile,RedirectAttributes redirectAttributes) throws IOException {
+    @ResponseBody
+    public ResultDTO upload(@RequestParam(value = "exerciseFile", required = false) MultipartFile exerciseFile) throws IOException {
 //        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\" + upload;
+        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
@@ -101,20 +104,64 @@ public class UserExerciseController {
         //获得最后一行的行号
         int lastRowNum = sheet.getLastRowNum();
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList<>();
-        for (int i = 1; i < lastRowNum; i++) {
+        for (int i = 1; i < lastRowNum+1; i++) {
             ExerciseEditDTO edit = new ExerciseEditDTO();
             HSSFRow row = sheet.getRow(i);
-            String baseSubject = row.getCell(0).getStringCellValue();
-            String subjectName = row.getCell(1).getStringCellValue();
-            String exercisetype = row.getCell(2).getStringCellValue();
-            String title = row.getCell(3).getStringCellValue();
-            String answers = row.getCell(4).getStringCellValue();
-            String correct = row.getCell(5).getStringCellValue();
-            String analysis = row.getCell(6).getStringCellValue();
+            HSSFCell cell0 = row.getCell(0);
+            if (cell0 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String baseSubject = cell0.getStringCellValue();
+            HSSFCell cell1 = row.getCell(1);
+            if (cell1 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String subjectName = cell1.getStringCellValue();
+            HSSFCell cell2 = row.getCell(2);
+            if (cell2 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String exercisetype = cell2.getStringCellValue();
+            HSSFCell cell3 = row.getCell(3);
+            if (cell3 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String title = cell3.getStringCellValue();
+            HSSFCell cell4 = row.getCell(4);
+            if (cell4 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String answers = cell4.getStringCellValue();
+            HSSFCell cell5 = row.getCell(5);
+            if (cell5 == null){
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
+            }
+            String correct = cell5.getStringCellValue();
+            HSSFCell cell6 = row.getCell(6);
+            String analysis = "";
+            if (cell6 != null){
+                analysis = cell6.getStringCellValue();
+            }
 
             Subject subject = subjectService.verification(baseSubject, subjectName);
             if (subject != null) {
                 edit.setSubjectId(subject.getSubjectId());
+            } else {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                return ResultDTO.errorOf(CustomizeErrorCode.FILE_SUBJECT_ERROR);
             }
             edit.setExerciseType(exercisetype);
             edit.setTitle(title);
@@ -137,21 +184,20 @@ public class UserExerciseController {
         }
 
         DeleteFile deleteFile = new DeleteFile();
-        String s = deleteFile.delFile(upload);
+        deleteFile.delFile(upload);
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, userDetails);
         }
 
-        redirectAttributes.addFlashAttribute("msg","上传成功");
-        return "redirect:/user/personal";
+        return ResultDTO.okOf();
     }
 
     // 添加或更新习题
     @RequestMapping("/addOrUpdate")
-    public String addexercise(ExerciseEditDTO edit, Model model, RedirectAttributes redirectAttributes) {
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
+    @ResponseBody
+    public ResultDTO addexercise(ExerciseEditDTO edit, Model model) {
         List<Option> options = new ArrayList<>();
         List<String> answers = edit.getAnswers();
         byte[] bytes = {64};
@@ -178,8 +224,7 @@ public class UserExerciseController {
             model.addAttribute("exerciseEditDTO", exerciseEditDTO);
         }
 
-        redirectAttributes.addFlashAttribute("msg","操作成功");
-        return "redirect:/user/personal";
+        return ResultDTO.okOf();
     }
 
     // 根据基础学科获取习题
@@ -257,6 +302,23 @@ public class UserExerciseController {
     public ExerciseEditDTO toUpdate(Integer exerciseId) {
         ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(exerciseId);
         return exerciseEditDTO;
+    }
+
+    // 删除习题
+    @RequestMapping("/delete")
+    @ResponseBody
+    public ResultDTO delete(Integer exerciseId) {
+        if (exerciseId != null) {
+            Exercise exercise = exerciseService.getExerciseByExerciseId(exerciseId);
+            if (exercise != null) {
+                exerciseService.deleteByExerciseId(exercise.getExerciseId());
+            } else {
+                return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+            }
+        }else {
+            return ResultDTO.errorOf(CustomizeErrorCode.EXERCISE_NOT_FOUND);
+        }
+        return ResultDTO.okOf();
     }
 
 }

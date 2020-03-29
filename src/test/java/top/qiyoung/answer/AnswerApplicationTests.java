@@ -1,11 +1,11 @@
 package top.qiyoung.answer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,19 @@ class AnswerApplicationTests {
 
     @Test
     void contextLoads() throws IOException {
-        Comment comment = new Comment(null,null,null,"",new Date());
+
+        String user = "as,zx,cv,vb";
+        String[] split = user.split(",");
+        List users = new ArrayList();
+        for (String s : split) {
+            users.add(s);
+            System.out.println(s);
+        }
+        users.add("kl");
+        String join = StringUtils.join(users, ",");
+        System.out.println(join);
+
+//        Comment comment = new Comment(null,null,null,"",new Date());
 
         /*exerciseService.updateStatus(100,1,"123",1);*/
        /* String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());

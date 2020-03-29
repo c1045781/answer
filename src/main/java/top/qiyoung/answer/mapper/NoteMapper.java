@@ -1,10 +1,12 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import top.qiyoung.answer.model.Note;
 
 import java.util.List;
 
+@Component
 public interface NoteMapper {
     Note getNote(@Param("exerciseId") Integer exerciseId,@Param("userId") Integer userId);
 

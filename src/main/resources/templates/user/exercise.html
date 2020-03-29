@@ -41,6 +41,7 @@
 						<div class="right-top-header" sec:authorize="isAuthenticated()">
 							<a href="/logout">退出</a>
 							<a href="/user/personal">个人中心</a>
+							<a href="/user/notification/message">消息中心<span class="badge" style="color: #fff;background-color: #fa5a57;position: absolute;" name="num"></span></a>
 							<a href="/user/modifyPassword">修改密码</a>
 						</div>
 					</div>
@@ -229,7 +230,7 @@
 									<h2 class="widget-title">热门题目</h2>
 									<ul id="hotExercise">
                                         <li class="cat-item" th:each="exercise:${hotExercise}">
-                                            <a target="_blank" style="cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;"
+                                            <a target="_blank" style="cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;" th:title="${exercise.exerciseTitle}"
                                                th:href="@{/user/exercise/exerciseToAnswer(exerciseId=${exercise.exerciseId})}" th:text="${exercise.exerciseTitle}"></a>
                                         </li>
 									</ul>
@@ -238,7 +239,7 @@
 									<h2 class="widget-title">优秀题目</h2>
 									<ul id="excellentExercise">
                                         <li class="cat-item" th:each="exercise:${excellentExercise}">
-                                            <a target="_blank" style="cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;"
+                                            <a target="_blank" style="cursor: pointer;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;display: block;" th:title="${exercise.exerciseTitle}"
                                                th:href="@{/user/exercise/exerciseToAnswer(exerciseId=${exercise.exerciseId})}" th:text="${exercise.exerciseTitle}"></a>
                                         </li>
 									</ul>
@@ -304,6 +305,7 @@
             	$("#span"+dataList[i].exercise.exerciseId).html(AVGScores[dataList[i].exercise.exerciseId] + "( " + countMap[dataList[i].exercise.exerciseId] + "人)");
 			}
 		}
+		allNotification();
     }
 
 </script>

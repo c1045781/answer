@@ -1,10 +1,14 @@
 package top.qiyoung.answer.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
+import top.qiyoung.answer.enums.UserRoleEnum;
 import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.model.Query;
 
 import java.util.List;
 
+@Component
 public interface UserMapper {
 
     MyUser login(MyUser myUser);
@@ -30,4 +34,6 @@ public interface UserMapper {
     int countUserList1(Query query);
 
     void modifyPassword(MyUser myUser);
+
+    List<MyUser> getUserByType(Integer role);
 }

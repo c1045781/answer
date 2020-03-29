@@ -1,10 +1,12 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import top.qiyoung.answer.model.Answer;
 
 import java.util.List;
 
+@Component
 public interface AnswerMapper {
     void add(Answer answer);
 

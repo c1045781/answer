@@ -1,10 +1,12 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import top.qiyoung.answer.model.Exercise;
 
 import java.util.List;
 
+@Component
 public interface MidMapper {
 
     int insert(@Param("exerciseSetId") Integer exerciseSetId,@Param("exerciseId") Integer exerciseId);

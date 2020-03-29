@@ -1,10 +1,12 @@
 package top.qiyoung.answer.service;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.qiyoung.answer.dto.*;
+import top.qiyoung.answer.enums.NotificationTypeEnum;
 import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.exception.CustomizeException;
 import top.qiyoung.answer.mapper.*;
@@ -21,26 +23,28 @@ import java.util.stream.Stream;
 public class ExerciseService {
 
 
-    @Resource
+    @Autowired
     private ExerciseMapper exerciseMapper;
-    @Resource
+    @Autowired
     private UserMapper userMapper;
     @Resource
     private SubjectMapper subjectMapper;
-    @Resource
+    @Autowired
     private MidMapper midMapper;
-    @Resource
+    @Autowired
     private PermissionMapper permissionMapper;
-    @Resource
+    @Autowired
     private EvaluationMapper evaluationMapper;
-    @Resource
+    @Autowired
     private AnswerMapper answerMapper;
-    @Resource
+    @Autowired
     private CollectMapper collectMapper;
-    @Resource
+    @Autowired
     private CommentMapper commentMapper;
-    @Resource
+    @Autowired
     private NoteMapper noteMapper;
+    @Autowired
+    private NotificationMapper notificationMapper;
 
     public int insert(ExerciseEditDTO edit, UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
@@ -247,6 +251,10 @@ public class ExerciseService {
 
     @Transactional
     public void updateStatus(Integer exerciseId, Integer status, String reason, Integer messageId) {
+        Message message = permissionMapper.getMessageByMessageId(messageId);
+        Exercise exercise = exerciseMapper.getExerciseByExerciseId(exerciseId);
+        Notification notification = new Notification(null,-1,message.getUserId(),messageId, NotificationTypeEnum.NOTIFICATION_SYSTEM_EXERCISE.getType(),new Date(),0,exercise.getExerciseTitle());
+        notificationMapper.addNotification(notification);
         permissionMapper.updateStatus(messageId,reason,status);
         exerciseMapper.updateById(exerciseId, status);
     }

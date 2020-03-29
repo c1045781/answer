@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>习题管理</title>
+    <title>试题管理</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="keywords" content=""/>
@@ -38,8 +38,8 @@
             <div class="w3l_agileits_breadcrumbs_inner">
                 <ul>
                     <li>首页<span>»</span></li>
-                    <li>习题管理<span>»</span></li>
-                    <li>编辑习题</li>
+                    <li>试题管理<span>»</span></li>
+                    <li>编辑试题</li>
                 </ul>
             </div>
         </div>
@@ -55,7 +55,7 @@
                                 <div class="form-div">
                                     <div class="validation-grids widget-shadow" data-example-id="basic-forms">
                                         <div class="input-info">
-                                            <h3 class="w3_inner_tittle two">编辑习题：</h3>
+                                            <h3 class="w3_inner_tittle two">编辑试题：</h3>
                                         </div>
                                         <div class="alert alert-danger" role="alert" th:if="${message != null}">
                                             <strong th:text="${message}"></strong>
@@ -150,7 +150,7 @@
                                                         <div class="option-div" id="A">
                                                             <label class="control-label" style="width: 5%;">A：</label>
                                                             <input type="text" class="form-control" name="answers"
-                                                                   required="">
+                                                                   required="" autocomplete="off">
                                                             <button onclick="deleteOption()" type="button"
                                                                     class="btn btn-danger option-button disabled">
                                                                 删除
@@ -159,7 +159,7 @@
                                                         <div class="option-div" id="B">
                                                             <label class="control-label" style="width: 5%;">B：</label>
                                                             <input type="text" class="form-control" name="answers"
-                                                                   required="">
+                                                                   required="" autocomplete="off">
                                                             <button onclick="deleteOption()" type="button"
                                                                     class="btn btn-danger option-button  disabled">
                                                                 删除
@@ -168,7 +168,7 @@
                                                         <div class="option-div" id="C">
                                                             <label class="control-label" style="width: 5%;">C：</label>
                                                             <input type="text" class="form-control" name="answers"
-                                                                   required="">
+                                                                   required="" autocomplete="off">
                                                             <button onclick="deleteOption()" type="button"
                                                                     class="btn btn-danger option-button  disabled">
                                                                 删除
@@ -177,7 +177,7 @@
                                                         <div class="option-div" id="D">
                                                             <label class="control-label" style="width: 5%;">D：</label>
                                                             <input type="text" class="form-control" name="answers"
-                                                                   required="">
+                                                                   required="" autocomplete="off">
                                                             <button onclick="deleteOption()" type="button"
                                                                     class="btn btn-danger option-button">
                                                                 删除

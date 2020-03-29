@@ -13,6 +13,10 @@ public enum CustomizeErrorCode {
     ANSWER_NOT_FOUND(2008, "历史答题不存在，请重新操作"),
     NOTE_NOT_FOUND(2008, "笔记不存在，请重新操作"),
     Insufficient_Permissions(2009, "权限不足，请重新操作"),
+    IMG_UPLOAD_ERROR(2010, "图片上传失败，请重新操作"),
+    FILE_SUBJECT_ERROR(2011, "试题分类错误，请重新上传"),
+    FILE_FORMAT_ERROR(2012, "试题格式错误，请重新上传"),
+    NOTIFICATION_NOT_FOUND(2013, "未找到该通知，请确认后重试"),
     ;
 
 

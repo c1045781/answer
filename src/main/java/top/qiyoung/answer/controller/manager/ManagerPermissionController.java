@@ -14,6 +14,7 @@ import top.qiyoung.answer.service.PermissionService;
 import top.qiyoung.answer.service.UserService;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/manager/permission")
@@ -68,4 +69,10 @@ public class ManagerPermissionController {
         return permissionService.getMessageByMessageId(messageId);
     }
 
+    @RequestMapping("/addNotice")
+    @ResponseBody
+    public ResultDTO addNotification(String content, Integer role, Principal principal){
+        permissionService.addNotice(content,role,principal.getName());
+        return ResultDTO.okOf();
+    }
 }

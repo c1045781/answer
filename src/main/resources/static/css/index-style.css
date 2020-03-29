@@ -1307,7 +1307,7 @@ ul.list-has-style li:before {
   float: right;
 }
 
-.kopa-header-02 .top-header .right-top-header * {
+.kopa-header-02 .top-header .right-top-header {
   display: inline-block;
 }
 
@@ -6314,7 +6314,7 @@ aside.sidebar .kopa-widget-advanced_search .widget-title:before {
 
 .kopa-widget-course_info .module-course_info-02 .nav-tabs li:first-child a {
   text-transform: uppercase;
-  font-weight: 700;
+  /*font-weight: 700;*/
   letter-spacing: 1px;
 }
 

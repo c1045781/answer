@@ -59,15 +59,15 @@ public class UserExerciseSetController {
 
     // 添加或更新习题集
     @RequestMapping("/addOrUpdate")
-    public String addOrUpdate(ExerciseSetDTO setVM, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResultDTO addOrUpdate(ExerciseSetDTO setVM) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (setVM.getExerciseSetId() != null) {
             setService.update(setVM);
         } else {
             setService.insert(setVM, userDetails);
         }
-        redirectAttributes.addFlashAttribute("msg","操作成功");
-        return "redirect:/user/personal";
+        return ResultDTO.okOf();
     }
 
     // 删除习题集

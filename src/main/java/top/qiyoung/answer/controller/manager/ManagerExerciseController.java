@@ -120,10 +120,15 @@ public class ManagerExerciseController {
     @RequestMapping("/templatesUpload")
     public String templatesUpload(@RequestParam("exerciseFile") MultipartFile exerciseFile,RedirectAttributes redirectAttributes,Model model){
         FileUpload fileUpload = new FileUpload();
+        String suffix = exerciseFile.getOriginalFilename().substring(exerciseFile.getOriginalFilename().indexOf("."));
+        if (!".xls".equals(suffix) && !".xlsx".equals(suffix)){
+            model.addAttribute("msg","文件类型错误，请重新上传");
+            return "manage/exercise/template-upload";
+        }
         try {
             fileUpload.uploadTemplate(exerciseFile);
         } catch (IOException e) {
-            model.addAttribute("message","文件上传失败，请重新上传");
+            model.addAttribute("msg","文件上传失败，请重新上传");
             return "manage/exercise/template-upload";
         }
         redirectAttributes.addFlashAttribute("msg","上传成功");
@@ -136,7 +141,7 @@ public class ManagerExerciseController {
                          Model model,RedirectAttributes redirectAttributes) throws IOException {
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\" + upload;
+        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
@@ -159,12 +164,16 @@ public class ManagerExerciseController {
             if (subject != null) {
                 edit.setSubjectId(subject.getSubjectId());
             } else {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
                 model.addAttribute("messs", "文件格式错误");
                 return "manage/exercise/upload";
             }
             if (exercisetype.equals("单选题") || exercisetype.equals("判断题") || exercisetype.equals("多选题")) {
                 edit.setExerciseType(exercisetype);
             } else {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
                 model.addAttribute("messs", "文件格式错误");
                 return "manage/exercise/upload";
             }

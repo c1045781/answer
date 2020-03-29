@@ -120,7 +120,7 @@ function deleteExerciseSetForUser(e) {
         success: function (data) {
             if(data.code == 200){
                 alert(data.message);
-                window.location.href="/user/personal";
+                AddExerciseSetList(1);
             }else{
                 alert(data.message);
             }
@@ -194,7 +194,7 @@ function viewExerciseReviewModal(id){
             $('#correct').html("正确答案：" + data.exercise.correct);
             $('#analysis').html("答案解析：" + data.exercise.analysis);
             $.each(data.options,function(index,item){
-                content += '<span class="list-group-item-text option-span">'+item.option + '.' + item.content + '</span>';
+                content += '<span class="list-group-item-text option-span">'+item.option + '.' + item.content + '</span><br>';
 
             });
             $('#option').html(content);
@@ -367,7 +367,7 @@ function showAddExerciseSet(e,page){
             var list = data.dataList[0].list;
             for (var i = 0; i < list.length; i++){
                 content += "<div class='list-group'>" +
-                        "<h3 class='list-group-item-heading exercise-list-title'>"+list[i].exercise.exerciseTitle+"</h3>"+
+                        "<h3 class='list-group-item-heading exercise-list-title'>"+(i+1)+"."+list[i].exercise.exerciseTitle+"</h3>"+
                         "<div class='exercise-list-info'>";
                 $.each(list[i].options,function(index,item){
                     content += '<p class="list-group-item-text option-span">'+item.option + '.' + item.content + '</p>';
@@ -376,7 +376,7 @@ function showAddExerciseSet(e,page){
                         "<div class='exercise-list-info'>"+"题目分类："+list[i].subject.baseSubject +'»'+list[i].subject.name+"</div>" +
                         "<div class='exercise-list-info'>"+"正确答案："+list[i].exercise.correct+"</div>" +
                         "<div class='exercise-list-info'>"+"答案解析："+list[i].exercise.analysis+"</div>" +
-                        "</div>";
+                        "<hr></div>";
             }
 
             if(data.totalPage !=0) {

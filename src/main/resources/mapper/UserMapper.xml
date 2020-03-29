@@ -213,4 +213,13 @@
             user_id = #{userId}
         </where>
     </update>
+
+    <select id="getUserByType" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from user
+        <where>
+            <if test="role != null">
+              role = #{role}
+            </if>
+        </where>
+    </select>
 </mapper>

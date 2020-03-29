@@ -33,7 +33,7 @@ public class ExerciseSetService {
     private UserMapper userMapper;
 
     public int insert(ExerciseSetDTO setVM, UserDetails userDetails) {
-        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
+            MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
         int result;
         ExerciseSet exerciseSet = new ExerciseSet();
 
@@ -59,7 +59,8 @@ public class ExerciseSetService {
         result = setMapper.insert(exerciseSet);
         if (setVM.getExerciseList() != null) {
             for (Integer exerciseId : exerciseIds) {
-                result = midMapper.insert(exerciseSetId, exerciseId);
+                if (exerciseId != null)
+                    result = midMapper.insert(exerciseSetId, exerciseId);
             }
         }
         return result;
@@ -239,11 +240,18 @@ public class ExerciseSetService {
     }
 
     public void addLike(Integer exerciseSetId) {
-        setMapper.addLike(exerciseSetId);
+        ExerciseSet exerciseSet = setMapper.getExerciseSetById(exerciseSetId);
+        if (exerciseSet != null){
+            setMapper.addLike(exerciseSetId);
+        }
+
     }
 
     public void delLike(Integer exerciseSetId) {
-        setMapper.delLike(exerciseSetId);
+        ExerciseSet exerciseSet = setMapper.getExerciseSetById(exerciseSetId);
+        if (exerciseSet != null && exerciseSet.getLikeCount() > 0) {
+            setMapper.delLike(exerciseSetId);
+        }
     }
 
     public List<ExerciseSetDTO> getHighLikeExerciseSet(Integer subjectId) {

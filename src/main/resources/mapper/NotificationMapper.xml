@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.qiyoung.answer.mapper.NotificationMapper">
+    <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Notification">
+        <id column="notification_id" jdbcType="INTEGER" property="notificationId"/>
+        <result column="notifier_id" jdbcType="INTEGER" property="notifierId"/>
+        <result column="receiver_id" jdbcType="INTEGER" property="receiverId"/>
+        <result column="outId" jdbcType="INTEGER" property="outId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="getList" resultMap="BaseResultMap">
+        select * from notification
+        <where>
+            <if test="userId != null">
+                receiver_id = #{userId} and type = #{type} and receiver_id != notifier_id
+            </if>
+        </where>
+        <if test="index != null and pageSize != null">
+            order by create_time desc limit #{index},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countList" resultType="java.lang.Integer">
+        select count(1) from notification
+        <where>
+            <if test="userId != null">
+                receiver_id = #{userId} and type = #{type} and receiver_id != notifier_id
+            </if>
+        </where>
+    </select>
+
+    <select id="getSystemList" resultMap="BaseResultMap">
+        select * from notification
+        <where>
+            <if test="userId != null">
+                receiver_id = #{userId} and type = #{type} or receiver_id = #{userId} and type = #{type1} or receiver_id = #{userId} and type = #{type2} or receiver_id = #{userId} and type = #{type3}
+            </if>
+        </where>
+        <if test="index != null and pageSize != null">
+            order by create_time desc limit #{index},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countSystemList" resultType="java.lang.Integer">
+        select count(1) from notification
+        <where>
+            <if test="userId != null">
+                receiver_id = #{userId} and type = #{type} or receiver_id = #{userId} and type = #{type1} or receiver_id = #{userId} and type = #{type2} or receiver_id = #{userId} and type = #{type3}
+            </if>
+        </where>
+    </select>
+
+    <select id="getNotificationByNotificationId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from notification
+        <where>
+            notification_id = #{notificationId}
+        </where>
+    </select>
+
+    <insert id="addNotification" parameterType="top.qiyoung.answer.model.Notification">
+        insert into notification(notifier_id, receiver_id, outer_id, type, create_time, status, title) values (#{notifierId},#{receiverId},#{outerId},#{type},#{createTime},#{status},#{title})
+    </insert>
+
+    <select id="getNotifierIdByReceiverId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select notifier_id from notification
+        <where>
+            type = 5 and receiver_id = #{userId};
+        </where>
+    </select>
+
+    <select id="getReceiverIdByNotifierId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select receiver_id from notification
+        <where>
+            type = 5 and notifier_id = #{userId};
+        </where>
+    </select>
+
+    <select id="getNewChat" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from notification
+         <where>
+             type = 5 and ((notifier_id = #{userId} and receiver_id = #{secondUserId}) or (receiver_id = #{userId} and notifier_id =  #{secondUserId}))
+         </where>
+        order by create_time desc limit 0,1
+    </select>
+
+    <select id="getChat" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from notification
+        <where>
+            type = 5 and ((notifier_id = #{userId} and receiver_id = #{secondId}) or (receiver_id = #{userId} and notifier_id =  #{secondId}))
+        </where>
+        order by create_time
+    </select>
+
+    <select id="getNewMessage" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from notification
+        <where>
+            type = 5 and ((notifier_id = #{to} and receiver_id = #{from}) or (receiver_id = #{to} and notifier_id =  #{from}))
+        </where>
+        order by create_time desc limit 0,2
+    </select>
+
+    <select id="getNotificationNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from notification
+        <where>
+            receiver_id = #{userId} and type = #{type} and status = #{status}
+        </where>
+    </select>
+
+    <update id="read" parameterType="java.lang.Integer">
+        update notification set status = 1
+        <where>
+            receiver_id = #{userId} and type = #{type}
+        </where>
+    </update>
+
+    <select id="getAllNotification" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(1) from notification
+        <where>
+            receiver_id = #{userId} and status = 0
+        </where>
+    </select>
+
+</mapper>

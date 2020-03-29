@@ -80,6 +80,11 @@ public class IndexController {
         return "user/personal";
     }
 
+    @RequestMapping("/user/chat")
+    public String test(){
+        return "/user/chat";
+    }
+
     @RequestMapping("/user/modifyPassword")
     public String modifyPassword(){
         return "/user/modify-password";

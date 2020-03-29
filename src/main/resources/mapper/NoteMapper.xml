@@ -57,7 +57,7 @@
         select * from note
         <where>
             <if test="userId != null">
-                user_id = #{userId}
+                user_id = #{userId} and content != ''
             </if>
         </where>
         order by create_time desc

@@ -1,11 +1,13 @@
 package top.qiyoung.answer.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import top.qiyoung.answer.model.Message;
 import top.qiyoung.answer.model.Query;
 
 import java.util.List;
 
+@Component
 public interface PermissionMapper {
 
     int countMessageList();

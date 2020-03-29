@@ -95,10 +95,15 @@ public class UserAnswerController {
     public String viewNoteExercise(Integer noteId, Model model){
         Note note = noteService.findNoteByNoteId(noteId);
         Answer answer = answerService.findAnswerByExerciseIdAndUserId(note.getExerciseId(),note.getUserId());
-        ExerciseEditDTO exerciseEditDTO = exerciseService.getExerciseEdit(answer.getExerciseId());
+        ExerciseEditDTO exerciseEditDTO;
+        if (answer == null){
+            exerciseEditDTO = exerciseService.getExerciseEdit(note.getExerciseId());
+        }else {
+            exerciseEditDTO = exerciseService.getExerciseEdit(answer.getExerciseId());
+            model.addAttribute("answer",answer);
+        }
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList();
         exerciseEditDTOList.add(exerciseEditDTO);
-        model.addAttribute("answer",answer);
         model.addAttribute("exerciseEditDTOList", exerciseEditDTOList);
         return "user/answer";
     }

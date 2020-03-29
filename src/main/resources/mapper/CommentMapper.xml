@@ -4,7 +4,10 @@
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Comment">
         <id column="comment_id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
-        <result column="exercise_id" jdbcType="INTEGER" property="exerciseId"/>
+        <result column="receiver_id" jdbcType="INTEGER" property="receiverId"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="like_count" jdbcType="INTEGER" property="likeCount"/>
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
@@ -17,7 +20,7 @@
                   user_id = #{search}
                 </if>
                 <if test="type == 'exercise' and search != null and search != ''">
-                  exercise_id = #{search}
+                  parent_id = #{search} and type = 1
                 </if>
             </if>
         </where>
@@ -37,7 +40,7 @@
                     user_id = #{search}
                 </if>
                 <if test="type == 'exercise' and search != null and search != ''">
-                    exercise_id = #{search}
+                    parent_id = #{search} and type =1
                 </if>
             </if>
         </where>
@@ -51,14 +54,17 @@
             </if>
         </where>
     </delete>
+
     <delete id="deleteByExerciseId" parameterType="java.lang.Integer">
         delete from comment
         <where>
             <if test="exerciseId != null">
-                exercise_id = #{exerciseId}
+                parent_id = #{exerciseId} and type = 1
             </if>
         </where>
-    </delete><delete id="deleteByUserId" parameterType="java.lang.Integer">
+    </delete>
+
+    <delete id="deleteByUserId" parameterType="java.lang.Integer">
         delete from comment
         <where>
             <if test="userId != null">
@@ -67,27 +73,75 @@
         </where>
     </delete>
 
-    <select id="getCommentListByExerciseId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getCommentListByParentIdType1" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select * from comment
         <where>
-            <if test="exerciseId != null">
-                exercise_id = #{exerciseId}
+            <if test="parentId != null">
+                parent_id = #{parentId} and type = 1
+            </if>
+        </where>
+        order by create_time desc limit #{index},#{size}
+    </select>
+    <select id="CountCommentListByParentIdType1" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from comment
+        <where>
+            <if test="parentId != null">
+                parent_id = #{parentId} and type = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="getCommentListByParentIdType2" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from comment
+        <where>
+            <if test="parentId != null">
+                parent_id = #{parentId} and type = 2
+            </if>
+        </where>
+        limit #{index},#{size}
+    </select>
+
+    <select id="CountCommentListByParentIdType2" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from comment
+        <where>
+            <if test="parentId != null">
+                parent_id = #{parentId} and type = 2
             </if>
         </where>
     </select>
 
     <insert id="addComment" parameterType="top.qiyoung.answer.model.Comment">
-        insert into comment(user_id, exercise_id, content, create_time) values (#{userId},#{exerciseId},#{content},#{createTime})
+        insert into comment(user_id, parent_id, content, create_time,type,like_count,receiver_id) values (#{userId},#{parentId},#{content},#{createTime},#{type},#{likeCount},#{receiverId})
     </insert>
 
     <select id="countByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select count(1) from comment
         <where>
-              exercise_id = #{exerciseId}
+              parent_id = #{exerciseId} and type = 1
         </where>
     </select>
 
     <select id="getCommentByCommentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select * from comment where comment_id = #{commentId}
     </select>
+
+    <update id="addLike" parameterType="java.lang.Integer">
+        update comment
+        <set>
+            like_count = like_count + 1
+        </set>
+        <where>
+            comment_id = #{commentId}
+        </where>
+    </update>
+
+    <update id="delLike" parameterType="java.lang.Integer">
+        update comment
+        <set>
+            like_count = like_count - 1
+        </set>
+        <where>
+            comment_id = #{commentId}
+        </where>
+    </update>
 </mapper>

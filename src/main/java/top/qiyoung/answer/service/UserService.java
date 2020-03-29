@@ -120,14 +120,14 @@ public class UserService {
     }
 
     public int update(MyUser myUser, MultipartFile avatarImg) {
-        if (!avatarImg.isEmpty()) {
+        if (avatarImg != null){
             MyUser dbMyUser = userMapper.getUserById(myUser.getUserId());
             if (dbMyUser == null){
                 throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
             }
             DeleteFile deleteFile = new DeleteFile();
             if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg"))
-            deleteFile.delFile(System.getProperty("myUser.dir") + "\\src\\main\\resources\\static\\"+ dbMyUser.getAvatarImgUrl());
+            deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\"+ dbMyUser.getAvatarImgUrl());
             FileUpload fileUpload = new FileUpload();
             String upload;
             if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
