@@ -565,7 +565,7 @@ function openExerciseComment(e,page){
                     '<header>' +
                     '<div class="entry-meta ">' +
                     '<p class="entry-author"> <a href="#">'+ list[i].myUser.nickname +'</a> </p>' +
-                    '<div>'+ Format(new Date(list[i].createDate),"yyyy-MM-dd hh:mm:ss") +'</div>' +
+                    '<div>'+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                     '</div>' +
                     '</header>' +
                     '<p>'+ list[i].content +'</p>' +
@@ -577,8 +577,8 @@ function openExerciseComment(e,page){
                     '</div>'+
                     '</div>' +
                     '</article>';
+                    content += '<ol class="children" id="children'+list[i].commentId+'">';
                 if (list[i].paginationDTO != null && list[i].paginationDTO.length != 0){
-                    content += '<ol class="children"><li class="comment ">';
                     var list1 = list[i].paginationDTO.dataList;
                     for (var j=0;j<list1.length;j++){
                         content += '<li class="comment">' +
@@ -590,7 +590,7 @@ function openExerciseComment(e,page){
                             '<header>' +
                             '<div class="entry-meta ">' +
                             '<p class="entry-author"> <a href="#">'+ list1[j].myUser.nickname +'</a> </p>' +
-                            '<div>'+ Format(new Date(list1[j].createDate),"yyyy-MM-dd hh:mm:ss") +'</div>' +
+                            '<div>'+ Format(new Date(list1[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                             '</div>' +
                             '</header>' +
                             '<p>回复 <a href="#" style="color: #3498DB;">'+list1[j].receiver.nickname+'</a> :'+list1[j].content+'</p>'+
@@ -601,179 +601,86 @@ function openExerciseComment(e,page){
                             '<a class="comment-reply-link" href="javascript:void(0)" onclick="ExerciseCommentSecond('+list1[j].commentId +',this,'+list1[j].exercise.exerciseId+');" style="border: 0;">回复</a>' +
                             '</div>'+
                             '</div>' +
-                            '</article>';
+                            '</article></li>';
                     }
-                    debugger;
-                    content += '</li>';
-                    if(list[i].paginationDTO.totalPage !=0) {
+                    if(list[i].paginationDTO.totalPage !=0 && list[i].paginationDTO.totalPage !=1) {
                         if (list[i].paginationDTO.currentPage == 1 && list[i].paginationDTO.currentPage != list[i].paginationDTO.totalPage) {
                             content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
-                            "<li>共"+list[i].paginationDTO.totalPage+"页</li><li class='disabled'><a href='#'>&lt;</a></li>"+
+                            "<li>共"+list[i].paginationDTO.totalPage+"页</li><li class='disabled'><a href='javascript:void(0)'>&lt;</a></li>"+
                             "<li><a>第"+list[i].paginationDTO.currentPage+"页</a></li>"+
-                            "<li><a href='#'>&gt;</a></li>"+
+                            "<li><a href='javascript:void(0)' onclick='secondCommentPage("+list[i].commentId+","+(list[i].paginationDTO.currentPage+1)+")'>&gt;</a></li>"+
                             "</ul></nav></div>";
                         } else if (list[i].paginationDTO.currentPage == list[i].paginationDTO.totalPage && list[i].paginationDTO.currentPage != 1) {
                             content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
-                                "<li>共"+list[i].paginationDTO.totalPage+"页</li><li><a href='#'>&lt;</a></li>"+
+                                "<li>共"+list[i].paginationDTO.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+list[i].commentId+","+(list[i].paginationDTO.currentPage-1)+")'>&lt;</a></li>"+
                                 "<li><a>第"+list[i].paginationDTO.currentPage+"页</a></li>"+
-                                "<li class='disabled'><a href='#'>&gt;</a></li>"+
+                                "<li class='disabled'><a href='javascript:void(0)'>&gt;</a></li>"+
                                 "</ul></nav></div>";
                         } else /*if (list[i].paginationDTO.currentPage != list[i].paginationDTO.totalPage && list[i].paginationDTO.currentPage != 1)*/ {
                             content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
-                                "<li>共"+list[i].paginationDTO.totalPage+"页</li><li><a href='#'>&lt;</a></li>"+
+                                "<li>共"+list[i].paginationDTO.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+list[i].commentId+","+(list[i].paginationDTO.currentPage-1)+")'>&lt;</a></li>"+
                                 "<li><a>第"+list[i].paginationDTO.currentPage+"页</a></li>"+
-                                "<li><a href='#'>&gt;</a></li>"+
+                                "<li><a href='javascript:void(0)' onclick='secondCommentPage("+list[i].commentId+","+(list[i].paginationDTO.currentPage+1)+")'>&gt;</a></li>"+
                                 "</ul></nav></div>";
-                        } /*else {
-                            $("#nav").html("<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;padding-bottom: 25px;'>"+
-                                "<li>共"+list[i].paginationDTO.totalPage+"页</li><li class='disabled'><a href='#'>&lt;</a></li>"+
-                                "<li><a href='#'>第"+list[i].paginationDTO.currentPage+"页</a></li>"+
-                                "<li class='disabled'><a href='#'>&gt;</a></li>"+
-                                "</ul></nav></div>");
-                        }*/
-/*
-                        if (list[i].paginationDTO.currentPage == 1 && list[i].paginationDTO.currentPage != list[i].paginationDTO.totalPage) {
-                            $("#nav").html("<nav aria-label='Page navigation' style='text-align: center;'>" +
-                                "<ul class='pagination pagination-sm'>" +
-                                "<li><span>" + list[i].paginationDTO.currentPage + "/" + list[i].paginationDTO.totalPage + "</span></li>" +
-                                "<li  class='disabled'>" +
-                                "<a href='javascript:void(0)' aria-label='Previous'>" +
-                                "<span aria-hidden='true'>上一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "<li>" +
-                                "<a onclick='historyAnswer(" + (list[i].paginationDTO.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
-                                " <span aria-hidden='true'>下一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "</ul>" +
-                                "</nav>")
-                        } else if (list[i].paginationDTO.currentPage == list[i].paginationDTO.totalPage && list[i].paginationDTO.currentPage != 1) {
-                            $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
-                                "<ul class='pagination pagination-sm'>" +
-                                "<li><span>" + list[i].paginationDTO.currentPage + "/" + list[i].paginationDTO.totalPage + "</span></li>" +
-                                "<li>" +
-                                "<a onclick='historyAnswer(" + (list[i].paginationDTO.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
-                                "<span aria-hidden='true'>上一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "<li   class='disabled'>" +
-                                "<a href='javascript:void(0)' aria-label='Next'>" +
-                                " <span aria-hidden='true'>下一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "</ul>" +
-                                "</nav>")
-                        } else if (list[i].paginationDTO.currentPage != list[i].paginationDTO.totalPage && list[i].paginationDTO.currentPage != 1) {
-                            $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
-                                "<ul class='pagination pagination-sm'>" +
-                                "<li><span>" + list[i].paginationDTO.currentPage + "/" + list[i].paginationDTO.totalPage + "</span></li>" +
-                                "<li>" +
-                                "<a onclick='historyAnswer(" + (list[i].paginationDTO.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
-                                "<span aria-hidden='true'>上一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "<li>" +
-                                "<a onclick='historyAnswer(" + (list[i].paginationDTO.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
-                                " <span aria-hidden='true'>下一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "</ul>" +
-                                "</nav>")
-                        } else {
-                            $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
-                                "<ul class='pagination pagination-sm'>" +
-                                "<li><span>" + list[i].paginationDTO.currentPage + "/" + list[i].paginationDTO.totalPage + "</span></li>" +
-                                "<li class='disabled'>" +
-                                "<a href='javascript:void(0)' aria-label='Previous'>" +
-                                "<span aria-hidden='true'>上一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "<li class='disabled'>" +
-                                "<a href='javascript:void(0)' aria-label='Next'>" +
-                                " <span aria-hidden='true'>下一页</span>" +
-                                "</a>" +
-                                "</li>" +
-                                "</ul>" +
-                                "</nav>")
                         }
-*/
                     }else{
                         content += "";
                     }
-                    content += '</ol>';
                 }
-                debugger;
-                if(data.totalPage != 0) {
-                    if (data.currentPage == 1 && data.currentPage != data.totalPage) {
-                        content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
-                            "<ul class='pagination pagination'>" +
-                            "<li  class='disabled'>" +
-                            "<a href='javascript:void(0)' aria-label='Previous'>" +
-                            "<span aria-hidden='true'>上一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
-                            "<li>" +
-                            "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
-                            " <span aria-hidden='true'>下一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "</ul>" +
-                            "</nav></div>";
-                    } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
-                        content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
-                            "<ul class='pagination pagination'>" +
-                            "<li>" +
-                            "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
-                            "<span aria-hidden='true'>上一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
-                            "<li   class='disabled'>" +
-                            "<a href='javascript:void(0)' aria-label='Next'>" +
-                            " <span aria-hidden='true'>下一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "</ul>" +
-                            "</nav></div>";
-                    } else /*if (data.currentPage != data.totalPage && data.currentPage != 1)*/ {
-                        content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
-                            "<ul class='pagination pagination'>" +
-                            "<li>" +
-                            "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
-                            "<span aria-hidden='true'>上一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
-                            "<li>" +
-                            "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
-                            " <span aria-hidden='true'>下一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "</ul>" +
-                            "</nav></div>";
-                    } /*else {
-                        $("#nav").html("<nav aria-label='Page navigation'  style='text-align: center;'>" +
-                            "<ul class='pagination pagination'>" +
-                            "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
-                            "<li class='disabled'>" +
-                            "<a href='javascript:void(0)' aria-label='Previous'>" +
-                            "<span aria-hidden='true'>上一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "<li class='disabled'>" +
-                            "<a href='javascript:void(0)' aria-label='Next'>" +
-                            " <span aria-hidden='true'>下一页</span>" +
-                            "</a>" +
-                            "</li>" +
-                            "</ul>" +
-                            "</nav>")
-                    }*/
-                }else {
-                    content +="";
+                content += '</ol></li>';
+            }
+            if(data.totalPage != 0 && data.totalPage != 1) {
+                if (data.currentPage == 1 && data.currentPage != data.totalPage) {
+                    content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
+                        "<ul class='pagination pagination'>" +
+                        "<li  class='disabled'>" +
+                        "<a href='javascript:void(0)' aria-label='Previous'>" +
+                        "<span aria-hidden='true'>上一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
+                        "<li>" +
+                        "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
+                        " <span aria-hidden='true'>下一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "</ul>" +
+                        "</nav></div>";
+                } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
+                    content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
+                        "<ul class='pagination pagination'>" +
+                        "<li>" +
+                        "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
+                        "<span aria-hidden='true'>上一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
+                        "<li   class='disabled'>" +
+                        "<a href='javascript:void(0)' aria-label='Next'>" +
+                        " <span aria-hidden='true'>下一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "</ul>" +
+                        "</nav></div>";
+                } else /*if (data.currentPage != data.totalPage && data.currentPage != 1)*/ {
+                    content +="<div id='nav' style='margin-left: 25px;margin-top: 20px;'><nav aria-label='Page navigation'>" +
+                        "<ul class='pagination pagination'>" +
+                        "<li>" +
+                        "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage - 1) + ")' href='javascript:void(0)' aria-label='Previous'>" +
+                        "<span aria-hidden='true'>上一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "<li><span>" + data.currentPage + "/" + data.totalPage + "</span></li>" +
+                        "<li>" +
+                        "<a onclick='openExerciseComment("+data.dataList[0].exercise.exerciseId+"," + (data.currentPage + 1) + ")' href='javascript:void(0)' aria-label='Next'>" +
+                        " <span aria-hidden='true'>下一页</span>" +
+                        "</a>" +
+                        "</li>" +
+                        "</ul>" +
+                        "</nav></div>";
                 }
-                content += '</li>';
+            }else {
+                content +="";
             }
             $("#comment_ol"+e).html(content);
         }
@@ -781,6 +688,64 @@ function openExerciseComment(e,page){
     $("#comment_section"+e).css('display','block');
     $("#a_close_comment"+e).css('display','block');
     $("#a_open_comment"+e).css('display','none');
+}
+
+function secondCommentPage(id,page){
+    $.ajax({
+        url:"/user/comment/secondComment",
+        data:{commentId:id,currentPage:page},
+        type:"post",
+        dataType:"json",
+        success:function(data){
+            var content = "";
+            var list = data.dataList;
+            for (var j=0;j<list.length;j++){
+                content += '<li class="comment">' +
+                    '<article style="margin-top: 20px">' +
+                    '<div class="comment-avatar ">' +
+                    '<img alt="" src="'+ list[j].myUser.avatarImgUrl +'">' +
+                    '</div>' +
+                    '<div class="comment-content">' +
+                    '<header>' +
+                    '<div class="entry-meta ">' +
+                    '<p class="entry-author"> <a href="#">'+ list[j].myUser.nickname +'</a> </p>' +
+                    '<div>'+ Format(new Date(list[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
+                    '</div>' +
+                    '</header>' +
+                    '<p>回复 <a href="#" style="color: #3498DB;">'+list[j].receiver.nickname+'</a> :'+list[j].content+'</p>'+
+                    '<div class="comment-actions" style="margin-top: 0px">' +
+                    '<span id="likeSpan'+list[j].commentId+'">' +
+                    '<a class="fa fa-thumbs-o-up" href="javascript:void(0)" onclick="addExerciseCommentLike('+list[j].commentId +');" style="border: 0;">' +
+                    '<span>（'+list[j].likeCount+'）</span></a></span>'+
+                    '<a class="comment-reply-link" href="javascript:void(0)" onclick="ExerciseCommentSecond('+list[j].commentId +',this,'+list[j].exercise.exerciseId+');" style="border: 0;">回复</a>' +
+                    '</div>'+
+                    '</div>' +
+                    '</article></li>';
+            }
+            if(data.totalPage !=0) {
+                if (data.currentPage == 1 && data.currentPage != data.totalPage) {
+                    content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                        "<li>共"+data.totalPage+"页</li><li class='disabled'><a href='javascript:void(0)'>&lt;</a></li>"+
+                        "<li><a>第"+data.currentPage+"页</a></li>"+
+                        "<li><a href='javascript:void(0)' onclick='secondCommentPage("+id+","+(data.currentPage+1)+")'>&gt;</a></li>"+
+                        "</ul></nav></div>";
+                } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
+                    content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                        "<li>共"+data.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+id+","+(data.currentPage-1)+")'>&lt;</a></li>"+
+                        "<li><a>第"+data.currentPage+"页</a></li>"+
+                        "<li class='disabled'><a href='javascript:void(0)'>&gt;</a></li>"+
+                        "</ul></nav></div>";
+                } else {
+                    content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                        "<li>共"+data.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+id+","+(data.currentPage-1)+")'>&lt;</a></li>"+
+                        "<li><a>第"+data.currentPage+"页</a></li>"+
+                        "<li><a href='javascript:void(0)' onclick='secondCommentPage("+id+","+(data.currentPage+1)+")'>&gt;</a></li>"+
+                        "</ul></nav></div>";
+                }
+            }
+            $("#children"+id).html(content);
+        }
+    });
 }
 
 function addExerciseCommentLike(id){
@@ -810,12 +775,12 @@ function ExerciseCommentSecond(id,e,exerciseId){
         "<p class='textarea-block' style='width: 100%;'>" +
         "<textarea aria-required='true' name='content' rows='3' placeholder='' style='width: 80%;margin: 10px;'></textarea></p>" +
         "<p class='post-comment input-block'>" +
-        "<button id='submit-comment' onclick='submitCommentSecond("+id+","+exerciseId+");' name='submit' type='submit' class='button-01' style='padding: 10px 10px;padding: 10px 40px;margin: 0 10px;'>发布</button>" +
+        "<button id='submit-comment' onclick='submitCommentSecond("+id+");' name='submit' type='submit' class='button-01' style='padding: 10px 10px;padding: 10px 40px;margin: 0 10px;'>发布</button>" +
         "</p></form>");
 
 }
 
-function submitCommentSecond(id,exerciseId){
+function submitCommentSecond(id){
     var content = $("#commentSecondForm textarea").val();
     if (content == ""){
         alert("评论内容不能为空");
@@ -829,7 +794,9 @@ function submitCommentSecond(id,exerciseId){
         data: JSON.stringify({parentId:id,type:2,content:content}),
         success:function (data) {
             if (data.code == 200){
-                openExerciseComment(exerciseId);
+                // 跳转到二级评论最后一页，最新评论
+                newSecondComment(id);
+                // openExerciseComment(exerciseId);
             } else {
                 alert(data.message);
             }
@@ -837,6 +804,77 @@ function submitCommentSecond(id,exerciseId){
         }
     });
     $("#commentSecondForm").remove()
+}
+
+function newSecondComment(id){
+    $.ajax({
+       url:"/user/comment/newSecondComment",
+       data:{commentId:id},
+       type:"post",
+        async:false,
+       dataType:"json",
+       success:function(data){
+           var commentId;
+           $.ajax({
+               url:"/user/comment/getFirstCommentId",
+               data:{commentId:id},
+               type:"post",
+               async:false,
+               success:function(data){
+                   commentId = data
+               }
+           });
+           debugger;
+           var content = "";
+           var list = data.dataList;
+           for (var j=0;j<list.length;j++){
+               content += '<li class="comment">' +
+                   '<article style="margin-top: 20px">' +
+                   '<div class="comment-avatar ">' +
+                   '<img alt="" src="'+ list[j].myUser.avatarImgUrl +'">' +
+                   '</div>' +
+                   '<div class="comment-content">' +
+                   '<header>' +
+                   '<div class="entry-meta ">' +
+                   '<p class="entry-author"> <a href="#">'+ list[j].myUser.nickname +'</a> </p>' +
+                   '<div>'+ Format(new Date(list[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
+                   '</div>' +
+                   '</header>' +
+                   '<p>回复 <a href="#" style="color: #3498DB;">'+list[j].receiver.nickname+'</a> :'+list[j].content+'</p>'+
+                   '<div class="comment-actions" style="margin-top: 0px">' +
+                   '<span id="likeSpan'+list[j].commentId+'">' +
+                   '<a class="fa fa-thumbs-o-up" href="javascript:void(0)" onclick="addExerciseCommentLike('+list[j].commentId +');" style="border: 0;">' +
+                   '<span>（'+list[j].likeCount+'）</span></a></span>'+
+                   '<a class="comment-reply-link" href="javascript:void(0)" onclick="ExerciseCommentSecond('+list[j].commentId +',this,'+list[j].exercise.exerciseId+');" style="border: 0;">回复</a>' +
+                   '</div>'+
+                   '</div>' +
+                   '</article></li>';
+           }
+           if(data.totalPage !=0 && data.totalPage !=1) {
+               if (data.currentPage == 1 && data.currentPage != data.totalPage) {
+                   content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                       "<li>共"+data.totalPage+"页</li><li class='disabled'><a href='javascript:void(0)'>&lt;</a></li>"+
+                       "<li><a>第"+data.currentPage+"页</a></li>"+
+                       "<li><a href='javascript:void(0)' onclick='secondCommentPage("+commentId+","+(data.currentPage+1)+")'>&gt;</a></li>"+
+                       "</ul></nav></div>";
+               } else if (data.currentPage == data.totalPage && data.currentPage != 1) {
+                   content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                       "<li>共"+data.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+commentId+","+(data.currentPage-1)+")'>&lt;</a></li>"+
+                       "<li><a>第"+data.currentPage+"页</a></li>"+
+                       "<li class='disabled'><a href='javascript:void(0)'>&gt;</a></li>"+
+                       "</ul></nav></div>";
+               } else {
+                   content += "<div id='nav' style='margin-top: 10px;'><nav aria-label='Page navigation'><ul class='pager' style='text-align: left;'>"+
+                       "<li>共"+data.totalPage+"页</li><li><a href='javascript:void(0)' onclick='secondCommentPage("+commentId+","+(data.currentPage-1)+")'>&lt;</a></li>"+
+                       "<li><a>第"+data.currentPage+"页</a></li>"+
+                       "<li><a href='javascript:void(0)' onclick='secondCommentPage("+commentId+","+(data.currentPage+1)+")'>&gt;</a></li>"+
+                       "</ul></nav></div>";
+               }
+           }
+
+           $("#children"+commentId).html(content);
+       }
+    });
 }
 
 function closeExerciseComment(e) {
@@ -1033,7 +1071,7 @@ function submitComment(e){
         data: JSON.stringify({parentId:e,content:content}),
         success:function (data) {
             if (data.code == 200){
-                openExerciseComment(e);
+                openExerciseComment(e,data.data);
             } else {
                 alert(data.message);
             }

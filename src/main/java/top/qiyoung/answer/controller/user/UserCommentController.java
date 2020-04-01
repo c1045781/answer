@@ -64,4 +64,24 @@ public class UserCommentController {
         Comment comment = commentService.getCommentByCommentId(commentId);
         return comment;
     }
+
+    @RequestMapping("/secondComment")
+    @ResponseBody
+    public PaginationDTO<CommentDTO> getSecondComment(Integer commentId,Integer currentPage){
+        PaginationDTO<CommentDTO> paginationDTO = commentService.getSecondComment(commentId,currentPage);
+        return paginationDTO;
+    }
+
+    @RequestMapping("/newSecondComment")
+    @ResponseBody
+    public PaginationDTO<CommentDTO> newSecondComment(Integer commentId){
+        PaginationDTO<CommentDTO> paginationDTO = commentService.getNewSecondComment(commentId);
+        return paginationDTO;
+    }
+    @RequestMapping("/getFirstCommentId")
+    @ResponseBody
+    public Integer getFirstCommentId(Integer commentId){
+        Integer parentId = commentService.getFirstCommentId(commentId);
+        return parentId;
+    }
 }

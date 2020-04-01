@@ -13,7 +13,7 @@ public class CommentDTO {
     private Integer likeCount;
     private MyUser myUser;
     private MyUser receiver;
-    private Date createDate;
+    private Date createTime;
     private PaginationDTO<CommentDTO> paginationDTO;
     private Exercise exercise;
 
@@ -65,12 +65,12 @@ public class CommentDTO {
         this.myUser = myUser;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public PaginationDTO<CommentDTO> getPaginationDTO() {

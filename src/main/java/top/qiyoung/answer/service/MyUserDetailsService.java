@@ -1,8 +1,5 @@
 package top.qiyoung.answer.service;
 
-//import org.springframework.security.core.userdetails.MyUser;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +9,6 @@ import top.qiyoung.answer.mapper.UserMapper;
 import top.qiyoung.answer.model.MyUser;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {

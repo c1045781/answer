@@ -15,9 +15,7 @@ public interface CommentMapper {
 
     int deleteByCommentId(Integer commentId);
 
-    List<Comment> getCommentListByParentIdType1(@Param("parentId") Integer parentId,@Param("index") Integer index,@Param("size") Integer size);
-
-    List<Comment> getCommentListByParentIdType2(@Param("parentId") Integer parentId,@Param("index") Integer index,@Param("size") Integer size);
+    List<Comment> getCommentListByParentId(@Param("parentId") Integer parentId,@Param("index") Integer index,@Param("size") Integer size,@Param("type")Integer type,@Param("order")String order);
 
     void addComment(Comment comment);
 
@@ -33,7 +31,9 @@ public interface CommentMapper {
 
     void delLike(Integer commentId);
 
-    int CountCommentListByParentIdType1(Integer parentId);
+    int countCommentListByParentId(@Param("parentId") Integer parentId,@Param("type")Integer type);
 
-    int CountCommentListByParentIdType2(Integer parentId);
+    List<Comment> getSecondCommentList(@Param("commentId") Integer commentId,@Param("index") Integer index,@Param("size") int size);
+
+    Integer countSecondCommentList(Integer commentId);
 }

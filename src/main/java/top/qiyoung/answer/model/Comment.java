@@ -3,7 +3,7 @@ package top.qiyoung.answer.model;
 import java.util.Date;
 
 public class Comment{
-    private Integer id;
+    private Integer commentId;
     private Integer userId;
     private Integer receiverId;
     private Integer parentId;
@@ -28,7 +28,7 @@ public class Comment{
     }
 
     public Comment(Integer id, Integer userId, Integer receiverId, Integer parentId, Integer likeCount, Integer type, String content, Date createTime) {
-        this.id = id;
+        this.commentId = id;
         this.userId = userId;
         this.receiverId = receiverId;
         this.parentId = parentId;
@@ -38,12 +38,12 @@ public class Comment{
         this.createTime = createTime;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getCommentId() {
+        return commentId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCommentId(Integer commentId) {
+        this.commentId = commentId;
     }
 
     public Integer getUserId() {

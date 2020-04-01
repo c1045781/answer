@@ -42,7 +42,7 @@ public class ManagerCommentController {
         if (commentId != null) {
             Comment comment = commentService.getCommentByCommentId(commentId);
             if (comment!=null) {
-                commentService.deleteByCommentId(comment.getId());
+                commentService.deleteByCommentId(comment.getCommentId());
             }else {
                 return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.qiyoung.answer.mapper.CommentMapper">
     <resultMap id="BaseResultMap" type="top.qiyoung.answer.model.Comment">
-        <id column="comment_id" jdbcType="INTEGER" property="id"/>
+        <id column="comment_id" jdbcType="INTEGER" property="commentId"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="receiver_id" jdbcType="INTEGER" property="receiverId"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
@@ -73,39 +73,20 @@
         </where>
     </delete>
 
-    <select id="getCommentListByParentIdType1" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getCommentListByParentId" resultMap="BaseResultMap">
         select * from comment
         <where>
             <if test="parentId != null">
-                parent_id = #{parentId} and type = 1
+                parent_id = #{parentId} and type = #{type}
             </if>
         </where>
-        order by create_time desc limit #{index},#{size}
+        order by #{order} limit #{index},#{size}
     </select>
-    <select id="CountCommentListByParentIdType1" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    <select id="countCommentListByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select count(1) from comment
         <where>
             <if test="parentId != null">
-                parent_id = #{parentId} and type = 1
-            </if>
-        </where>
-    </select>
-
-    <select id="getCommentListByParentIdType2" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select * from comment
-        <where>
-            <if test="parentId != null">
-                parent_id = #{parentId} and type = 2
-            </if>
-        </where>
-        limit #{index},#{size}
-    </select>
-
-    <select id="CountCommentListByParentIdType2" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select count(1) from comment
-        <where>
-            <if test="parentId != null">
-                parent_id = #{parentId} and type = 2
+                parent_id = #{parentId} and type = #{type}
             </if>
         </where>
     </select>
