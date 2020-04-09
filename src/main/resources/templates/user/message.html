@@ -107,7 +107,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#t4" onclick="chatList()" aria  -controls="t4" role="tab" data-toggle="tab">
+                                        <a href="#t4" onclick="chatList()" aria-controls="t4" role="tab" data-toggle="tab">
                                             私信<span class="badge" style="color: #fff;background-color: #fa5a57;" th:text="${chatNum==0?'':chatNum}" id="chatNum"></span>
                                         </a>
                                     </li>
@@ -255,65 +255,6 @@
         });
     });
     // 消息处理
-    function handleNotification(chat) {
-        $.ajax({
-            url:"/user/notification/newMessage",
-            data:{to:chat.to,from:chat.from},
-            dataType:"json",
-            cache:false,
-            async:false,
-            success:function(data){
-                var content = "";
-                var user;
-                $.ajax({
-                    url:"/user/users/information",
-                    dataType:"json",
-                    async:false,
-                    cache:false,
-                    success:function(result){
-                        if (result != null){
-                            user = result;
-                        }
-                    }
-                });
-                var title = $("#chatTitle").html();
-                if (title == data[0].receiver.nickname || title == data[0].notifier.nickname) {
-                    if (new Date(data[0].createTime).getTime() - new Date(data[1].createTime).getTime() > 1000 * 60 * 5) {
-                        content += "<div style='text-align: center;margin: 15px;'>" + Format(data[0].createTime, 'yyyy-MM-dd hh:mm:ss') + "</div>";
-                    }
-                    if (data[0].receiver.userId == user.userId) {
-                        content += "<div class='admin-group'>" +
-                            "<img class='admin-img' src='" + data[0].notifier.avatarImgUrl + "'>" +
-                            "<div class='admin-msg'>" +
-                            "<i class='triangle-admin'></i>" +
-                            "<pre class='admin-reply'>" + data[0].title + "</pre>" +
-                            "</div>" +
-                            "</div>";
-                    } else {
-                        content += "<div class='user-group'>" +
-                            "<div class='user-msg'>" +
-                            "<pre class='user-reply'>" + data[0].title + "</pre>" +
-                            "<i class='triangle-user'></i>" +
-                            "</div>" +
-                            "<img class='user-img' src='" + user.avatarImgUrl + "'>" +
-                            "</div>";
-                    }
-                }
-                $("#chatDiv").append(content);
-                $('#chatDiv').scrollTop( $('#chatDiv')[0].scrollHeight);
-                $("#msg-content").val('');
-                var name;
-                $("#chatUl li").each(function(){
-                    if ( $(this).css("background-color") == "rgb(250, 250, 250)"){
-                        name = $(this).attr("name");
-                    }
-                });
-                chatList();
-                showChat(name,$("li[name="+name+"]"));
-            }
-        });
-        // $('#output').append("<b>" + chat.from +":"+chat.content + "</b><br/>");
-    }
     function sendSpittle(content) {
     //  表示向后端路径/chat发送消息请求，这个是在控制器中@MessageMapping中定义的。
         stomp.send("/chat",{},JSON.stringify({
@@ -330,9 +271,52 @@
     };
 
     window.onload = function(){
+        var id = window.localStorage.getItem("id");
+        var user;
+        if (id != null && id != ""){
+            $.ajax({
+                url:"/user/users/getUser",
+                data:{userId:id},
+                dataType:"json",
+                async:false,
+                success:function(result){
+                    if (result != null){
+                        user = result;
+                    }
+                }
+            });
+            $("[aria-controls='t4']").click();
+            var content = $("#chatUl").html();
+            if ($("#chatUl li[name='"+user.userId+"']").html() == null){
+            content = "<li style='cursor: pointer;background-color: #ffffff;' name='"+user.userId+"'>" +
+                "<div style='float: right;' onclick='delChat(" + user.userId + ")'><span  class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #000000;font-size: 1em;'></span></div>"+
+                "<article style='margin-top: 20px'  onclick='showChat(" + user.userId + ")'>" +
+                "<div class='comment-avatar '>" +
+                "<img src='" + user.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
+                "</div>" +
+                "<div class='comment-content' style='width: 80%;float: right; margin-top: -15%;'>" +
+                "<header>" +
+                "<div class='entry-meta '>" +
+                "<div> " + user.nickname + " </div>" +
+                "<div style='font-size: 0.9em;margin-top: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'></div>" +
+                "</div>" +
+                "</header>" +
+                "</div>" +
+                "</article>" +
+                "</li>" + content;
+                $("#to").val(user.username);
+                $("#chatTitle").html(user.nickname);
+                $("#chatUl").html(content);
+            }else {
+                showChat(user.userId);
+            }
+            window.localStorage.setItem("id","");
+        }else {
+            reply(1);
+        }
         var msg = [[${msg}]];
-        reply(1);
         allNotification();
+
     }
 </script>
 </body>

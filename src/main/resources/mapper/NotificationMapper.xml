@@ -124,4 +124,10 @@
         </where>
     </select>
 
+    <delete id="delChat" parameterType="java.lang.Integer">
+        delete from notification
+        <where>
+            type = 5 and ((notifier_id = #{userId} and receiver_id = #{myUserId}) or (receiver_id = #{userId} and notifier_id =  #{myUserId}))
+        </where>
+    </delete>
 </mapper>

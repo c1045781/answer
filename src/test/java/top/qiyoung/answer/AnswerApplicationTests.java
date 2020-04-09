@@ -39,21 +39,11 @@ class AnswerApplicationTests {
     @Test
     void contextLoads() throws IOException {
 
-        String user = "as,zx,cv,vb";
-        String[] split = user.split(",");
-        List users = new ArrayList();
-        for (String s : split) {
-            users.add(s);
-            System.out.println(s);
-        }
-        users.add("kl");
-        String join = StringUtils.join(users, ",");
-        System.out.println(join);
 
 //        Comment comment = new Comment(null,null,null,"",new Date());
 
         /*exerciseService.updateStatus(100,1,"123",1);*/
-       /* String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
+        /*String hashpw = BCrypt.hashpw("123", BCrypt.gensalt());
         System.out.println(hashpw);*/
         /*String path = "c:/software/";
         String fileName = "test";

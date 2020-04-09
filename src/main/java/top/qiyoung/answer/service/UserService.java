@@ -110,9 +110,8 @@ public class UserService {
         userMapper.deleteById(userId);
     }
 
-    public MyUser getUserById(UserDetails userDetails) {
-        MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
-        MyUser user = userMapper.getUserById(myUser.getUserId());
+    public MyUser getUserById(Integer userId) {
+        MyUser user = userMapper.getUserById(userId);
         if (user == null){
             throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
         }
@@ -120,24 +119,21 @@ public class UserService {
     }
 
     public int update(MyUser myUser, MultipartFile avatarImg) {
-        if (avatarImg != null){
+        if (avatarImg != null && !"".equals(avatarImg.getOriginalFilename())){
             MyUser dbMyUser = userMapper.getUserById(myUser.getUserId());
             if (dbMyUser == null){
                 throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
             }
             DeleteFile deleteFile = new DeleteFile();
-            if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg"))
-            deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\"+ dbMyUser.getAvatarImgUrl());
+            if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg")) {
+                deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + dbMyUser.getAvatarImgUrl());
+            }
             FileUpload fileUpload = new FileUpload();
             String upload;
-            if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
-                upload = "/upload/default.jpg";
-            }else {
-                try {
-                    upload = fileUpload.uploadImg(avatarImg);
-                } catch (IOException e) {
-                    return 2;
-                }
+            try {
+                upload = fileUpload.uploadImg(avatarImg);
+            } catch (IOException e) {
+                return 2;
             }
             myUser.setAvatarImgUrl(upload);
         }
@@ -147,9 +143,14 @@ public class UserService {
         return 1;
     }
 
-    public int userCount() {
+    public int userCount1() {
         Query query = new Query();
         return userMapper.countUserList1(query);
+    }
+
+    public int userCount0() {
+        Query query = new Query();
+        return userMapper.countUserList0(query);
     }
 
     public MyUser getUserByUserId(Integer userId) {
@@ -172,5 +173,10 @@ public class UserService {
         password = BCrypt.hashpw(password, BCrypt.gensalt());
         myUser.setPassword(password);
         userMapper.modifyPassword(myUser);
+    }
+
+    public MyUser getUserByUsername(String username) {
+        MyUser user = userMapper.findUserByAccount(username);
+        return user;
     }
 }

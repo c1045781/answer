@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>用户管理</title>
+    <title>审核管理</title>
     <!-- custom-theme -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -38,8 +38,8 @@
             <div class="w3l_agileits_breadcrumbs_inner">
                 <ul>
                     <li>首页<span>»</span></li>
-                    <li>用户管理<span>»</span></li>
-                    <li>用户查询</li>
+                    <li>审核管理<span>»</span></li>
+                    <li>权限申请</li>
                 </ul>
             </div>
         </div>
@@ -48,52 +48,32 @@
         <div class="inner_content_w3_agile_info two_in">
             <div class="agile-tables">
                 <div class="w3l-table-info agile_info_shadow">
-                    <h3 class="w3_inner_tittle two">用户列表</h3>
-                    <div>
-                        用户类型：<select name="role" id="role" class="answer-select">
-                            <option value="">全部</option>
-                            <option th:if="${#authentication.authorities == 0}" th:selected="${role == 1}" value="1">管理员</option>
-                            <option th:selected="${role == 2}" value="2">一般用户</option>
-                            <option th:selected="${role == 3}" value="3">特殊用户</option>
-                        </select>
-                        <select name="type" id="type"  class="answer-select">
-                            <option th:selected="${type == 'id'}" value="id">ID</option>
-                            <option th:selected="${type == 'username'}" value="username">账号</option>
-                            <option th:selected="${type == 'account'}" value="account">昵称</option>
-                        </select> ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
-                        <button onclick="submitUserFrom(1)" class="btn btn-primary" style="margin-bottom: 3px;">搜索</button>
-
-                    </div>
+                    <h3 class="w3_inner_tittle two">权限申请列表</h3>
                     <table id="table" class="answer-table">
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>账号</th>
-                            <th>身份</th>
-                            <th>昵称</th>
-                            <th>头像</th>
-                            <th>描述</th>
-                            <th>创建时间</th>
+                            <th>申请人ID</th>
+                            <th>申请内容</th>
+                            <th>申请时间</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="myUser:${paginationDTO.dataList}">
-                            <td th:text="${myUser.userId}"></td>
-                            <td th:text="${myUser.username}"></td>
-                            <td th:text="${myUser.role==1?'管理员':myUser.role==2?'一般用户':'特殊用户'}"></td>
-                            <!--<td th:if="myUser.role==2" th:text="${'一般用户'}"></td>-->
-                            <!--<td th:if="myUser.role==3" th:text="${'特殊用户'}"></td>-->
-                            <td th:text="${myUser.nickname}"></td>
-                            <td><img style="width: 50px;height: 50px;" th:src="${myUser.avatarImgUrl}"></td>
-                            <td class="answer-table-td" th:title="${myUser.description}" th:text="${myUser.description}"></td>
-                            <td th:text="${#dates.format(myUser.createTime,'yyyy-MM-dd')}"></td>
+                        <tr th:each="message:${paginationDTO.dataList}">
+                            <td th:text="${message.messageId}"></td>
+                            <td th:text="${message.userId}"></td>
+                            <td class="answer-table-td" th:title="${message.content}"  th:text="${message.content}"></td>
+                            <td th:text="${#dates.format(message.createTime,'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
-                                <button th:onclick="deleteUserModal([[${myUser.userId}]]);" type="button" class="btn btn-danger">
-                                    删除
+                                <button th:onclick="showPermissionForManager([[${message.messageId}]])" type="button" class="btn btn-danger">
+                                    查看
                                 </button>
-                                <button th:onclick="updateUserModal([[${myUser.userId}]]);" type="button" class="btn btn-danger">
-                                    修改
+                                <button th:onclick="successNoticeReviewModal([[${message.messageId}]],[[${message.userId}]])" type="button" class="btn btn-danger">
+                                    同意
+                                </button>
+                                <button th:onclick="reasonModal([[${message.messageId}]],[[${message.userId}]])" type="button" class="btn btn-danger">
+                                    拒绝
                                 </button>
                             </td>
                         </tr>
@@ -109,13 +89,14 @@
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage > 4} ">
-                                    <a href="#" aria-label="Previous" th:href="@{/manager/user/check(currentPage=1 ,role=${role},type=${type}, search=${search})}">
+                                    <a href="#" aria-label="Previous"
+                                       th:href="@{/manager/permission/review(currentPage=1 , subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;&lt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage != 1} ">
                                     <a href="#" aria-label="Previous"
-                                       th:href="@{/manager/user/check(currentPage=${paginationDTO.currentPage-1},role=${role},type=${type}, search=${search})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.currentPage-1}, subjectId=${subjectId},type=${type},search=${search},exerciseType=${exerciseType})}">
                                         <span aria-hidden="true">&lt;</span>
                                     </a>
                                 </li>
@@ -124,44 +105,44 @@
                                     th:each="pageNo : ${#numbers.sequence(1, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/user/check(currentPage=${pageNo},role=${role},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage<=3}"
                                     th:each="pageNo : ${#numbers.sequence(1, 7)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/user/check(currentPage=${pageNo},role=${role},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage>=3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.currentPage+3)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/user/check(currentPage=${pageNo},role=${role},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
                                 <li th:if="${paginationDTO.totalPage>7 && paginationDTO.currentPage>3 && paginationDTO.totalPage-paginationDTO.currentPage<3}"
                                     th:each="pageNo : ${#numbers.sequence(paginationDTO.currentPage-3, paginationDTO.totalPage)}"
                                     th:class="${paginationDTO.currentPage == pageNo}?'active'">
                                     <a href="#" th:text="${pageNo}"
-                                       th:href="@{/manager/user/check(currentPage=${pageNo},role=${role},type=${type}, search=${search})}"></a>
+                                       th:href="@{/manager/permission/review(currentPage=${pageNo}, subjectId=${subjectId})}"></a>
                                 </li>
 
 
                                 <li th:if="${paginationDTO.currentPage != paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/manager/user/check(currentPage=${paginationDTO.currentPage+1},role=${role},type=${type}, search=${search})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.currentPage+1}, subjectId=${subjectId})}">
                                         <span aria-hidden="true">&gt;</span>
                                     </a>
                                 </li>
                                 <li th:if="${paginationDTO.currentPage+3 < paginationDTO.totalPage} ">
                                     <a href="#" aria-label="Next"
-                                       th:href="@{/manager/user/check(currentPage=${paginationDTO.totalPage},role=${role},type=${type}, search=${search})}">
+                                       th:href="@{/manager/permission/review(currentPage=${paginationDTO.totalPage}, subjectId=${subjectId})}">
                                         <span aria-hidden="true">&gt;&gt;</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <input type="text" id="skip" name="skip" th:value="${skip}" style="height: 33px; margin-left: 10px; width: 37px; text-align: center;">
-                                    <button onclick="submitUserFrom($('#skip').val())" class="btn btn-primary" style="margin-bottom: 3px;">跳转</button>
+                                    <input type="text" id="skip" name="skip" th:value="${skip}" class="input-skip">
+                                    <button onclick="submitReviewPermissionFrom($('#skip').val())" class="btn btn-primary" style="margin-bottom: 3px;">跳转</button>
                                 </li>
                             </ul>
                         </nav>
@@ -171,30 +152,39 @@
         </div>
     </div>
     <div th:insert="~{foot :: foot}"></div>
-
-    <div class="modal fade" id="deleteResultSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal fade" id="showPermission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">×</span></button>
-                    <h4 class="modal-title" id="">确认框</h4>
+                    <h4 class="modal-title" id="exampleModalLabel">申请内容</h4>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <input type="hidden" id="resultUrl" name="resultUrl">
-                            <label class="control-label">删除成功</label>
-                        </div>
-                    </form>
+                    <div>
+                        <p id="permission_content" style="overflow-wrap: break-word;"></p>
+                    </div>
+                    <div class="product_meta">
+                                            <span style="width: 100%;float: left;margin: 10px 0;">申请状态：
+                                                <span class="sku" id="permission_status"></span>
+                                            </span>
+                        <span  id="permission_is">拒绝理由：
+                                               <span class="sku" id="permission_reason"></span>
+                                            </span>
+                        <span style="margin: 10px 0;">申请日期:
+                                                <span class="sku" id="permission_date"></span>
+                                            </span>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="resultOK()">确认</button>
+                    <button style="background: #3498db" type="button" class="btn btn-default" data-dismiss="modal">确定</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="deleteResultErrorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -205,7 +195,8 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label class="control-label">删除失败</label>
+                            <input type="hidden" id="resultUrl" name="resultUrl">
+                            <label class="control-label">操作成功</label>
                         </div>
                     </form>
                 </div>
@@ -215,29 +206,26 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+
+    <div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">×</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">确认框</h4>
-                </div>
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <input type="hidden" id="deleteId" name="id">
-                            <label class="control-label">确定要删除用户？</label>
+                            拒绝理由：<textarea class="form-control" id="reason" rows="3"></textarea>
+                            <input type="hidden" id="reasonId">
+                            <input type="hidden" id="reasonUserId">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
-                    <button type="button" class="btn btn-primary" onclick="deleteUser()">确认</button>
+                    <button type="button" class="btn btn-primary" onclick="failNoticeReviewModal()">确认</button>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script>
@@ -250,18 +238,33 @@
     new gnMenu(document.getElementById('gn-menu'));
 </script>
 <!-- tables -->
-<script type="text/javascript">
+
+<script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
+<script>
+
+    window.onload = function () {
+        var modelInput = $("#modelInput").val();
+        if (modelInput != null && modelInput != "") {
+            return
+        }
+        $.ajax({
+            url: '/subject/base',
+            type: 'post',
+            contentType: "application/json",
+            success: function (data) {
+                if (data != null) {
+                    $('#base').html("<option></option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $('#base').append("<option>" + data[i] + "</option>");
+                    }
+                }
+            }
+        });
+    }
 
 </script>
-<script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
-<script type="text/javascript" th:inline="javascript">
-    window.onload = function (){
-        var msg = [[${msg}]];
-        if (msg != null && msg != ''){
-            alert(msg);
-        }
-    }
-    /*$(document).ready(function () {
+<script type="text/javascript">
+    $(document).ready(function () {
         $('#table').basictable();
 
         $('#table-breakpoint').basictable({
@@ -285,12 +288,13 @@
         $('#table-max-height').basictable({
             tableWrapper: true
         });
-    });*/
+    });
 </script>
 <!-- //js -->
 <script src="/js/screenfull.js"></script>
+
 <script>
-    /*$(function () {
+    $(function () {
         $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
 
         if (!screenfull.enabled) {
@@ -301,7 +305,7 @@
         $('#toggle').click(function () {
             screenfull.toggle($('#container')[0]);
         });
-    });*/
+    });
 </script>
 <script src="/js/jquery.nicescroll.js"></script>
 <script src="/js/scripts.js"></script>

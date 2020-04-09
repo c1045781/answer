@@ -18,6 +18,7 @@ import top.qiyoung.answer.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,14 +57,30 @@ public class ManagerUserController {
     @RequestMapping("/addOrUpdate")
     public String addOrUpdate(MyUser myUser, Model model,
                               RedirectAttributes redirectAttributes,
-                              @RequestParam(value = "avatarImg", required = false) MultipartFile avatarImg){
+                              @RequestParam(value = "avatarImg", required = false) MultipartFile avatarImg, Principal principal){
+        MyUser user = userService.getUserByUsername(principal.getName());
         String filename = avatarImg.getOriginalFilename();
         String[] split = filename.split("\\.");
         String suffix = split[split.length - 1];
-        if (!avatarImg.isEmpty() && !(suffix.equals("jpg") || suffix.equals("png") || suffix.equals("jpeg"))) {
-            model.addAttribute("message", "图片格式错误");
-            model.addAttribute("myUser", myUser);
-            return "manage/user/add-user";
+        if (!avatarImg.isEmpty()) {
+            if (!(suffix.equals("jpg") || suffix.equals("png") || suffix.equals("jpeg"))) {
+                model.addAttribute("message", "图片格式错误");
+                model.addAttribute("myUser", myUser);
+                if (user.getUserId() == myUser.getUserId()) {
+                    return "redirect:/manager/user/info";
+                } else {
+                    return "redirect:/manager/user/add-user";
+                }
+            }
+            if (avatarImg.getSize() > 1024*1024){
+                model.addAttribute("message", "请选择1M以内图片");
+                model.addAttribute("myUser", myUser);
+                if (user.getUserId() == myUser.getUserId()) {
+                    return "redirect:/manager/user/info";
+                } else {
+                    return "redirect:/manager/user/add-user";
+                }
+            }
         }
         String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
         if (myUser != null){
@@ -72,7 +89,11 @@ public class ManagerUserController {
             if (!m.matches()){
                 model.addAttribute("message", "手机号格式错误");
                 model.addAttribute("myUser", myUser);
-                return "manage/user/add-user";
+                if (user.getUserId() == myUser.getUserId()) {
+                    return "redirect:/manager/user/info";
+                } else {
+                    return "redirect:/manager/user/add-user";
+                }
             }
         }
 
@@ -89,19 +110,25 @@ public class ManagerUserController {
                 return "redirect:/manager/user/check";
             }
         } else {
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            MyUser user = userService.getUserByUserDetails(userDetails);
             int result = userService.update(myUser, avatarImg);
             if (result == 0){
                 MyUser dbuser = userService.getUserByUserId(myUser.getUserId());
                 model.addAttribute("myUser", dbuser);
                 model.addAttribute("message","更新失败，请重新操作");
-                return "manage/user/add-user";
+                if (user.getUserId() == myUser.getUserId()) {
+                    return "redirect:/manager/user/info";
+                } else {
+                    return "redirect:/manager/user/add-user";
+                }
             }else if (result == 2){
                 MyUser dbuser = userService.getUserByUserId(myUser.getUserId());
                 model.addAttribute("myUser", dbuser);
                 model.addAttribute("message","图片上传失败，请重新上传");
-                return "manage/user/add-user";
+                if (user.getUserId() == myUser.getUserId()) {
+                    return "redirect:/manager/user/info";
+                } else {
+                    return "redirect:/manager/user/add-user";
+                }
             }else {
                 redirectAttributes.addFlashAttribute("msg", "操作成功");
                 if (user.getUserId() == myUser.getUserId()) {

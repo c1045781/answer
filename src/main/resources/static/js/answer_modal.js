@@ -232,7 +232,7 @@ function failExerciseReviewModal() {
         type: 'post',
         data: {exerciseId: id,status:2,reason:reason,messageId:reasonId},
         dataType: "json",
-        success: function () {
+        success: function (data) {
             $('#reasonModal').modal("hide");
             if(data.code == 200){
                 alert(data.message);
@@ -254,7 +254,51 @@ function failExerciseReviewModal() {
         success: function (data) {
             if(data.code == 200){
                 alert(data.message);
-                window.location.href = "/manager/permission/check";
+                window.location.href = "/manager/permission/checkAuthority";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/permission/check");
+        }
+    });
+}
+
+
+function failNoticeReviewModal() {
+    var userId = $("#reasonUserId").val();
+    var id = $("#reasonId").val();
+    var reason = $("#reason").val();
+    $.ajax({
+        url: '/manager/notification/update',
+        type: 'post',
+        data: {id: id,userId:userId,reason:reason,status:2},
+        dataType: "json",
+        success: function (data) {
+            $('#reasonModal').modal('hide');
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/permission/checkNotice";
+            }else{
+                alert(data.message);
+            }
+            // $('#successModal').modal();
+            // $('#resultUrl').val("/manager/permission/check");
+        }
+    });
+
+}
+
+function successNoticeReviewModal(id,userId) {
+    $.ajax({
+        url: '/manager/notification/update',
+        type: 'post',
+        data: {messageId: id,userId:userId,status:1},
+        dataType: "json",
+        success: function (data) {
+            if(data.code == 200){
+                alert(data.message);
+                window.location.href = "/manager/permission/checkNotice";
             }else{
                 alert(data.message);
             }
@@ -283,7 +327,7 @@ function failPermissionReviewModal() {
             $('#reasonModal').modal('hide');
             if(data.code == 200){
                 alert(data.message);
-                window.location.href = "/manager/permission/check";
+                window.location.href = "/manager/permission/checkAuthority";
             }else{
                 alert(data.message);
             }

@@ -54,7 +54,6 @@
                         <input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
                         <select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
                                 th:if='${baseList != null}'>
-                            <option></option>
                             <option th:each="base:${baseList}"
                                     th:text="${base}" th:value="${base}"
                                     th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -85,7 +84,7 @@
                             <th>题目分类</th>
                             <th>题目类型</th>
                             <th>题干</th>
-                            <th>创建人</th>
+                            <th>创建人ID</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -96,7 +95,7 @@
                             <td th:text="${ExerciseVM.subject.name}"></td>
                             <td th:text="${ExerciseVM.exercise.exerciseType}"></td>
                             <td class="answer-table-td" th:title="${ExerciseVM.exercise.exerciseTitle}"  th:text="${ExerciseVM.exercise.exerciseTitle}"></td>
-                            <td th:text="${ExerciseVM.myUser.nickname}"></td>
+                            <td th:text="${ExerciseVM.myUser.userId}"></td>
                             <td th:text="${#dates.format(ExerciseVM.exercise.createTime,'yyyy-MM-dd')}"></td>
                             <td>
                                 <button th:onclick="viewExerciseReviewModal([[${ExerciseVM.exercise.exerciseId}]]);" type="button" class="btn btn-danger">
@@ -275,10 +274,10 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').html("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
+                    showSubject(data[0]);
                 }
             }
         });

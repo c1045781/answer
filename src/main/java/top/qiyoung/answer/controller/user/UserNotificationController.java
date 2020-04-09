@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import top.qiyoung.answer.dto.ExerciseEditDTO;
 import top.qiyoung.answer.dto.NotificationDTO;
 import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.dto.ResultDTO;
 import top.qiyoung.answer.enums.NotificationTypeEnum;
 import top.qiyoung.answer.model.Answer;
 import top.qiyoung.answer.model.MyUser;
@@ -123,5 +124,13 @@ public class UserNotificationController {
     public Integer allNotification(Principal principal){
         Integer count = notificationService.getAllNotification(principal.getName());
         return count;
+    }
+
+    // 删除聊天信息
+    @RequestMapping("/delChat")
+    @ResponseBody
+    public ResultDTO delChat(String username,Principal principal){
+        notificationService.delChat(username,principal.getName());
+        return ResultDTO.okOf();
     }
 }

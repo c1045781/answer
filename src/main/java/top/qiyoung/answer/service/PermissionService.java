@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.dto.ResultDTO;
 import top.qiyoung.answer.enums.MessageStatusEnum;
 import top.qiyoung.answer.enums.MessageTypeEnum;
 import top.qiyoung.answer.enums.NotificationTypeEnum;
@@ -32,12 +33,14 @@ public class PermissionService {
     @Autowired
     private NotificationMapper notificationMapper;
 
-    public PaginationDTO<Message> getMessageList(Integer currentPage, Integer size, String order) {
+    public PaginationDTO<Message> getMessageList(Integer currentPage, Integer size, String order,Integer type) {
         PaginationDTO<Message> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
-        int count = permissionMapper.countMessageList();
+        int count = permissionMapper.countMessageList(type);
         query.setSize(size);
         query.setIndex((currentPage-1)*size);
+        query.setType(type+"");
+        query.setOrder(order);
         List<Message> messages = permissionMapper.getMessageList(query);
 
         paginationDTO.setDataList(messages);
@@ -85,36 +88,49 @@ public class PermissionService {
         permissionMapper.add(message);
     }
 
-    public void addNotice(String content, Integer role, String name) {
+    public ResultDTO addNotice(String content, Integer role, String name) {
         MyUser myUser = userMapper.findUserByAccount(name);
         Message message;
         if (myUser.getRole() == UserRoleEnum.SUPER_MANAGER.getType()){
-            message = new Message(null,null,content, MessageTypeEnum.NOTICE.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.AUDIT_PASS.getType());
+            List<MyUser> general = userMapper.getUserByType(UserRoleEnum.GENERAL_USER.getType());
+            List<MyUser> special = userMapper.getUserByType(UserRoleEnum.SPECIAL_USER.getType());
+            if (role == MessageTypeEnum.NOTICE.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.AUDIT_PASS.getType());
+                for (MyUser user : general) {
+                    Notification notification = new Notification(null,myUser.getUserId(),user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
+                    notificationMapper.addNotification(notification);
+                }
+                for (MyUser user : special) {
+                    Notification notification = new Notification(null,myUser.getUserId(),user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
+                    notificationMapper.addNotification(notification);
+                }
+            }else if (role == MessageTypeEnum.NOTICE_GENERAL.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE_GENERAL.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.AUDIT_PASS.getType());
+                for (MyUser user : general) {
+                    Notification notification = new Notification(null,myUser.getUserId(),user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
+                    notificationMapper.addNotification(notification);
+                }
+            }else if (role == MessageTypeEnum.NOTICE_SPECIAL.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE_SPECIAL.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.AUDIT_PASS.getType());
+                for (MyUser user : special) {
+                    Notification notification = new Notification(null,myUser.getUserId(),user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
+                    notificationMapper.addNotification(notification);
+                }
+            }else {
+                return ResultDTO.errorOf(3003,"公告对象错误");
+            }
         }else {
-            message = new Message(null,null,content, MessageTypeEnum.NOTICE.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.AUDIT_PASS.getType());
+            if (role == MessageTypeEnum.NOTICE.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.UNAUDITED.getType());
+            }else if (role == MessageTypeEnum.NOTICE_GENERAL.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE_GENERAL.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.UNAUDITED.getType());
+            }else if (role == MessageTypeEnum.NOTICE_SPECIAL.getType()){
+                message = new Message(null,null,content, MessageTypeEnum.NOTICE_SPECIAL.getType(),null,myUser.getUserId(),new Date(), MessageStatusEnum.UNAUDITED.getType());
+            }else {
+                return ResultDTO.errorOf(3003,"公告对象错误");
+            }
         }
         permissionMapper.add(message);
-        List<MyUser> general = userMapper.getUserByType(UserRoleEnum.GENERAL_USER.getType());
-        List<MyUser> special = userMapper.getUserByType(UserRoleEnum.SPECIAL_USER.getType());
-        if (role == null){
-            for (MyUser user : general) {
-                Notification notification = new Notification(null,-1,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
-                notificationMapper.addNotification(notification);
-            }
-            for (MyUser user : special) {
-                Notification notification = new Notification(null,-1,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
-                notificationMapper.addNotification(notification);
-            }
-        }else if (role == 2){
-            for (MyUser user : general) {
-                Notification notification = new Notification(null,-1,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
-                notificationMapper.addNotification(notification);
-            }
-        }else {
-            for (MyUser user : special) {
-                Notification notification = new Notification(null,-1,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,content);
-                notificationMapper.addNotification(notification);
-            }
-        }
+        return ResultDTO.okOf();
     }
 }

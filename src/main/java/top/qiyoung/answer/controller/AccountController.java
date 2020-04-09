@@ -30,8 +30,6 @@ public class AccountController {
     // 用户注册
     @RequestMapping("/register")
     public String register(MyUser myUser, RedirectAttributesModelMap model){
-        String password = BCrypt.hashpw(myUser.getPassword(), BCrypt.gensalt());
-        myUser.setPassword(password);
         if (myUser.getPassword().length() < 6){
             model.addFlashAttribute("error","密码长度最少6个字符");
             return "redirect:/toRegister";

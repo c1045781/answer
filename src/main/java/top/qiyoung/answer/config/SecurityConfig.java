@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import top.qiyoung.answer.model.MyUser;
 import top.qiyoung.answer.service.MyUserDetailsService;
 
 import javax.sql.DataSource;
@@ -22,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
     @Autowired
-    private UserDetailsService myUserDetailsService;
+    private MyUserDetailsService myUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder(){

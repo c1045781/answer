@@ -44,6 +44,13 @@ public class UserUsersController {
         return user;
     }
 
+    @RequestMapping("/userByUsername")
+    @ResponseBody
+    public MyUser userByUsername(String username) {
+        MyUser user = userService.getUserByUsername(username);
+        return user;
+    }
+
     @RequestMapping("/personal/update")
     @ResponseBody
     public ResultDTO personalUpdate(@RequestParam(value = "userId")String userId,
@@ -151,4 +158,9 @@ public class UserUsersController {
         return ResultDTO.okOf();
     }
 
+    @RequestMapping("/getUser")
+    @ResponseBody
+    public MyUser getUser(Integer userId){
+        return userService.getUserById(userId);
+    }
 }

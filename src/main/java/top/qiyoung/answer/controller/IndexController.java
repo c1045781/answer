@@ -53,8 +53,8 @@ public class IndexController {
         }
         if (userDetails !=null) {
             MyUser myUser = userService.getUserByUserDetails(userDetails);
-            if(myUser.getRole() == 1 || myUser.getRole() == 0){
-                int userCount = userService.userCount();
+            if(myUser.getRole() == 0){
+                int userCount = userService.userCount0();
                 int exerciseCount = exerciseService.countExercise();
                 int exerciseSetCount = exerciseSetService.countExerciseSet();
                 int commentCount = commentService.countComment();
@@ -65,7 +65,20 @@ public class IndexController {
                 model.addAttribute("commentCount",commentCount);
                 model.addAttribute("permissionCount",permissionCount);
                 return "manage/main-page";
-            }else {
+            }else if (myUser.getRole() == 1){
+                int userCount = userService.userCount1();
+                int exerciseCount = exerciseService.countExercise();
+                int exerciseSetCount = exerciseSetService.countExerciseSet();
+                int commentCount = commentService.countComment();
+                int permissionCount = permissionService.countPermission();
+                model.addAttribute("userCount",userCount);
+                model.addAttribute("exerciseCount",exerciseCount);
+                model.addAttribute("exerciseSetCount",exerciseSetCount);
+                model.addAttribute("commentCount",commentCount);
+                model.addAttribute("permissionCount",permissionCount);
+                return "manage/main-page";
+            }
+            else {
                 model.addAttribute("myUser",myUser);
             }
         }
@@ -80,9 +93,9 @@ public class IndexController {
         return "user/personal";
     }
 
-    @RequestMapping("/user/chat")
+    @RequestMapping("/test")
     public String test(){
-        return "/user/chat";
+        return "/user/asd";
     }
 
     @RequestMapping("/user/modifyPassword")
@@ -94,4 +107,5 @@ public class IndexController {
     public String index(){
         return "redirect:/index";
     }
+
 }

@@ -124,7 +124,6 @@
 											<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 											<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
 													th:if='${baseList != null}'>
-												<option></option>
 												<option th:each="base:${baseList}"
 														th:text="${base}" th:value="${base}"
 														th:selected='${subjectList[0].baseSubject== base}'></option>

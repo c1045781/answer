@@ -86,7 +86,7 @@ public class ManagerExerciseController {
     }
 
     // 获取审核的习题
-    @RequestMapping("review")
+    @RequestMapping("/review")
     public String review(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                          @RequestParam(value = "size", defaultValue = "10") Integer size,
                          @RequestParam(value = "subjectId", required = false) Integer subjectId,

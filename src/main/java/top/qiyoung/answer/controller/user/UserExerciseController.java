@@ -56,10 +56,11 @@ public class UserExerciseController {
                                 @RequestParam(value = "search", required = false) String search,
                                 @RequestParam(value = "type", defaultValue = "title") String type,
                                 @RequestParam(value = "exerciseType", required = false) String exerciseType,
+                                @RequestParam(value = "score", required = false) Integer score,
                                 @RequestParam(value = "subjectId", required = false) Integer subjectId,
                                 @RequestParam(value = "order", defaultValue = "exercise_id asc") String orderby,
                                 Model model) {
-        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType,5);
+        PaginationDTO<ExerciseDTO> paginationDTO = exerciseService.getExerciseList(currentPage, size, search, type, orderby, subjectId,exerciseType,score);
         if (subjectId != null) {
             Subject subject = subjectService.getSubjectById(subjectId);
             List<Subject> subjects = subjectService.getSubjectByBase(subject.getBaseSubject());
@@ -71,20 +72,21 @@ public class UserExerciseController {
         Map<Integer,Double> AVGScores = new HashMap<>();
         for (ExerciseDTO exerciseDTO : paginationDTO.getDataList()) {
             Integer count = evaluationService.countByExerciseId(exerciseDTO.getExercise().getExerciseId());
-            Double score = evaluationService.findAVGScoreByExerciseId(exerciseDTO.getExercise().getExerciseId());
-            AVGScores.put(exerciseDTO.getExercise().getExerciseId(),score);
+            Double dbscore = evaluationService.findAVGScoreByExerciseId(exerciseDTO.getExercise().getExerciseId());
+            AVGScores.put(exerciseDTO.getExercise().getExerciseId(),dbscore);
             countMap.put(exerciseDTO.getExercise().getExerciseId(),count);
         }
         List<Exercise> hotExercise = exerciseService.getHotExercise(subjectId);
         List<Exercise> excellentExercise = exerciseService.getExcellentExercise(subjectId);
-        model.addAttribute("hotExercise", hotExercise);
-        model.addAttribute("excellentExercise", excellentExercise);
+        model.addAttribute("hotExercise", hotExercise.size()==0?null:hotExercise);
+        model.addAttribute("excellentExercise", excellentExercise.size()==0?null:excellentExercise);
         model.addAttribute("AVGScores", AVGScores);
         model.addAttribute("countMap", countMap);
         model.addAttribute("paginationDTO", paginationDTO);
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("exerciseType", exerciseType);
         model.addAttribute("search", search);
+        model.addAttribute("score", score);
         model.addAttribute("type", type);
         return "user/exercise";
     }

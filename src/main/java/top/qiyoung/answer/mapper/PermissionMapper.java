@@ -10,7 +10,7 @@ import java.util.List;
 @Component
 public interface PermissionMapper {
 
-    int countMessageList();
+    int countMessageList(Integer type);
 
     int countAllPermission();
 

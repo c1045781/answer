@@ -39,5 +39,7 @@ public interface NotificationMapper {
 
     int countSystemList(@Param("userId") Integer userId, @Param("type") int type, @Param("type1") int type1,@Param("type2") int type2,@Param("type3") int type3);
 
+    void delChat(@Param("userId") Integer userId,@Param("myUserId") Integer myUserId);
+
 //    int getNotificationNumByChat(@Param("userId")Integer userId,@Param("type") int type,@Param("status") int status);
 }

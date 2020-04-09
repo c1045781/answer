@@ -34,13 +34,12 @@ public class CommentService {
     @Autowired
     private NotificationMapper notificationMapper;
 
-    public PaginationDTO<Comment> getCommentList(Integer currentPage, Integer size, String type, String search, String order) {
+    public PaginationDTO<Comment> getCommentList(Integer currentPage, Integer size, String search, String order) {
         PaginationDTO<Comment> paginationDTO = new PaginationDTO<>(currentPage,size);
         Query query = new Query();
         query.setIndex((currentPage-1)*size);
         query.setSize(size);
         query.setSearch(search);
-        query.setType(type);
         query.setOrder(order);
         List<Comment> commentList = commentMapper.getCommentList(query);
         paginationDTO.setDataList(commentList);

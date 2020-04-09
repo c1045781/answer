@@ -49,7 +49,7 @@ public class UserExerciseSetController {
         }
         List<ExerciseSetDTO> highLikeExerciseSet = setService.getHighLikeExerciseSet(subjectId);
         model.addAttribute("paginationDTO", paginationDTO);
-        model.addAttribute("highLikeExerciseSet", highLikeExerciseSet);
+        model.addAttribute("highLikeExerciseSet", highLikeExerciseSet.size()==0?null:highLikeExerciseSet);
         model.addAttribute("type", type);
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("search", search);

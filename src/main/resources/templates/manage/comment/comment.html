@@ -50,10 +50,7 @@
                 <div class="w3l-table-info agile_info_shadow">
                     <h3 class="w3_inner_tittle two">评论列表</h3>
                     <div>
-                        <select name="type" id="type"  class="answer-select">
-                            <option th:selected="${type == 'user'}" value="user">用户ID</option>
-                            <option th:selected="${type == 'exercise'}" value="exercise">试题ID</option>
-                        </select> ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
+                        用户ID ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
                         <button onclick="submitCommentFrom(1)" class="btn btn-primary" style="margin-bottom: 3px;">搜索</button>
                     </div>
                     <table id="table" class="answer-table">
@@ -61,7 +58,6 @@
                         <tr>
                             <th>ID</th>
                             <th>评论人ID</th>
-                            <th>试题ID</th>
                             <th>评论内容</th>
                             <th>评论时间</th>
                             <th>操作</th>
@@ -69,13 +65,12 @@
                         </thead>
                         <tbody>
                         <tr th:each="comment:${paginationDTO.dataList}">
-                            <td th:text="${comment.id}"></td>
+                            <td th:text="${comment.commentId}"></td>
                             <td th:text="${comment.userId}"></td>
-                            <td th:text="${comment.exerciseId}"></td>
                             <td th:title="${comment.content}" class="answer-table-td" th:text="${comment.content}"></td>
                             <td th:text="${#dates.format(comment.createTime,'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
-                                <button th:onclick="deleteCommentModal([[${comment.id}]]);" type="button" class="btn btn-danger">
+                                <button th:onclick="deleteCommentModal([[${comment.commentId}]]);" type="button" class="btn btn-danger">
                                     删除
                                 </button>
                             </td>

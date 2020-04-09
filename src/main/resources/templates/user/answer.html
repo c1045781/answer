@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/css/slider-pro.min.css">
     <!--<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">-->
     <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/answer.css">
     <link rel="stylesheet" href="/css/index-style.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -152,6 +153,9 @@
                                 <section th:id="comment_section + ${exerciseEditDTO.exerciseEditId}" class="kopa-commnent" style="display: none;">
                                     <h3 class="comments-title">讨论区</h3>
                                     <div class="single-comment-list">
+                                        <!--<div class="tooltip">鼠标移动到我这
+                                            <span class="tooltiptext">提示文本</span>
+                                        </div>-->
                                         <ol class="comments-list" th:id="comment_ol + ${exerciseEditDTO.exerciseEditId}">
 
                                         </ol>
@@ -236,7 +240,39 @@
         });
         allNotification();
     }
+
+    function keywords_title(){
+        return "";
+    }
 </script>
+<style>
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+
+        /* 定位 */
+        position: absolute;
+        z-index: 1;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -60px;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+</style>
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/slick.min.js"></script>

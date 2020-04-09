@@ -43,7 +43,7 @@ function showSubject(e) {
                     $('#subjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
                 }
             }else{
-                $('#subjectId').append("<option>全部</option>");
+                $('#subjectId').append("<option value=''>全部</option>");
             }
         }
     });
@@ -445,7 +445,6 @@ function submitReviewPermissionFrom(e) {
 
 function submitCommentFrom(e){
     var skip = parseInt(e);
-    var type = $("#type").val();
     var search = $("#search").val();
     var total = parseInt($("#totalPage").val());
     if (isNaN(skip) || skip == null || skip < 1){
@@ -454,14 +453,16 @@ function submitCommentFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/manager/comment/check?currentPage=" + skip +"&type="+ type+"&search="+search;
+    window.location.href = "/manager/comment/check?currentPage=" + skip +"&search="+search;
 }
 
 
-function exerciseTypeChange(e){
+function exerciseSelectChange(){
     var subjectId = $("#hidden_subjectId").val();
     var search = $("#hidden_search").val();
-    window.location.href = "/user/exercise/check?subjectId="+ subjectId+"&search="+search+"&exerciseType="+e;
+    var exerciseType = $("#exerciseType").val();
+    var score = $("#score").val();
+    window.location.href = "/user/exercise/check?subjectId="+ subjectId+"&search="+search+"&exerciseType="+exerciseType+"&score="+score;
 }
 
 function orderbyChange(e){
@@ -559,12 +560,36 @@ function openExerciseComment(e,page){
                 content += '<li class="comment">' +
                     '<article>' +
                     '<div class="comment-avatar ">' +
-                    '<img alt="" src="'+ list[i].myUser.avatarImgUrl +'">' +
+                    '<img style="height: 65px;width: 65px;" src="'+ list[i].myUser.avatarImgUrl +'">' +
                     '</div>' +
-                    '<div class="comment-content">' +
+                    '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                     '<header>' +
                     '<div class="entry-meta ">' +
-                    '<p class="entry-author"> <a href="#">'+ list[i].myUser.nickname +'</a> </p>' +
+                    // '<p class="entry-author"><div><div class="wrapper">'+ list[i].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;">I am a tooltip!</div></div></div></p>' +
+                    '<p class="entry-author"><div>' +
+
+                    '<div class="wrapper">'+ list[i].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                    '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[i].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="content">' +
+                    '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+                if (list[i].myUser.description.length > 0){
+                    content += list[i].myUser.description;
+                } else {
+                    content += "用户未设置自我介绍"
+                }
+                content += '</p>' +
+                    '<a href="javascript:void(0)" onclick="toChat('+list[i].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                    '</div>' +
+                    '</div></div></div></div>' +
+                    '</div>' +
+                    '</section>' +
+                    '</div></div>'+
+
+                    '</div></p>' +
                     '<div>'+ Format(new Date(list[i].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                     '</div>' +
                     '</header>' +
@@ -584,16 +609,62 @@ function openExerciseComment(e,page){
                         content += '<li class="comment">' +
                             '<article style="margin-top: 20px">' +
                             '<div class="comment-avatar ">' +
-                            '<img alt="" src="'+ list1[j].myUser.avatarImgUrl +'">' +
+                            '<img style="height: 65px;width: 65px;" src="'+ list1[j].myUser.avatarImgUrl +'">' +
                             '</div>' +
-                            '<div class="comment-content">' +
+                            '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                             '<header>' +
                             '<div class="entry-meta ">' +
-                            '<p class="entry-author"> <a href="#">'+ list1[j].myUser.nickname +'</a> </p>' +
+                            '<p class="entry-author"><div>' +
+
+                            '<div class="wrapper">'+ list1[j].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                            '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                            '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                            '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                            '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="'+ list1[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                            '<div class="content">' +
+                            '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+                        if (list1[j].myUser.description.length > 0){
+                            content += list1[j].myUser.description;
+                        } else {
+                            content += "用户未设置自我介绍"
+                        }
+                        content += '</p>' +
+                            '<a href="javascript:void(0)" onclick="toChat('+list1[j].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                            '</div>' +
+                            '</div></div></div></div>' +
+                            '</div>' +
+                            '</section>' +
+                            '</div></div>'+
+
+                            '</div></p>' +
                             '<div>'+ Format(new Date(list1[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                             '</div>' +
                             '</header>' +
-                            '<p>回复 <a href="#" style="color: #3498DB;">'+list1[j].receiver.nickname+'</a> :'+list1[j].content+'</p>'+
+                            '<p style="float: left">回复 <div style="float:left;margin: 2px 10px;">' +
+
+                            '<div class="wrapper">'+ list[i].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                            '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                            '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                            '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                            '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[i].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                            '<div class="content">' +
+                            '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+                        if (list[i].myUser.description.length > 0){
+                            content += list[i].myUser.description;
+                        } else {
+                            content += "用户未设置自我介绍"
+                        }
+                            content += '</p>' +
+                            '<a href="javascript:void(0)" onclick="toChat('+list[i].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                            '</div>' +
+                            '</div></div></div></div>' +
+                            '</div>' +
+                            '</section>' +
+                            '</div></div>'+
+
+                            '</div> :'+list1[j].content+'</p>'+
                             '<div class="comment-actions" style="margin-top: 0px">' +
                             '<span id="likeSpan'+list1[j].commentId+'">' +
                             '<a class="fa fa-thumbs-o-up" href="javascript:void(0)" onclick="addExerciseCommentLike('+list1[j].commentId +');" style="border: 0;">' +
@@ -703,16 +774,62 @@ function secondCommentPage(id,page){
                 content += '<li class="comment">' +
                     '<article style="margin-top: 20px">' +
                     '<div class="comment-avatar ">' +
-                    '<img alt="" src="'+ list[j].myUser.avatarImgUrl +'">' +
+                    '<img style="height: 65px;width: 65px;" src="'+ list[j].myUser.avatarImgUrl +'">' +
                     '</div>' +
-                    '<div class="comment-content">' +
+                    '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                     '<header>' +
                     '<div class="entry-meta ">' +
-                    '<p class="entry-author"> <a href="#">'+ list[j].myUser.nickname +'</a> </p>' +
+                    '<p class="entry-author"><div>' +
+
+                    '<div class="wrapper">'+ list[j].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                    '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="content">' +
+                    '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+                if (list[j].myUser.description.length > 0){
+                    content += list[j].myUser.description;
+                } else {
+                    content += "用户未设置自我介绍"
+                }
+                content += '</p>' +
+                    '<a href="javascript:void(0)" onclick="toChat('+list[j].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                    '</div>' +
+                    '</div></div></div></div>' +
+                    '</div>' +
+                    '</section>' +
+                    '</div></div>'+
+
+                    '</div></p>' +
                     '<div>'+ Format(new Date(list[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                     '</div>' +
                     '</header>' +
-                    '<p>回复 <a href="#" style="color: #3498DB;">'+list[j].receiver.nickname+'</a> :'+list[j].content+'</p>'+
+                    '<p style="float: left">回复 <div style="float:left;margin: 2px 10px;">' +
+
+                    '<div class="wrapper">'+ list[j].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                    '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="content">' +
+                    '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+                if (list[j].myUser.description.length > 0){
+                    content += list[j].myUser.description;
+                } else {
+                    content += "用户未设置自我介绍"
+                }
+                content += '</p>' +
+                    '<a href="javascript:void(0)" onclick="toChat('+list[j].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                    '</div>' +
+                    '</div></div></div></div>' +
+                    '</div>' +
+                    '</section>' +
+                    '</div></div>'+
+
+                    '</div> :'+list[j].content+'</p>'+
                     '<div class="comment-actions" style="margin-top: 0px">' +
                     '<span id="likeSpan'+list[j].commentId+'">' +
                     '<a class="fa fa-thumbs-o-up" href="javascript:void(0)" onclick="addExerciseCommentLike('+list[j].commentId +');" style="border: 0;">' +
@@ -824,23 +941,69 @@ function newSecondComment(id){
                    commentId = data
                }
            });
-           debugger;
            var content = "";
            var list = data.dataList;
            for (var j=0;j<list.length;j++){
                content += '<li class="comment">' +
                    '<article style="margin-top: 20px">' +
                    '<div class="comment-avatar ">' +
-                   '<img alt="" src="'+ list[j].myUser.avatarImgUrl +'">' +
+                   '<img style="height: 65px;width: 65px;" src="'+ list[j].myUser.avatarImgUrl +'">' +
                    '</div>' +
-                   '<div class="comment-content">' +
+                   '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                    '<header>' +
                    '<div class="entry-meta ">' +
-                   '<p class="entry-author"> <a href="#">'+ list[j].myUser.nickname +'</a> </p>' +
+                   '<p class="entry-author"><div>' +
+
+                   '<div class="wrapper">'+ list[j].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                   '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                   '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                   '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                   '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                   '<div class="content">' +
+                   '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+               if (list[j].myUser.description.length > 0){
+                   content += list[j].myUser.description;
+               } else {
+                   content += "用户未设置自我介绍"
+               }
+               content += '</p>' +
+                   '<a href="javascript:void(0)" onclick="toChat('+list[j].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                   '</div>' +
+                   '</div></div></div></div>' +
+                   '</div>' +
+                   '</section>' +
+                   '</div></div>'+
+
+                   '</div></p>' +
                    '<div>'+ Format(new Date(list[j].createTime),"yyyy-MM-dd hh:mm:ss") +'</div>' +
                    '</div>' +
                    '</header>' +
-                   '<p>回复 <a href="#" style="color: #3498DB;">'+list[j].receiver.nickname+'</a> :'+list[j].content+'</p>'+
+                   // '<p>回复 <a href="#" style="color: #3498DB;">'+list[j].receiver.nickname+'</a> :'+list[j].content+'</p>'+
+                   '<p style="float: left">回复 <div style="float:left;margin: 2px 10px;">' +
+
+                   '<div class="wrapper">'+ list[j].receiver.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                   '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
+                   '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
+                   '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
+                   '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
+                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                   '<div class="content">' +
+                   '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
+               if (list[j].receiver.description.length > 0){
+                   content += list[j].receiver.description;
+               } else {
+                   content += "用户未设置自我介绍"
+               }
+               content += '</p>' +
+                   '<a href="javascript:void(0)" onclick="toChat('+list[j].receiver.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                   '</div>' +
+                   '</div></div></div></div>' +
+                   '</div>' +
+                   '</section>' +
+                   '</div></div>'+
+
+                   '</div> :'+list[j].content+'</p>'+
                    '<div class="comment-actions" style="margin-top: 0px">' +
                    '<span id="likeSpan'+list[j].commentId+'">' +
                    '<a class="fa fa-thumbs-o-up" href="javascript:void(0)" onclick="addExerciseCommentLike('+list[j].commentId +');" style="border: 0;">' +
@@ -875,6 +1038,44 @@ function newSecondComment(id){
            $("#children"+commentId).html(content);
        }
     });
+}
+
+function toChat(id){
+    var user;
+    $.ajax({
+        url:"/user/users/information",
+        dataType:"json",
+        async:false,
+        success:function(result){
+            if (result != null){
+                user = result;
+            }
+        }
+    });
+    if (user.userId == id){
+        alert("不能给自己发私信");
+        return;
+    }
+
+    addChatList(id);
+    window.location.href = "/user/notification/message";
+
+}
+
+function addChatList(id){
+    var user;
+    $.ajax({
+        url:"/user/users/getUser",
+        data:{userId:id},
+        dataType:"json",
+        async:false,
+        success:function(result){
+            if (result != null){
+                user = result;
+            }
+        }
+    });
+    window.localStorage.setItem("id",id);
 }
 
 function closeExerciseComment(e) {
@@ -950,6 +1151,60 @@ function Format(datetime,fmt) {
     return fmt;
 }
 
+function submitInfoManager(){
+    debugger;
+    if ($("#avatarImg")[0].files[0] != null){
+        var size = $("#avatarImg")[0].files[0].size;
+        var substring = $("#avatarImg").val().substring($("#avatarImg").val().lastIndexOf("."));
+        var arr = [".jpg",".png",".jpeg"];
+        var flag = false;
+        for(var i=0;i<arr.length;i++)
+        {
+            if(substring == arr[i])
+            {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag){
+            alert("图片格式错误");
+            return;
+        }
+        if (size > 1024*1024){
+            alert("请选择1M以内图片");
+            return;
+        }
+    }
+    var phone = $("#phone").val();
+    var reg = /(1[3-9]\d{9}$)/;
+    if (!reg.test(phone)){
+        alert("手机号格式错误");
+        return;
+    }
+    var formData = new FormData();
+    formData.append("avatarImg",$("#avatarImg")[0].files[0]);
+    formData.append("userId",$("#userId").val());
+    formData.append("avatarImgUrl",$("#avatarImgUrl").attr("src"));
+    formData.append("username",$("#username").val());
+    formData.append("phone",$("#phone").val());
+    formData.append("description",$("#description").val());
+    formData.append("nickname",$("#nickname").val());
+    formData.append("sex",$("#sex").val());
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "/manager/users/addOrUpdate",
+        data: formData,
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success:function (data) {
+            alert(data.message);
+        }
+    });
+}
 
 function submitInfo(){
     if ($("#avatarImg")[0].files[0] != null){
@@ -1149,8 +1404,8 @@ function personInformation(msg){
             $("#showUsername").html("账号："+data.username);
             $("#showNickname").html("昵称："+data.nickname);
             $("#showAvatarImgUrl").attr("src",data.avatarImgUrl);
-            $("#showPhone").html("手机号："+data.phone);
-            $("#showDescription").html("自我介绍："+data.description);
+            $("#showPhone").html(data.phone!=null?"手机号："+data.phone:'手机号：');
+            $("#showDescription").html(data.description!=null?"自我介绍："+data.description:'自我介绍：');
             $("#showSex").html("性别："+data.sex);
             showInfo();
         }
@@ -2434,8 +2689,9 @@ function chatList(){
             data.forEach(function (element, sameElement, set) {
                 if (user != null) {
                     if (element.receiver.userId == user.userId){
-                        content += "<li style='cursor: pointer;background-color: #ffffff;' name='"+element.notifier.userId+"' onclick='showChat(" + element.notifier.userId + ",this)'>" +
-                            "<article style='margin-top: 20px'>" +
+                        content += "<li style='cursor: pointer;background-color: #ffffff;' name='"+element.notifier.userId+"'>" +
+                            "<div style='float: right;' onclick='delChat(\"" + element.notifier.username + "\")'><span  class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #000000;font-size: 1em;'></span></div>"+
+                            "<article style='margin-top: 20px' onclick='showChat(" + element.notifier.userId + ")'>" +
                             "<div class='comment-avatar '>" +
                             "<img src='" + element.notifier.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
                             "</div>" +
@@ -2450,15 +2706,16 @@ function chatList(){
                             "</article>" +
                             "</li>";
                     }else {
-                        content += "<li style='cursor: pointer;background-color: #ffffff;' name='"+element.receiver.userId+"' onclick='showChat(" + element.receiver.userId + ",this)'>" +
-                            "<article style='margin-top: 20px'>" +
+                        content += "<li style='cursor: pointer;background-color: #ffffff;' name='"+element.receiver.userId+"'>" +
+                            "<div style='float: right;' onclick='delChat(\"" + element.receiver.username + "\")'><span  class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #000000;font-size: 1em;'></span></div>"+
+                            "<article style='margin-top: 20px' onclick='showChat(" + element.receiver.userId + ")'>" +
                             "<div class='comment-avatar '>" +
                             "<img src='" + element.receiver.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
                             "</div>" +
                             "<div class='comment-content' style='width: 80%;float: right; margin-top: -15%;'>" +
                             "<header>" +
                             "<div class='entry-meta '>" +
-                            "<div> " + element.receiver.nickname + " </div>" +
+                            "<div>" + element.receiver.nickname + "</div>" +
                             "<div style='font-size: 0.9em;margin-top: 10px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>" + element.title + "</div>" +
                             "</div>" +
                             "</header>" +
@@ -2471,18 +2728,48 @@ function chatList(){
             $("#chatUl").html(content);
             $("#chatDiv").html("");
             $("#chatTitle").html("");
+            $("#to").val("");
+            $("#msg-content").html("");
             updateNotificationNum();
             allNotification()
         }
     });
 }
 
-function showChat(id,e){
+function delChat(name){
+    debugger;
+    var username = $("#to").val();
+    $.ajax({
+        url:"/user/notification/delChat",
+        data:{username:name},
+        dataType:"json",
+        async:false,
+        success:function(){
+        }
+    });
+    if(username != "" && username != null &&  username != name){
+        var user;
+        $.ajax({
+            url:"/user/users/userByUsername",
+            data:{username:username},
+            dataType:"json",
+            async:false,
+            success:function(data){
+                chatList();
+                showChat(data.userId);
+            }
+        });
+    }else {
+        chatList();
+    }
+}
+
+function showChat(id){
     $("#chatUl li").each(function(){
         $(this).css("background-color","#ffffff");
     });
-    $(e).css("background-color","#fafafa");
-
+    $("li[name="+id+"]").css("background-color","#fafafa");
+    debugger;
     $.ajax({
         url:"/user/notification/showChat",
         data:{secondId:id},
@@ -2664,5 +2951,78 @@ function allNotification(){
         }
     });
 }
+
+function handleNotification(chat) {
+    $.ajax({
+        url:"/user/notification/newMessage",
+        data:{to:chat.to,from:chat.from},
+        dataType:"json",
+        cache:false,
+        async:false,
+        success:function(data){
+            debugger;
+            var content = "";
+            var user;
+            $.ajax({
+                url:"/user/users/information",
+                dataType:"json",
+                async:false,
+                cache:false,
+                success:function(result){
+                    if (result != null){
+                        user = result;
+                    }
+                }
+            });
+            var title = $("#chatTitle").html();
+            if (title == data[0].receiver.nickname || title == data[0].notifier.nickname) {
+                if (data.length < 2){
+                    content += "<div style='text-align: center;margin: 15px;'>" + Format(data[0].createTime, 'yyyy-MM-dd hh:mm:ss') + "</div>";
+                }else {
+                    if (new Date(data[0].createTime).getTime() - new Date(data[1].createTime).getTime() > 1000 * 60 * 5) {
+                        content += "<div style='text-align: center;margin: 15px;'>" + Format(data[0].createTime, 'yyyy-MM-dd hh:mm:ss') + "</div>";
+                    }
+                }
+                if (data[0].receiver.userId == user.userId) {
+                    content += "<div class='admin-group'>" +
+                        "<img class='admin-img' src='" + data[0].notifier.avatarImgUrl + "'>" +
+                        "<div class='admin-msg'>" +
+                        "<i class='triangle-admin'></i>" +
+                        "<pre class='admin-reply'>" + data[0].title + "</pre>" +
+                        "</div>" +
+                        "</div>";
+                } else {
+                    content += "<div class='user-group'>" +
+                        "<div class='user-msg'>" +
+                        "<pre class='user-reply'>" + data[0].title + "</pre>" +
+                        "<i class='triangle-user'></i>" +
+                        "</div>" +
+                        "<img class='user-img' src='" + user.avatarImgUrl + "'>" +
+                        "</div>";
+                }
+            }
+            $("#chatDiv").append(content);
+            $('#chatDiv').scrollTop( $('#chatDiv')[0].scrollHeight);
+            $("#msg-content").val('');
+            var name;
+            $("#chatUl li").each(function(){
+                if ( $(this).css("background-color") == "rgb(250, 250, 250)"){
+                    name = $(this).attr("name");
+                }
+            });
+            chatList();
+            if (name == null){
+                if (data[0].receiver.userId == user.userId) {
+                    name = data[0].notifier.userId;
+                }else {
+                    name = data[0].receiver.userId;
+                }
+            }
+            showChat(name);
+        }
+    });
+    // $('#output').append("<b>" + chat.from +":"+chat.content + "</b><br/>");
+}
+
 
 window.setInterval(allNotification, 1000*60);

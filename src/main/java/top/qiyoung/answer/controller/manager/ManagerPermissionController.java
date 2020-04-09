@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.dto.ResultDTO;
+import top.qiyoung.answer.enums.MessageTypeEnum;
 import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Message;
 import top.qiyoung.answer.model.MyUser;
@@ -25,15 +26,26 @@ public class ManagerPermissionController {
     @Resource
     private UserService userService;
 
-    // 查询申请
-    @RequestMapping("/check")
-    public String check(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+    // 查询权限申请
+    @RequestMapping("/checkAuthority")
+    public String checkAuthority(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                         @RequestParam(value = "size", defaultValue = "10") Integer size,
                         @RequestParam(value = "order", defaultValue = "create_time asc") String order,
                         Model model){
-        PaginationDTO<Message> paginationDTO = permissionService.getMessageList(currentPage,size,order);
+        PaginationDTO<Message> paginationDTO = permissionService.getMessageList(currentPage,size,order, MessageTypeEnum.PERMISSION_APPLICATION.getType());
         model.addAttribute("paginationDTO",paginationDTO);
         return "manage/review/permission-review";
+    }
+
+    // 查询通知申请
+    @RequestMapping("/checkNotice")
+    public String checkNotify(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                        @RequestParam(value = "size", defaultValue = "10") Integer size,
+                        @RequestParam(value = "order", defaultValue = "create_time asc") String order,
+                        Model model){
+        PaginationDTO<Message> paginationDTO = permissionService.getMessageList(currentPage,size,order,MessageTypeEnum.NOTICE.getType());
+        model.addAttribute("paginationDTO",paginationDTO);
+        return "manage/review/notice-review";
     }
 
     // 更新用户类型
@@ -70,9 +82,17 @@ public class ManagerPermissionController {
     }
 
     @RequestMapping("/addNotice")
-    @ResponseBody
-    public ResultDTO addNotification(String content, Integer role, Principal principal){
-        permissionService.addNotice(content,role,principal.getName());
-        return ResultDTO.okOf();
+    public String addNotification(String content, Integer role, Principal principal,Model model){
+        ResultDTO resultDTO = permissionService.addNotice(content, role, principal.getName());
+        if (resultDTO.getCode() == 200) {
+            model.addAttribute("msg", "添加成功");
+            return "redirect:/manager/notification/toAdd";
+        }else {
+            model.addAttribute("message", resultDTO.getMessage());
+            model.addAttribute("content", content);
+            return "/manage/notification/add-notice";
+        }
     }
+
+
 }

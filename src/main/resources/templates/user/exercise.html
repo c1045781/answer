@@ -92,7 +92,6 @@
 									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
 											th:if='${baseList != null}'>
-										<option value="">全部</option>
 										<option th:each="base:${baseList}"
 												th:text="${base}" th:value="${base}"
 												th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -112,7 +111,6 @@
 
 									<select name="subjectId" class="answer-select" id="subjectId"
 											th:if='${subjectList == null}'>
-
 									</select>
 									</p>
 									<p><input type="text" th:value="${search}" name="search" placeholder="关键字..."></p>
@@ -129,11 +127,19 @@
                         <div class="col-md-8 col-sm-12 col-xs-12">
                             <div class="shop-content">
 	                            <form class="woocommerce-ordering" method="get">
-	                                <select name="exerciseType" onchange="exerciseTypeChange(this.value)">
-	                                    <option>全部</option>
+	                                <select style="width: 135px;" name="exerciseType" id="exerciseType" onchange="exerciseSelectChange()">
+	                                    <option value="">全部</option>
 	                                    <option value="单选题" th:selected="${exerciseType == '单选题'}">单选题</option>
 	                                    <option value="多选题" th:selected="${exerciseType == '多选题'}">多选题</option>
 	                                    <option value="判断题" th:selected="${exerciseType == '判断题'}">判断题</option>
+	                                </select>
+									<select style="width: 145px" name="score" id="score" onchange="exerciseSelectChange()">
+										<option value="">全部</option>
+	                                    <option value="5" th:selected="${score == 5}">5分</option>
+	                                    <option value="4" th:selected="${score == 4}">4分及以上</option>
+	                                    <option value="3" th:selected="${score == 3}">3分及以上</option>
+	                                    <option value="2" th:selected="${score == 2}">2分及以上</option>
+	                                    <option value="1" th:selected="${score == 1}">1分及以上</option>
 	                                </select>
 	                                <input type="hidden" id="hidden_subjectId" th:value="${subjectId}">
 	                                <input type="hidden" id="hidden_search" th:value="${search}">
@@ -226,7 +232,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
 							<aside class="sidebar">
-								<section class="widget widget_categories">
+								<section class="widget widget_categories" th:if="${hotExercise != null}">
 									<h2 class="widget-title">热门题目</h2>
 									<ul id="hotExercise">
                                         <li class="cat-item" th:each="exercise:${hotExercise}">
@@ -235,7 +241,7 @@
                                         </li>
 									</ul>
 								</section>
-								<section class="widget widget_categories">
+								<section class="widget widget_categories" th:if="${excellentExercise != null}">
 									<h2 class="widget-title">优秀题目</h2>
 									<ul id="excellentExercise">
                                         <li class="cat-item" th:each="exercise:${excellentExercise}">
@@ -286,11 +292,10 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').append("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
-                    showSubject("");
+                    showSubject(data[0]);
                 }
             }
         });

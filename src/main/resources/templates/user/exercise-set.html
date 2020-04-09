@@ -91,7 +91,6 @@
 									<input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
 									<select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
 											th:if='${baseList != null}'>
-										<option value="">全部</option>
 										<option th:each="base:${baseList}"
 												th:text="${base}" th:value="${base}"
 												th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -226,7 +225,7 @@
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
 							<aside class="sidebar">
-                                <section class="widget widget_categories">
+                                <section class="widget widget_categories" th:if="${highLikeExerciseSet != null}">
                                     <h2 class="widget-title">高赞套题</h2>
                                     <ul id="hotExercise">
                                         <li class="cat-item" th:each="exerciseSet:${highLikeExerciseSet}">
@@ -276,11 +275,10 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
-                    $('#base').append("<option value=''>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
-                	showSubject("");
+                	showSubject(data[0]);
                 }
             }
         });

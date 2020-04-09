@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import top.qiyoung.answer.dto.NotificationDTO;
 import top.qiyoung.answer.dto.PaginationDTO;
+import top.qiyoung.answer.enums.MessageTypeEnum;
 import top.qiyoung.answer.enums.NotificationStatusEnum;
 import top.qiyoung.answer.enums.NotificationTypeEnum;
 import top.qiyoung.answer.enums.UserRoleEnum;
@@ -211,5 +212,40 @@ public class NotificationService {
         }
         PaginationDTO<NotificationDTO> paginationDTO = new PaginationDTO(currentPage,size,(int)Math.ceil((double)count/(double)size),count,null,null,notificationDTOS);
         return paginationDTO;
+    }
+
+    public void delChat(String username,String myUsername) {
+        MyUser user = userMapper.findUserByAccount(username);
+        MyUser myUser = userMapper.findUserByAccount(myUsername);
+        notificationMapper.delChat(user.getUserId(),myUser.getUserId());
+    }
+
+    public void update(Integer messageId,Integer userId, String reason, Integer status) {
+        permissionMapper.updateStatus(messageId,reason,status);
+        if (status == 1){
+            Message message = permissionMapper.getMessageByMessageId(messageId);
+            List<MyUser> general = userMapper.getUserByType(UserRoleEnum.GENERAL_USER.getType());
+            List<MyUser> special = userMapper.getUserByType(UserRoleEnum.SPECIAL_USER.getType());
+            if (message.getType() == MessageTypeEnum.NOTICE.getType()) {
+                for (MyUser user : general) {
+                    Notification notification = new Notification(null,userId,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,message.getContent());
+                    notificationMapper.addNotification(notification);
+                }
+                for (MyUser user : special) {
+                    Notification notification = new Notification(null,userId,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,message.getContent());
+                    notificationMapper.addNotification(notification);
+                }
+            }else if (message.getType() == MessageTypeEnum.NOTICE_GENERAL.getType()) {
+                for (MyUser user : general) {
+                    Notification notification = new Notification(null,userId,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,message.getContent());
+                    notificationMapper.addNotification(notification);
+                }
+            }else if (message.getType() == MessageTypeEnum.NOTICE_SPECIAL.getType()) {
+                for (MyUser user : special) {
+                    Notification notification = new Notification(null,userId,user.getUserId(),null,NotificationTypeEnum.NOTIFICATION_NOTICE.getType(),new Date(),0,message.getContent());
+                    notificationMapper.addNotification(notification);
+                }
+            }
+        }
     }
 }

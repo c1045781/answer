@@ -55,9 +55,6 @@
                     </if>
                 </if>
             </if>
-            <!--<if test="role != null">
-                and role = #{role}
-            </if>-->
             <if test="id != null">
                 and subject_id = #{id}
             </if>
@@ -65,7 +62,7 @@
                 and exercise_type = #{exerciseType}
             </if>
             <if test="score != null">
-                score &lt;= #{score}
+                and score >= #{score}
             </if>
             <if test="1 == 1">
                 and status = 1
@@ -102,7 +99,7 @@
                 and exercise_type = #{exerciseType}
             </if>
             <if test="score != null">
-                score &lt;= #{score}
+                and score >= #{score}
             </if>
             <if test="1 == 1">
                 and status = 1

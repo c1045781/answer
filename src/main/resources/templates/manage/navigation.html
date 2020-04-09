@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <body>
 <div th:fragment="nav">
     <div class="w3_agileits_top_nav">
@@ -83,8 +83,11 @@
                                 <a href="#"><i class="fa fa-warning (alias)" aria-hidden="true"></i>申请管理<i
                                         class="fa fa-angle-down" aria-hidden="true"></i></a>
                                 <ul class="gn-submenu">
-                                    <li class="mini_list_agile"><a href="/manager/permission/check"><i class="fa fa-caret-right"
+                                    <li class="mini_list_agile"><a href="/manager/permission/checkAuthority"><i class="fa fa-caret-right"
                                                                                           aria-hidden="true"></i>权限申请</a>
+                                    </li>
+                                    <li class="mini_list_agile" sec:authorize="hasAuthority('0')" ><a href="/manager/permission/checkNotice"><i class="fa fa-caret-right"
+                                                                                          aria-hidden="true"></i>通知申请</a>
                                     </li>
                                     <li class="mini_list_w3"><a href="/manager/exercise/review"> <i class="fa fa-caret-right"
                                                                                       aria-hidden="true"></i>试题申请</a>

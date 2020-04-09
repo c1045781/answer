@@ -10,8 +10,8 @@
         <result column="create_time" property="createTime"/>
     </resultMap>
 
-    <select id="countMessageList" resultType="java.lang.Integer">
-        select count(*) from message where status = 0 and type = 1;
+    <select id="countMessageList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from message where status = 0 and type = #{type};
     </select>
 
     <select id="countAllPermission" resultType="java.lang.Integer">
@@ -19,7 +19,7 @@
     </select>
 
     <select id="getMessageList" parameterType="top.qiyoung.answer.model.Query" resultMap="BaseResultMap">
-        select * from message where status = 0 and type = 1
+        select * from message where status = 0 and type = #{type}
         <if test="order != null and order != ''">
             order by #{order}
         </if>
