@@ -1,5 +1,6 @@
 package top.qiyoung.answer.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -9,10 +10,16 @@ import java.io.*;
 // 文件上传
 @Controller
 public class FileDownloadController {
+
+    @Value("${file.upload.url}")
+    private String uploadUrl;
+
     @RequestMapping("/download")
     public void download(HttpServletResponse response) throws IOException {
-        String fileName1 =  System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\template.xls";//被下载文件的名称
-        String fileName2 =  System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\template.xlsx";//被下载文件的名称
+//        String fileName1 =  System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\template.xls";//被下载文件的名称
+//        String fileName2 =  System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\template.xlsx";//被下载文件的名称
+        String fileName1 =  uploadUrl+"/template.xls";//被下载文件的名称
+        String fileName2 =  uploadUrl+"/template.xlsx";//被下载文件的名称
 
         // 文件地址，真实环境是存放在数据库中的
         File file1 = new File(fileName1);
