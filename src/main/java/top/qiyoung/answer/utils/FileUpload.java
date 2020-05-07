@@ -1,5 +1,6 @@
 package top.qiyoung.answer.utils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.exception.CustomizeException;
@@ -9,9 +10,14 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class FileUpload {
+
+    @Value("${file.upload.url}")
+    private String uploadUrl;
+
     public String upload(MultipartFile avatarImg){
         if (!avatarImg.isEmpty()) {
-            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+//            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+            String path = uploadUrl;
             String filename = avatarImg.getOriginalFilename();
             String[] split = filename.split("\\.");
             String suffix = split[split.length - 1];
@@ -38,7 +44,8 @@ public class FileUpload {
 
     public void uploadTemplate(MultipartFile avatarImg) throws IOException {
         if (!avatarImg.isEmpty()) {
-            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+//            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+            String path = uploadUrl;
             String filename = avatarImg.getOriginalFilename();
             String[] split = filename.split("\\.");
             String suffix = split[split.length - 1];
@@ -62,7 +69,8 @@ public class FileUpload {
 
     public String uploadImg(MultipartFile avatarImg) throws IOException{
         if (!avatarImg.isEmpty()) {
-            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+//            String path = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\upload\\"; // System.getProperty("user.dir")获取项目路径
+            String path = uploadUrl;
             String filename = avatarImg.getOriginalFilename();
             String[] split = filename.split("\\.");
             String suffix = split[split.length - 1];
