@@ -111,7 +111,7 @@
                                                     <!--<input type="hidden" id="tableSum" th:value="${exerciseSetDTO!=null?exerciseSetDTO.exerciseList.size():'0'}">-->
                                                     <div class="col-xs-10 col-md-10 col-sm-10">
                                                         <div class="table-responsive">
-                                                            <table class="table">
+                                                            <table class="table" style="table-layout: fixed">
                                                                 <thead>
                                                                 <tr>
                                                                     <th></th>
@@ -128,7 +128,7 @@
                                                                         <td><input th:value="${exercise.exerciseId}" th:name="|exerciseList[${status.index}].exerciseId|" checked type="checkbox"></td>
                                                                         <td th:text="${exercise.exerciseId}"></td>
                                                                         <td th:text="${exercise.exerciseType}"></td>
-                                                                        <td th:text="${exercise.exerciseTitle}"></td>
+                                                                        <td th:title="${exercise.exerciseTitle}" th:text="${exercise.exerciseTitle}" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"></td>
                                                                         <td><button type="button" th:onclick="|showExerciseForExerciseSet(${exercise?.exerciseId})|"  class="btn btn-primary"> 查看 </button></td>
                                                                         <td><button type="button" th:onclick="|deleteExerciseTbody(${exercise?.exerciseId})|"  class="btn btn-primary"> 删除 </button></td>
                                                                     </tr>
@@ -153,7 +153,7 @@
     </div>
 </div>
 <div th:insert="~{foot :: foot}"></div>
-<div class="modal fade" id="showAddExercise" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+<div class="modal fade" id="showAddExercise" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="z-index: 10000">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -198,7 +198,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="addExerciseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+<div class="modal fade" id="addExerciseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="z-index: 9999">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">

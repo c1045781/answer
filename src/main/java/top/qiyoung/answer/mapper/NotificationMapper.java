@@ -41,5 +41,7 @@ public interface NotificationMapper {
 
     void delChat(@Param("userId") Integer userId,@Param("myUserId") Integer myUserId);
 
+    void deleteNotificationByExercise(Integer exerciseId);
+
 //    int getNotificationNumByChat(@Param("userId")Integer userId,@Param("type") int type,@Param("status") int status);
 }

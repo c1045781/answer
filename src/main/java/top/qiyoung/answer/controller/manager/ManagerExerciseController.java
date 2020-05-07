@@ -139,6 +139,13 @@ public class ManagerExerciseController {
     @RequestMapping("/uploadFile")
     public String upload(@RequestParam("exerciseFile") MultipartFile exerciseFile,
                          Model model,RedirectAttributes redirectAttributes) throws IOException {
+        String filename = exerciseFile.getOriginalFilename();
+        String[] suffixArr = filename.split("\\.");
+        String suffix = suffixArr[suffixArr.length - 1];
+        if (!suffix.equals("xls") && !suffix.equals("xlsx")) {
+            model.addAttribute("msg","文件类型错误");
+            return "manage/exercise/upload";
+        }
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
         upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
@@ -149,16 +156,55 @@ public class ManagerExerciseController {
         //获得最后一行的行号
         int lastRowNum = sheet.getLastRowNum();
         List<ExerciseEditDTO> exerciseEditDTOList = new ArrayList<>();
-        for (int i = 1; i < lastRowNum; i++) {
+        for (int i = 1; i <= lastRowNum; i++) {
             ExerciseEditDTO edit = new ExerciseEditDTO();
             HSSFRow row = sheet.getRow(i);
+            if (row.getCell(0) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg", "科目不能为空");
+                return "manage/exercise/upload";
+            }
             String baseSubject = row.getCell(0).getStringCellValue();
+            if (row.getCell(1) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg", "分类不能为空");
+                return "manage/exercise/upload";
+            }
             String subjectName = row.getCell(1).getStringCellValue();
+            if (row.getCell(2) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg", "试题类型不能为空");
+                return "manage/exercise/upload";
+            }
             String exercisetype = row.getCell(2).getStringCellValue();
+            if (row.getCell(3) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg", "题目不能为空");
+                return "manage/exercise/upload";
+            }
             String title = row.getCell(3).getStringCellValue();
+            if (row.getCell(4) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg", "选项不能为空");
+                return "manage/exercise/upload";
+            }
             String answers = row.getCell(4).getStringCellValue();
+            if (row.getCell(5) == null) {
+                DeleteFile deleteFile = new DeleteFile();
+                deleteFile.delFile(upload);
+                model.addAttribute("msg","答案不能为空");
+                return "manage/exercise/upload";
+            }
             String correct = row.getCell(5).getStringCellValue();
-            String analysis = row.getCell(6).getStringCellValue();
+            String analysis = "";
+            if (row.getCell(6) != null) {
+                analysis = row.getCell(6).getStringCellValue();
+            }
 
             Subject subject = subjectService.verification(baseSubject, subjectName);
             if (subject != null) {
@@ -166,7 +212,7 @@ public class ManagerExerciseController {
             } else {
                 DeleteFile deleteFile = new DeleteFile();
                 deleteFile.delFile(upload);
-                model.addAttribute("messs", "文件格式错误");
+                model.addAttribute("msg", "科目类型错误");
                 return "manage/exercise/upload";
             }
             if (exercisetype.equals("单选题") || exercisetype.equals("判断题") || exercisetype.equals("多选题")) {
@@ -174,12 +220,12 @@ public class ManagerExerciseController {
             } else {
                 DeleteFile deleteFile = new DeleteFile();
                 deleteFile.delFile(upload);
-                model.addAttribute("messs", "文件格式错误");
+                model.addAttribute("msg", "试题分类错误");
                 return "manage/exercise/upload";
             }
             edit.setTitle(title);
             edit.setCorrect(correct.toUpperCase());
-            String[] split = answers.split("、");
+            String[] split = answers.split(",");
             List<String> answerList = new ArrayList<>(Arrays.asList(split));
             List<Option> options = new ArrayList<>();
             byte[] bytes = {64};

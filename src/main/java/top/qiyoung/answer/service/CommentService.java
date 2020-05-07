@@ -34,19 +34,19 @@ public class CommentService {
     @Autowired
     private NotificationMapper notificationMapper;
 
-    public PaginationDTO<Comment> getCommentList(Integer currentPage, Integer size, String search, String order) {
+    public PaginationDTO<Comment> getCommentList(Integer currentPage, Integer size, String exerciseId,String userId, String order) {
         PaginationDTO<Comment> paginationDTO = new PaginationDTO<>(currentPage,size);
-        Query query = new Query();
-        query.setIndex((currentPage-1)*size);
+        /*Query query = new Query();
+        query.setIndex();
         query.setSize(size);
         query.setSearch(search);
-        query.setOrder(order);
-        List<Comment> commentList = commentMapper.getCommentList(query);
+        query.setOrder(order);*/
+        List<Comment> commentList = commentMapper.getCommentList((currentPage-1)*size,size,exerciseId,userId,order);
         paginationDTO.setDataList(commentList);
 
-        query.setIndex(null);
-        query.setSize(null);
-        int count = commentMapper.countCommentList(query);
+        /*query.setIndex(null);
+        query.setSize(null);*/
+        int count = commentMapper.countCommentList(exerciseId,userId);
         paginationDTO.setTotalSize(count);
         paginationDTO.setTotalPage((int)Math.ceil((double) paginationDTO.getTotalSize()/(double)size));
         return paginationDTO;
@@ -57,7 +57,7 @@ public class CommentService {
     }
 
     public int countComment() {
-        return commentMapper.countCommentList(new Query());
+        return commentMapper.countCommentList(null,null);
     }
 
     public PaginationDTO<CommentDTO> getCommentDTOListById(Integer parentId,Integer currentPage) {

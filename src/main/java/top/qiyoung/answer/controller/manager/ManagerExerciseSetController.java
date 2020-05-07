@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import top.qiyoung.answer.dto.ExerciseSetAndExercisesDTO;
 import top.qiyoung.answer.dto.ExerciseSetDTO;
 import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.dto.ResultDTO;
@@ -111,5 +112,15 @@ public class ManagerExerciseSetController {
         model.addAttribute("exerciseSetDTO", exerciseSetDTO);
         return "manage/exercise-set/add-exercise-set";
     }
+
+    // 根据套题Id获取多个题目
+    @RequestMapping("/checkOfExerciseSet")
+    @ResponseBody
+    public PaginationDTO<ExerciseSetAndExercisesDTO> checkOfExerciseSet(Integer exerciseSetId, Integer currentPage){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PaginationDTO<ExerciseSetAndExercisesDTO> dto = setService.checkOfExerciseSet(exerciseSetId,currentPage, userDetails);
+        return dto;
+    }
+
 
 }

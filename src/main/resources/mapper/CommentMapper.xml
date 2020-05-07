@@ -15,8 +15,11 @@
     <select id="getCommentList" resultMap="BaseResultMap" parameterType="top.qiyoung.answer.model.Query">
         select * from comment
         <where>
-            <if test="search != null and search != ''">
-              user_id = #{search}
+            <if test="userId != null and userId != ''">
+              user_id = #{userId}
+            </if>
+            <if test="exerciseId != null and exerciseId != ''">
+                and parent_id = #{exerciseId} and type = 1
             </if>
         </where>
         <if test="order != null and order != ''">
@@ -30,13 +33,11 @@
     <select id="countCommentList" parameterType="top.qiyoung.answer.model.Query" resultType="Integer">
         select count(*) from comment
         <where>
-            <if test="type != null and type != ''">
-                <if test="type == 'myUser' and search != null and search != ''">
-                    user_id = #{search}
-                </if>
-                <if test="type == 'exercise' and search != null and search != ''">
-                    parent_id = #{search} and type =1
-                </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="exerciseId != null and exerciseId != ''">
+                and parent_id = #{exerciseId} and type = 1
             </if>
         </where>
     </select>

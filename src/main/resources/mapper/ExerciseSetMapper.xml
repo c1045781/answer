@@ -43,6 +43,7 @@
             <if test="id != null">
                 and subject_id = #{id}
             </if>
+            and exercise_count > 0
         </where>
         <if test="order != null and order != ''">
             order by ${order}
@@ -196,6 +197,16 @@
              <if test="subjectId != null">
                  subject_id = #{subjectId}
              </if>
+             <if test="1==1">
+                 and exercise_count > 0
+             </if>
          </where>order by like_count desc limit 0,10
     </select>
+
+    <update id="delExerciseCountById" parameterType="java.lang.Integer">
+        update exercise_set set exercise_count = exercise_count - 1
+        <where>
+            exercise_set_id = #{id}
+        </where>
+    </update>
 </mapper>

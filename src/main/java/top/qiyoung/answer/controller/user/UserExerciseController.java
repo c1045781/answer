@@ -168,7 +168,7 @@ public class UserExerciseController {
             edit.setExerciseType(exercisetype);
             edit.setTitle(title);
             edit.setCorrect(correct.toUpperCase());
-            String[] split = answers.split("、");
+            String[] split = answers.split(",");
             List<String> answerList = new ArrayList<>(Arrays.asList(split));
             List<Option> options = new ArrayList<>();
             byte[] bytes = {64};

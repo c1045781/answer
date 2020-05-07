@@ -283,26 +283,25 @@
 <script th:inline="javascript">
     window.onload = function () {
         var modelInput = $("#modelInput").val();
-        if (modelInput != null && modelInput != "") {
-            return
-        }
-        $.ajax({
-            url: '/subject/base',
-            type: 'post',
-            contentType: "application/json",
-            success: function (data) {
-                if (data != null) {
-                    for (var i = 0; i < data.length; i++) {
-                        $('#base').append("<option>" + data[i] + "</option>");
+        if (modelInput == "") {
+            $.ajax({
+                url: '/subject/base',
+                type: 'post',
+                contentType: "application/json",
+                success: function (data) {
+                    if (data != null) {
+                        for (var i = 0; i < data.length; i++) {
+                            $('#base').append("<option>" + data[i] + "</option>");
+                        }
+                        showSubject(data[0]);
                     }
-                    showSubject(data[0]);
                 }
-            }
-        });
-
+            });
+        }
         var dataList = [[${paginationDTO.DataList}]];
         var AVGScores = [[${AVGScores}]];
         var countMap = [[${countMap}]];
+        debugger;
         for (var i = 0;i < dataList.length;i++) {
             $("#score"+dataList[i].exercise.exerciseId).rating();
             $("#score"+dataList[i].exercise.exerciseId).rating('showStars',AVGScores[dataList[i].exercise.exerciseId]);

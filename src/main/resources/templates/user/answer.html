@@ -140,7 +140,7 @@
                                                         <p class="textarea-block">
                                                             <textarea th:id="note_textarea + ${exerciseEditDTO.exerciseEditId}" aria-required="true" name="content" rows="10" placeholder=""></textarea>
                                                         </p>
-                                                        <input type="hidden" id="noteId">
+                                                        <input type="hidden" th:id="noteId + ${exerciseEditDTO.exerciseEditId}">
                                                         <p style="float: right" class="post-comment input-block">
                                                             <button id="submit-note" th:onclick="submitNote([[${exerciseEditDTO.exerciseEditId}]]);" name="submit" type="submit" class="button-01">保存</button>
                                                         </p>

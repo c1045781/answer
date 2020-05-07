@@ -50,7 +50,8 @@
                 <div class="w3l-table-info agile_info_shadow">
                     <h3 class="w3_inner_tittle two">评论列表</h3>
                     <div>
-                        用户ID ： <input type="text" id="search" th:value="${search}" name="search" style=" height: 33px;width: 200px;">
+                        用户ID ： <input type="text" id="userId" th:value="${userId}" name="userId" style=" height: 33px;width: 200px;">
+                        试题ID ： <input type="text" id="exerciseId" th:value="${exerciseId}" name="exerciseId" style=" height: 33px;width: 200px;">
                         <button onclick="submitCommentFrom(1)" class="btn btn-primary" style="margin-bottom: 3px;">搜索</button>
                     </div>
                     <table id="table" class="answer-table">

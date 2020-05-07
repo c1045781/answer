@@ -45,6 +45,8 @@ public class ExerciseService {
     private NoteMapper noteMapper;
     @Autowired
     private NotificationMapper notificationMapper;
+    @Autowired
+    private ExerciseSetMapper exerciseSetMapper;
 
     public int insert(ExerciseEditDTO edit, UserDetails userDetails) {
         MyUser myUser = userMapper.findUserByAccount(userDetails.getUsername());
@@ -114,13 +116,17 @@ public class ExerciseService {
     public void deleteByExerciseId(Integer exerciseId) {
         // 删除外键数据
         collectMapper.deleteCollectByExerciseId(exerciseId);
+        notificationMapper.deleteNotificationByExercise(exerciseId);
         permissionMapper.deleteByExerciseId(exerciseId);
         evaluationMapper.deleteByExerciseId(exerciseId);
         commentMapper.deleteByExerciseId(exerciseId);
         answerMapper.deleteByExerciseId(exerciseId);
-        midMapper.deleteByExerciseId(exerciseId);
         noteMapper.deleteByExerciseId(exerciseId);
-
+        List<Integer> exerciseSetIdList = midMapper.getExerciseSetIdByExerciseId(exerciseId);
+        for (Integer id : exerciseSetIdList) {
+            exerciseSetMapper.delExerciseCountById(id);
+        }
+        midMapper.deleteByExerciseId(exerciseId);
         exerciseMapper.deleteByExerciseId(exerciseId);
     }
 

@@ -130,4 +130,13 @@
             type = 5 and ((notifier_id = #{userId} and receiver_id = #{myUserId}) or (receiver_id = #{userId} and notifier_id =  #{myUserId}))
         </where>
     </delete>
+
+    <delete id="deleteNotificationByExercise" parameterType="java.lang.Integer">
+        delete from notification
+        <where>
+            <if test="exerciseId != null and exerciseId != ''">
+              type = 3 and outer_id = #{exerciseId}
+            </if>
+        </where>
+    </delete>
 </mapper>

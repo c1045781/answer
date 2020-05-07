@@ -9,9 +9,10 @@ import java.util.List;
 
 @Component
 public interface CommentMapper {
-    List<Comment> getCommentList(Query query);
+    List<Comment> getCommentList(@Param("index") Integer index,@Param("size") Integer size,@Param("exerciseId") String exerciseId
+            ,@Param("userId") String userId,@Param("order") String order);
 
-    int countCommentList(Query query);
+    int countCommentList(@Param("exerciseId") String exerciseId ,@Param("userId") String userId);
 
     int deleteByCommentId(Integer commentId);
 

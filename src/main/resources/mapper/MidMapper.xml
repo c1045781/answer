@@ -53,4 +53,13 @@
             </if>
         </where>
     </select>
+
+    <select id="getExerciseSetIdByExerciseId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select exercise_set_id from exercise_set_mid
+        <where>
+            <if test="exerciseId  != null">
+              and exercise_id = #{exerciseId}
+            </if>
+        </where>
+    </select>
 </mapper>

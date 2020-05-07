@@ -54,7 +54,7 @@
                         <input id="modelInput" type="hidden" th:value="${baseList != null?baseList:''}">
                         <select id="base" name="base" onchange="showSubject(this.value)" class="answer-select"
                                 th:if='${baseList != null}'>
-                            <option></option>
+                            <option>全部</option>
                             <option th:each="base:${baseList}"
                                     th:text="${base}" th:value="${base}"
                                     th:selected='${subjectList[0].baseSubject== base}'></option>
@@ -85,12 +85,12 @@
                         </select>
                         评分：
                         <select name="score" id="score" class="answer-select">
-                            <option th:selected="${score == 5}" value="5">五分及以下</option>
-                            <option th:selected="${score == 4}" value="4">四分及以下</option>
-                            <option th:selected="${score == 3}" value="3">三分及以下</option>
-                            <option th:selected="${score == 2}" value="2">两分及以下</option>
-                            <option th:selected="${score == 1}" value="1">一分及以下</option>
-                            <option th:selected="${score == 0}" value="0">零分</option>
+                            <option value="">全部</option>
+                            <option value="5" th:selected="${score == 5}">5分</option>
+                            <option value="4" th:selected="${score == 4}">4分及以上</option>
+                            <option value="3" th:selected="${score == 3}">3分及以上</option>
+                            <option value="2" th:selected="${score == 2}">2分及以上</option>
+                            <option value="1" th:selected="${score == 1}">1分及以上</option>
                         </select>
                         <select name="type" id="type" class="answer-select">
                             <option th:selected="${type == 'title'}" value="title">题干</option>
@@ -220,8 +220,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="list-group">
-                        <h4 class="list-group-item-heading" style="text-align: center" id="title"></h4>
-                        <div id="option" style="text-align: center;margin: 20px auto;"> </div>
+                        <h4 class="list-group-item-heading" style="text-align: left;margin: 20px 10%;" id="title"></h4>
+                        <div id="option" style="text-align: left;margin: 20px 10%;"> </div>
                         <div id="correct" style="text-align: left;margin: 20px 10%;"></div>
                         <div id="analysis" style="text-align: left;margin: 20px 10%;"></div>
                     </div>
@@ -313,7 +313,6 @@
 
 <script type="text/javascript" src="/js/jquery.basictable.min.js"></script>
 <script th:inline="javascript">
-
     window.onload = function () {
         var modelInput = $("#modelInput").val();
         if (modelInput != null && modelInput != "") {
@@ -340,7 +339,7 @@
     }
 
 </script>
-<script type="text/javascript">
+<!--<script type="text/javascript">
     $(document).ready(function () {
         $('#table').basictable();
 
@@ -366,11 +365,11 @@
             tableWrapper: true
         });
     });
-</script>
+</script>-->
 <!-- //js -->
 <script src="/js/screenfull.js"></script>
 
-<script>
+<!--<script>
     $(function () {
         $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
 
@@ -383,7 +382,7 @@
             screenfull.toggle($('#container')[0]);
         });
     });
-</script>
+</script>-->
 <script src="/js/jquery.nicescroll.js"></script>
 <script src="/js/scripts.js"></script>
 

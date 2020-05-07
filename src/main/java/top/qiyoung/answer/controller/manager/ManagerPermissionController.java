@@ -86,7 +86,7 @@ public class ManagerPermissionController {
         ResultDTO resultDTO = permissionService.addNotice(content, role, principal.getName());
         if (resultDTO.getCode() == 200) {
             model.addAttribute("msg", "添加成功");
-            return "redirect:/manager/notification/toAdd";
+            return "/manage/notification/add-notice";
         }else {
             model.addAttribute("message", resultDTO.getMessage());
             model.addAttribute("content", content);

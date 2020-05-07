@@ -18,4 +18,6 @@ public interface MidMapper {
     List<Integer> getExerciseIdListByExerciseSetId(Integer exerciseSetId);
 
     List<Exercise> getExerciseListByExerciseSetId(Integer exerciseSetId);
+
+    List<Integer> getExerciseSetIdByExerciseId(Integer exerciseId);
 }

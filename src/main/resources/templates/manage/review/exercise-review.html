@@ -274,10 +274,11 @@
             contentType: "application/json",
             success: function (data) {
                 if (data != null) {
+                    $('#base').html("<option>全部</option>");
                     for (var i = 0; i < data.length; i++) {
                         $('#base').append("<option>" + data[i] + "</option>");
                     }
-                    showSubject(data[0]);
+                    showSubject("");
                 }
             }
         });

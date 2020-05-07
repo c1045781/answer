@@ -24,12 +24,14 @@ public class ManagerCommentController {
     @RequestMapping("/check")
     public String check(@RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
                         @RequestParam(value = "size", defaultValue = "10") Integer size,
-                        @RequestParam(value = "search", required = false) String search,
+                        @RequestParam(value = "exerciseId", required = false) String exerciseId,
+                        @RequestParam(value = "userId", required = false) String userId,
                         @RequestParam(value = "order", defaultValue = "comment_id asc") String order,
                         Model model){
-        PaginationDTO<Comment> paginationDTO = commentService.getCommentList(currentPage,size,search,order);
+        PaginationDTO<Comment> paginationDTO = commentService.getCommentList(currentPage,size,exerciseId,userId,order);
         model.addAttribute("paginationDTO",paginationDTO);
-        model.addAttribute("search",search);
+        model.addAttribute("exerciseId",exerciseId);
+        model.addAttribute("userId",userId);
         return "manage/comment/comment";
     }
 

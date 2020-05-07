@@ -39,7 +39,6 @@ class AnswerApplicationTests {
     @Test
     void contextLoads() throws IOException {
 
-
 //        Comment comment = new Comment(null,null,null,"",new Date());
 
         /*exerciseService.updateStatus(100,1,"123",1);*/

@@ -87,7 +87,15 @@
 </script>
 <!-- input-forms -->
 <script type="text/javascript" src="/js/valida.2.1.6.min.js"></script>
-<script type="text/javascript">
+<script th:inline="javascript">
+    window.onload = function () {
+        var msg = [[${msg}]];
+        if (msg != null && msg != ''){
+            alert(msg);
+        }
+    }
+</script>
+<!--<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -104,10 +112,10 @@
 
     });
 
-</script>
+</script>-->
 <script src="/js/validator.min.js"></script>
 <script src="/js/screenfull.js"></script>
-<script>
+<!--<script>
     $(function () {
         $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
 
@@ -120,7 +128,7 @@
             screenfull.toggle($('#container')[0]);
         });
     });
-</script>
+</script>-->
 <script src="/js/jquery.nicescroll.js"></script>
 <script src="/js/scripts.js"></script>
 

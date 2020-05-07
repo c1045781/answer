@@ -39,4 +39,5 @@ public interface ExerciseSetMapper {
 
     List<ExerciseSet> getHighLikeExerciseSet(Integer subject);
 
+    void delExerciseCountById(Integer id);
 }

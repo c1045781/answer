@@ -43,6 +43,7 @@ function showSubject(e) {
                     $('#subjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
                 }
             }else{
+                $('#subjectId').html("");
                 $('#subjectId').append("<option value=''>全部</option>");
             }
         }
@@ -113,7 +114,7 @@ function addExercise(e) {
                         "<td>" + list[i].exercise.exerciseId + "</td>" +
                         "<td>" + list[i].exercise.exerciseType + "</td>" +
                         "<td>" + list[i].exercise.exerciseTitle + "</td>" +
-                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForManager("+ list[i].exercise.exerciseId +")'>确认</button></td>" +
+                        "<td><button type='button' class='btn btn-primary' onclick='showExerciseForManager("+ list[i].exercise.exerciseId +")'>查看</button></td>" +
                         "</tr>");
                 }
                 if (data.totalPage == 0) {
@@ -445,7 +446,8 @@ function submitReviewPermissionFrom(e) {
 
 function submitCommentFrom(e){
     var skip = parseInt(e);
-    var search = $("#search").val();
+    var userId = $("#userId").val();
+    var exerciseId = $("#exerciseId").val();
     var total = parseInt($("#totalPage").val());
     if (isNaN(skip) || skip == null || skip < 1){
         skip = 1;
@@ -453,7 +455,7 @@ function submitCommentFrom(e){
     if (skip > total) {
         skip = total;
     }
-    window.location.href = "/manager/comment/check?currentPage=" + skip +"&search="+search;
+    window.location.href = "/manager/comment/check?currentPage=" + skip +"&userId="+userId+"&exerciseId="+exerciseId;
 }
 
 
@@ -643,21 +645,26 @@ function openExerciseComment(e,page){
                             '</header>' +
                             '<p style="float: left">回复 <div style="float:left;margin: 2px 10px;">' +
 
-                            '<div class="wrapper">'+ list[i].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+
+
+
+
+
+                            '<div class="wrapper">'+ list1[j].receiver.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
                             '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
                             '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                             '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                             '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[i].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list1[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                             '<div class="content">' +
                             '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
-                        if (list[i].myUser.description.length > 0){
-                            content += list[i].myUser.description;
+                        if (list1[j].receiver.description.length > 0){
+                            content += list1[j].receiver.description;
                         } else {
                             content += "用户未设置自我介绍"
                         }
                             content += '</p>' +
-                            '<a href="javascript:void(0)" onclick="toChat('+list[i].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                            '<a href="javascript:void(0)" onclick="toChat('+list1[j].receiver.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
                             '</div>' +
                             '</div></div></div></div>' +
                             '</div>' +
@@ -808,21 +815,21 @@ function secondCommentPage(id,page){
                     '</header>' +
                     '<p style="float: left">回复 <div style="float:left;margin: 2px 10px;">' +
 
-                    '<div class="wrapper">'+ list[j].myUser.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
+                    '<div class="wrapper">'+ list[j].receiver.nickname +'<div class="tooltip" style="width: 300px;height: 180px;padding: 0;">' +
                     '<section class="widget kopa-widget-testimonials" style="margin-top: 0;">' +
                     '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                     '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                     '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                     '<div class="content">' +
                     '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
-                if (list[j].myUser.description.length > 0){
-                    content += list[j].myUser.description;
+                if (list[j].receiver.description.length > 0){
+                    content += list[j].receiver.description;
                 } else {
                     content += "用户未设置自我介绍"
                 }
                 content += '</p>' +
-                    '<a href="javascript:void(0)" onclick="toChat('+list[j].myUser.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
+                    '<a href="javascript:void(0)" onclick="toChat('+list[j].receiver.userId+')" style="margin-bottom: -6px;"><button type="button" class="btn btn-info">私信</button></a>' +
                     '</div>' +
                     '</div></div></div></div>' +
                     '</div>' +
@@ -987,7 +994,7 @@ function newSecondComment(id){
                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                    '<div class="content">' +
                    '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                if (list[j].receiver.description.length > 0){
@@ -1098,7 +1105,7 @@ function openExerciseNote(e){
             } else{
                 $("#note_a"+e).html("编辑");
                 $("#note_p"+e).html(data.content);
-                $("#noteId").val(data.noteId);
+                $("#noteId"+e).val(data.noteId);
             }
         },
         error:function () {
@@ -1205,6 +1212,7 @@ function submitInfoManager(){
         }
     });
 }
+
 
 function submitInfo(){
     if ($("#avatarImg")[0].files[0] != null){
@@ -1340,7 +1348,7 @@ function submitNote(e){
     $.ajax({
         type: "POST",
         url: "/user/note/addOrUpdate",
-        data: JSON.stringify({"content":$("#note_textarea"+e).val(),"exerciseId":e,"noteId":$("#noteId").val()}),
+        data: JSON.stringify({"content":$("#note_textarea"+e).val(),"exerciseId":e,"noteId":$("#noteId"+e).val()}),
         contentType:"application/json;charset=utf-8",
         dataType: "json",
         success:function (data) {
@@ -1737,6 +1745,8 @@ function collectList(e){
                         "</ul>" +
                         "</nav>")
                 }
+            }else{
+                $("#collect_nav").html("");
             }
         }
     });
@@ -2118,38 +2128,75 @@ function modifyExercise(id){
 }
 
 function modifyExerciseSet(e){
+    $('#showAddExercise').modal('hide');
     $.ajax({
         url:"/user/exerciseSet/toUpdate",
         data:{exerciseSetId:e},
         dataType:"json",
         type:"post",
+        async:false,
         success:function(data){
-            addExerciseSetForForm();
-            $("#exerciseSetForm option").each(function(){
-                if($(this).val() == data.subject.baseSubject){
-                    $(this).prop("selected",true);
-                    showSubject(data.subject.baseSubject);
-                    $("#exerciseSetForm option").each(function(){
+            $("#addExerciseSetList").css("display","none");
+            $("#addExerciseSet").css("display","block");
+            $.ajax({
+                url: '/subject/base',
+                type: 'post',
+                async:false,
+                contentType: "application/json",
+                success: function (resource) {
+                    if (resource != null) {
+                        $('#exerciseBase').html("");
+                        for (var i = 0; i < resource.length; i++) {
+                            $('#exerciseBase').append("<option>" + resource[i] + "</option>");
+                        }
+                    }
+
+                    $("#exerciseBase option").each(function(){
+                        if($(this).val() == data.subject.baseSubject){
+                            $(this).prop("selected",true);
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/subject/subjectByBase',
+                        type: 'post',
+                        async:false,
+                        data: JSON.stringify({baseSubject: data.subject.baseSubject}),
+                        contentType: "application/json",
+                        success: function (data) {
+                            if (data != null) {
+                                $('#exerciseSetSubjectId').html("");
+                                for (var i = 0; i < data.length; i++) {
+                                    $('#exerciseSetSubjectId').append("<option value='" + data[i].subjectId + "'>" + data[i].name + "</option>");
+                                }
+                            }
+                        }
+                    });
+
+                    // showSubjectForUser(data.subject.baseSubject);
+
+                    debugger;
+                    $("#exerciseSetSubjectId option").each(function(){
                         if($(this).val() == data.subject.subjectId){
                             $(this).prop("selected",true);
                         }
                     });
-                }
-            });
-            $("#exerciseSetTitle").val(data.title);
-            var content = "" ;
-            var list = data.exerciseList;
-            for (var i=0; i<list.length; i++){
-                content += "<tr><td><input value='"+list[i].exerciseId+"' checked type='checkbox' name='exerciseList["+i+"].exerciseId'></td>" +
+                    $("#exerciseSetTitle").val(data.title);
+                    var content = "" ;
+                    var list = data.exerciseList;
+                    for (var i=0; i<list.length; i++){
+                        content += "<tr><td><input value='"+list[i].exerciseId+"' checked type='checkbox' name='exerciseList["+i+"].exerciseId'></td>" +
                             "<td>"+list[i].exerciseId+"</td>" +
                             "<td>"+list[i].exerciseType+"</td>" +
-                            "<td>"+list[i].exerciseTitle+"</td>" +
-                            "<td><button type='button' onclick='showExerciseForExerciseSet("+list[i].exerciseId+")'  class='btn btn-primary'> 查看 </button></td>"+
+                            "<td title='"+list[i].exerciseTitle+"' style='white-space: nowrap;overflow: hidden;text-overflow: ellipsis;'>"+list[i].exerciseTitle+"</td>" +
+                            "<td><button type='button' onclick='showExerciseForUser("+list[i].exerciseId+")'  class='btn btn-primary'> 查看 </button></td>"+
                             "<td><button type='button' onclick='deleteExerciseTbody("+list[i].exerciseId+")'  class='btn btn-primary'> 删除 </button></td></tr>";
-            }
-            $("#exercise-tbody").html(content);
-            $("#exerciseSetId").val(data.exerciseSetId);
-            $("#exercise-div").css("display","block");
+                    }
+                    $("#exercise-tbody").html(content);
+                    $("#exerciseSetId").val(data.exerciseSetId);
+                    $("#exercise-div").css("display","block");
+                }
+            });
         }
     })
 }
@@ -2769,7 +2816,6 @@ function showChat(id){
         $(this).css("background-color","#ffffff");
     });
     $("li[name="+id+"]").css("background-color","#fafafa");
-    debugger;
     $.ajax({
         url:"/user/notification/showChat",
         data:{secondId:id},
@@ -2907,33 +2953,26 @@ function delExerciseSetLike(e){
 }
 
 function verificationSubject(){
+    debugger;
     var name = $("#name").val();
-    var base = $("#base option:checked").val();
-    var reg = /^[0-9]+.?[0-9]*$/;
+    var base = $("input[name='baseSubject']").val();
     if (base == ""){
         alert("学科不能为空");
-        return;
+        return false;
     }
     if (base.length > 50){
         alert("学科长度不能大于50字符");
-        return;
-    }
-    if (!reg.test(base)) {
-        alert("学科不能为纯数字");
-        return;
+        return false;
     }
     if (name == ""){
         alert("试题分类不能为空");
-        return;
+        return false;
     }
     if (name.length > 50){
         alert("试题分类长度不能大于50字符");
-        return;
+        return false;
     }
-    if (!reg.test(name)) {
-        alert("试题分类不能为纯数字");
-        return;
-    }
+    return true;
 }
 
 function allNotification(){
