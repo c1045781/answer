@@ -47,7 +47,7 @@
 						<div class="btn-group" style="height: 66px;padding-top: 17px;">
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: transparent;border: 0;padding-top: 2px;">
 								<a  style="background-color: transparent;border: 0;padding-top: 2px;max-width: 120px" href="#" class="thumbnail">
-									<img th:src="@{/root/answer/{url}(url=${myUser.avatarImgUrl})}" style="height: 25px;width: 25px;float: left;margin-top: -4px">
+									<img th:src="@{/root/answer{url}(url=${myUser.avatarImgUrl})}" style="height: 25px;width: 25px;float: left;margin-top: -4px">
 									<span th:text="${myUser.nickname}"></span>
 									<span class="badge" style="color: #fff;background-color: #fa5a57;position: absolute;" name="num"></span>
 								</a>

@@ -154,6 +154,7 @@ public class ManagerExerciseController {
         String upload = fileUpload.upload(exerciseFile);
 //        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
         upload = "/root/answer" + upload;
+        System.out.println(upload);
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
