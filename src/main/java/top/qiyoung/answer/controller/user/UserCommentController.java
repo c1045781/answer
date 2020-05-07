@@ -10,15 +10,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import top.qiyoung.answer.dto.CommentDTO;
 import top.qiyoung.answer.dto.PaginationDTO;
 import top.qiyoung.answer.dto.ResultDTO;
-import top.qiyoung.answer.exception.CustomizeErrorCode;
 import top.qiyoung.answer.model.Comment;
-import top.qiyoung.answer.model.Exercise;
 import top.qiyoung.answer.service.CommentService;
 import top.qiyoung.answer.service.ExerciseService;
 import top.qiyoung.answer.service.NotificationService;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 @Controller
 @RequestMapping("/user/comment")
@@ -26,10 +21,6 @@ public class UserCommentController {
 
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private ExerciseService exerciseService;
-    @Autowired
-    private NotificationService notificationService;
 
     // 获取习题评论信息
     @RequestMapping("/getCommentDTOList")

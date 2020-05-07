@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("top.qiyoung.Answer.mapper")
+@MapperScan("top.qiyoung.answer.mapper")
 public class AnswerApplication {
 
     public static void main(String[] args) {

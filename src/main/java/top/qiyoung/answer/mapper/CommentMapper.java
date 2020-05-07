@@ -34,7 +34,7 @@ public interface CommentMapper {
 
     int countCommentListByParentId(@Param("parentId") Integer parentId,@Param("type")Integer type);
 
-    List<Comment> getSecondCommentList(@Param("commentId") Integer commentId,@Param("index") Integer index,@Param("size") int size);
+    /*List<Comment> getSecondCommentList(@Param("commentId") Integer commentId,@Param("index") Integer index,@Param("size") int size);
 
-    Integer countSecondCommentList(Integer commentId);
+    Integer countSecondCommentList(Integer commentId);*/
 }
