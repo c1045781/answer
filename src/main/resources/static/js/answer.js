@@ -562,7 +562,7 @@ function openExerciseComment(e,page){
                 content += '<li class="comment">' +
                     '<article>' +
                     '<div class="comment-avatar ">' +
-                    '<img style="height: 65px;width: 65px;" src="/root/answer/'+ list[i].myUser.avatarImgUrl +'">' +
+                    '<img style="height: 65px;width: 65px;" src="/root/answer'+ list[i].myUser.avatarImgUrl +'">' +
                     '</div>' +
                     '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                     '<header>' +
@@ -575,7 +575,7 @@ function openExerciseComment(e,page){
                     '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                     '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                     '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer/'+ list[i].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer'+ list[i].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                     '<div class="content">' +
                     '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                 if (list[i].myUser.description.length > 0){
@@ -611,7 +611,7 @@ function openExerciseComment(e,page){
                         content += '<li class="comment">' +
                             '<article style="margin-top: 20px">' +
                             '<div class="comment-avatar ">' +
-                            '<img style="height: 65px;width: 65px;" src="/root/answer/'+ list1[j].myUser.avatarImgUrl +'">' +
+                            '<img style="height: 65px;width: 65px;" src="/root/answer'+ list1[j].myUser.avatarImgUrl +'">' +
                             '</div>' +
                             '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                             '<header>' +
@@ -623,7 +623,7 @@ function openExerciseComment(e,page){
                             '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                             '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                             '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer/'+ list1[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer'+ list1[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                             '<div class="content">' +
                             '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                         if (list1[j].myUser.description.length > 0){
@@ -655,7 +655,7 @@ function openExerciseComment(e,page){
                             '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                             '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                             '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer/'+ list1[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                            '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer'+ list1[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                             '<div class="content">' +
                             '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                         if (list1[j].receiver.description.length > 0){
@@ -781,7 +781,7 @@ function secondCommentPage(id,page){
                 content += '<li class="comment">' +
                     '<article style="margin-top: 20px">' +
                     '<div class="comment-avatar ">' +
-                    '<img style="height: 65px;width: 65px;" src="/root/answer/'+ list[j].myUser.avatarImgUrl +'">' +
+                    '<img style="height: 65px;width: 65px;" src="/root/answer'+ list[j].myUser.avatarImgUrl +'">' +
                     '</div>' +
                     '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                     '<header>' +
@@ -793,7 +793,7 @@ function secondCommentPage(id,page){
                     '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                     '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                     '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer/'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                     '<div class="content">' +
                     '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                 if (list[j].myUser.description.length > 0){
@@ -820,7 +820,7 @@ function secondCommentPage(id,page){
                     '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                     '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                     '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer/'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                    '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                     '<div class="content">' +
                     '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                 if (list[j].receiver.description.length > 0){
@@ -954,7 +954,7 @@ function newSecondComment(id){
                content += '<li class="comment">' +
                    '<article style="margin-top: 20px">' +
                    '<div class="comment-avatar ">' +
-                   '<img style="height: 65px;width: 65px;" src="/root/answer/'+ list[j].myUser.avatarImgUrl +'">' +
+                   '<img style="height: 65px;width: 65px;" src="/root/answer'+ list[j].myUser.avatarImgUrl +'">' +
                    '</div>' +
                    '<div class="comment-content" style="overflow: unset;padding-left: 95px;">' +
                    '<header>' +
@@ -966,7 +966,7 @@ function newSecondComment(id){
                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer/'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a><img src="/root/answer'+ list[j].myUser.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                    '<div class="content">' +
                    '<p  class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                if (list[j].myUser.description.length > 0){
@@ -994,7 +994,7 @@ function newSecondComment(id){
                    '<div class="widget-content module-testimonials-05 js-carousel owl-carousel owl-theme" style="opacity: 1; display: block;">' +
                    '<div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2220px; left: 0px; display: block;">' +
                    '<div class="owl-item" style="width: 370px;"><div class="item-testi" style="padding: 0;width: 300px;background-color: transparent;">' +
-                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer/'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
+                   '<div class="thumb" style="margin-top: 11px;margin-bottom: 0;"><a href="#"><img src="/root/answer'+ list[j].receiver.avatarImgUrl +'" style="width: 55px;height: 55px;"></a></div>' +
                    '<div class="content">' +
                    '<p class="tooltip-p" style="font-size: 1em;margin-bottom: 0;">';
                if (list[j].receiver.description.length > 0){
@@ -1411,7 +1411,7 @@ function personInformation(msg){
             $("#showUserId").val(data.userId);
             $("#showUsername").html("账号："+data.username);
             $("#showNickname").html("昵称："+data.nickname);
-            $("#showAvatarImgUrl").attr("src","/root/answer/"+data.avatarImgUrl);
+            $("#showAvatarImgUrl").attr("src","/root/answer"+data.avatarImgUrl);
             $("#showPhone").html(data.phone!=null?"手机号："+data.phone:'手机号：');
             $("#showDescription").html(data.description!=null?"自我介绍："+data.description:'自我介绍：');
             $("#showSex").html("性别："+data.sex);
@@ -2740,7 +2740,7 @@ function chatList(){
                             "<div style='float: right;' onclick='delChat(\"" + element.notifier.username + "\")'><span  class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #000000;font-size: 1em;'></span></div>"+
                             "<article style='margin-top: 20px' onclick='showChat(" + element.notifier.userId + ")'>" +
                             "<div class='comment-avatar '>" +
-                            "<img src='/root/answer/" + element.notifier.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
+                            "<img src='/root/answer" + element.notifier.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
                             "</div>" +
                             "<div class='comment-content' style='width: 80%;float: right; margin-top: -15%;'>" +
                             "<header>" +
@@ -2757,7 +2757,7 @@ function chatList(){
                             "<div style='float: right;' onclick='delChat(\"" + element.receiver.username + "\")'><span  class='glyphicon glyphicon-remove' aria-hidden='true' style='color: #000000;font-size: 1em;'></span></div>"+
                             "<article style='margin-top: 20px' onclick='showChat(" + element.receiver.userId + ")'>" +
                             "<div class='comment-avatar '>" +
-                            "<img src='/root/answer/" + element.receiver.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
+                            "<img src='/root/answer" + element.receiver.avatarImgUrl + "' style='width: 40px;height: 40px;'>" +
                             "</div>" +
                             "<div class='comment-content' style='width: 80%;float: right; margin-top: -15%;'>" +
                             "<header>" +
@@ -2850,13 +2850,13 @@ function showChat(id){
                         "<pre class='user-reply'>"+data[i].title+"</pre>" +
                         "<i class='triangle-user'></i>" +
                         "</div>" +
-                        "<img class='user-img' src='/root/answer/"+data[i].notifier.avatarImgUrl+"'>" +
+                        "<img class='user-img' src='/root/answer"+data[i].notifier.avatarImgUrl+"'>" +
                         "</div>";
                     $("#chatTitle").html(data[i].receiver.nickname);
                     $("#to").val(data[i].receiver.username);
                 }else {
                     content += "<div class='admin-group'>" +
-                        "<img class='admin-img' src='/root/answer/"+data[i].notifier.avatarImgUrl+"'>" +
+                        "<img class='admin-img' src='/root/answer"+data[i].notifier.avatarImgUrl+"'>" +
                         "<div class='admin-msg'>" +
                         "<i class='triangle-admin'></i>" +
                         "<pre class='admin-reply'>"+data[i].title+"</pre>" +
@@ -3024,7 +3024,7 @@ function handleNotification(chat) {
                 }
                 if (data[0].receiver.userId == user.userId) {
                     content += "<div class='admin-group'>" +
-                        "<img class='admin-img' src='/root/answer/" + data[0].notifier.avatarImgUrl + "'>" +
+                        "<img class='admin-img' src='/root/answer" + data[0].notifier.avatarImgUrl + "'>" +
                         "<div class='admin-msg'>" +
                         "<i class='triangle-admin'></i>" +
                         "<pre class='admin-reply'>" + data[0].title + "</pre>" +
@@ -3036,7 +3036,7 @@ function handleNotification(chat) {
                         "<pre class='user-reply'>" + data[0].title + "</pre>" +
                         "<i class='triangle-user'></i>" +
                         "</div>" +
-                        "<img class='user-img' src='/root/answer/" + user.avatarImgUrl + "'>" +
+                        "<img class='user-img' src='/root/answer" + user.avatarImgUrl + "'>" +
                         "</div>";
                 }
             }
