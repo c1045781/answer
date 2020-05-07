@@ -1,5 +1,6 @@
 package top.qiyoung.answer.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+    @Value("${file.upload.url}")
+    private String uploadUrl;
 
     @Resource
     private UserMapper userMapper;
@@ -53,7 +57,7 @@ public class UserService {
         FileUpload fileUpload = new FileUpload();
         String upload;
         if (avatarImg == null || "".equals(avatarImg.getOriginalFilename())){
-            upload = "/upload/default.jpg";
+            upload = uploadUrl+"/default.jpg";
         }else {
             try {
                 upload = fileUpload.uploadImg(avatarImg);
@@ -125,8 +129,8 @@ public class UserService {
                 throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
             }
             DeleteFile deleteFile = new DeleteFile();
-            if (!dbMyUser.getAvatarImgUrl().equals("/upload/default.jpg")) {
-                deleteFile.delFile(System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + dbMyUser.getAvatarImgUrl());
+            if (!dbMyUser.getAvatarImgUrl().equals(uploadUrl+"/default.jpg")) {
+                deleteFile.delFile( "/root/answer" + dbMyUser.getAvatarImgUrl());
             }
             FileUpload fileUpload = new FileUpload();
             String upload;

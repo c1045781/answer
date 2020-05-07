@@ -62,37 +62,11 @@ public class UserUsersController {
                                     @RequestParam(value = "avatarImgUrl")String avatarImgUrl,
                                     @RequestParam(value = "avatarImg", required = false) MultipartFile avatarImg) {
         MyUser myUser = new MyUser(Integer.parseInt(userId),nickname,username,null,null,description,avatarImgUrl,null,sex,phone);
-        /*if (avatarImg != null && StringUtils.isNotBlank(avatarImg.getOriginalFilename())) {
-            String filename = avatarImg.getOriginalFilename();
-            String[] split = filename.split("\\.");
-            String suffix = split[split.length - 1];
-            if (!avatarImg.isEmpty() && !(suffix.equals("jpg") || suffix.equals("png") || suffix.equals("jpeg"))) {
-                redirectAttributes.addFlashAttribute("msg","图片格式错误，请重新尝试");
-                return "redirect:/user/personal";
-            }
-            long size = avatarImg.getSize();
-            if (size > 1024*1024){
-                redirectAttributes.addFlashAttribute("msg","请选择1M以内图片");
-                return "redirect:/user/personal";
-            }
-        }*/
-
-       /* String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(myUser.getPhone());
-        if (!m.matches()) {
-            redirectAttributes.addFlashAttribute("msg","手机号格式错误，请重新尝试");
-            return "redirect:/user/personal";
-        }*/
         int result = userService.update(myUser, avatarImg);
         if (result == 2){
-            /*redirectAttributes.addFlashAttribute("msg","图片上传失败，请重新尝试");
-            return "redirect:/user/personal";*/
             return ResultDTO.errorOf(CustomizeErrorCode.IMG_UPLOAD_ERROR);
 
         }
-        /*redirectAttributes.addFlashAttribute("msg","操作成功");
-        return "redirect:/user/personal";*/
         return ResultDTO.okOf();
     }
 

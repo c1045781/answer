@@ -52,8 +52,8 @@ public class FileUpload {
             if (suffix.equals("xls") || suffix.equals("xlsx")) {
                 filename = "template." + suffix;
                 DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(path+"template.xls");
-                deleteFile.delFile(path+"template.xlsx");
+                deleteFile.delFile(path+"/template.xls");
+                deleteFile.delFile(path+"/template.xlsx");
                 File filepath = new File(path, filename);
                 if (!filepath.getParentFile().exists()) {
                     filepath.getParentFile().mkdir();
