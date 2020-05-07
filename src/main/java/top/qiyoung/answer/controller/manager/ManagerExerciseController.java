@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/manager/exercise")
 public class ManagerExerciseController {
+
+    @Value("${file.upload.url}")
+    private String uploadUrl;
 
     @Resource
     private ExerciseService exerciseService;
@@ -148,7 +152,8 @@ public class ManagerExerciseController {
         }
         FileUpload fileUpload = new FileUpload();
         String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
+//        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
+        upload = "/root/answer" + upload;
         //1.读取Excel文档对象
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
         //2.获取要解析的表格（第一个表格）
