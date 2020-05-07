@@ -85,7 +85,7 @@
                             <!--<td th:if="myUser.role==2" th:text="${'一般用户'}"></td>-->
                             <!--<td th:if="myUser.role==3" th:text="${'特殊用户'}"></td>-->
                             <td th:text="${myUser.nickname}"></td>
-                            <td><img style="width: 50px;height: 50px;" th:src="${myUser.avatarImgUrl}"></td>
+                            <td><img style="width: 50px;height: 50px;" th:src="/root/answer/+${myUser.avatarImgUrl}"></td>
                             <td class="answer-table-td" th:title="${myUser.description}" th:text="${myUser.description}"></td>
                             <td th:text="${#dates.format(myUser.createTime,'yyyy-MM-dd')}"></td>
                             <td>
