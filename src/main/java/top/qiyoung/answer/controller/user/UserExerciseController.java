@@ -95,12 +95,8 @@ public class UserExerciseController {
     @RequestMapping("/uploadFile")
     @ResponseBody
     public ResultDTO upload(@RequestParam(value = "exerciseFile", required = false) MultipartFile exerciseFile) throws IOException {
-//        MyUser myUser = (MyUser) request.getSession().getAttribute("myUser");
-        FileUpload fileUpload = new FileUpload();
-        String upload = fileUpload.upload(exerciseFile);
-        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
         //1.读取Excel文档对象
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(exerciseFile.getInputStream());
         //2.获取要解析的表格（第一个表格）
         HSSFSheet sheet = hssfWorkbook.getSheetAt(0);
         //获得最后一行的行号
@@ -111,43 +107,31 @@ public class UserExerciseController {
             HSSFRow row = sheet.getRow(i);
             HSSFCell cell0 = row.getCell(0);
             if (cell0 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String baseSubject = cell0.getStringCellValue();
             HSSFCell cell1 = row.getCell(1);
             if (cell1 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String subjectName = cell1.getStringCellValue();
             HSSFCell cell2 = row.getCell(2);
             if (cell2 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String exercisetype = cell2.getStringCellValue();
             HSSFCell cell3 = row.getCell(3);
             if (cell3 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String title = cell3.getStringCellValue();
             HSSFCell cell4 = row.getCell(4);
             if (cell4 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String answers = cell4.getStringCellValue();
             HSSFCell cell5 = row.getCell(5);
             if (cell5 == null){
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_FORMAT_ERROR);
             }
             String correct = cell5.getStringCellValue();
@@ -161,8 +145,6 @@ public class UserExerciseController {
             if (subject != null) {
                 edit.setSubjectId(subject.getSubjectId());
             } else {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 return ResultDTO.errorOf(CustomizeErrorCode.FILE_SUBJECT_ERROR);
             }
             edit.setExerciseType(exercisetype);
@@ -185,8 +167,6 @@ public class UserExerciseController {
             exerciseEditDTOList.add(edit);
         }
 
-        DeleteFile deleteFile = new DeleteFile();
-        deleteFile.delFile(upload);
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (ExerciseEditDTO edit : exerciseEditDTOList) {

@@ -150,13 +150,8 @@ public class ManagerExerciseController {
             model.addAttribute("msg","文件类型错误");
             return "manage/exercise/upload";
         }
-        FileUpload fileUpload = new FileUpload();
-        String upload = fileUpload.upload(exerciseFile);
-//        upload = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\" + upload;
-        upload = "/root/answer" + upload;
-        System.out.println(upload);
         //1.读取Excel文档对象
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(upload));
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(exerciseFile.getInputStream());
         //2.获取要解析的表格（第一个表格）
         HSSFSheet sheet = hssfWorkbook.getSheetAt(0);
         //获得最后一行的行号
@@ -166,43 +161,31 @@ public class ManagerExerciseController {
             ExerciseEditDTO edit = new ExerciseEditDTO();
             HSSFRow row = sheet.getRow(i);
             if (row.getCell(0) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "科目不能为空");
                 return "manage/exercise/upload";
             }
             String baseSubject = row.getCell(0).getStringCellValue();
             if (row.getCell(1) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "分类不能为空");
                 return "manage/exercise/upload";
             }
             String subjectName = row.getCell(1).getStringCellValue();
             if (row.getCell(2) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "试题类型不能为空");
                 return "manage/exercise/upload";
             }
             String exercisetype = row.getCell(2).getStringCellValue();
             if (row.getCell(3) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "题目不能为空");
                 return "manage/exercise/upload";
             }
             String title = row.getCell(3).getStringCellValue();
             if (row.getCell(4) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "选项不能为空");
                 return "manage/exercise/upload";
             }
             String answers = row.getCell(4).getStringCellValue();
             if (row.getCell(5) == null) {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg","答案不能为空");
                 return "manage/exercise/upload";
             }
@@ -216,16 +199,12 @@ public class ManagerExerciseController {
             if (subject != null) {
                 edit.setSubjectId(subject.getSubjectId());
             } else {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "科目类型错误");
                 return "manage/exercise/upload";
             }
             if (exercisetype.equals("单选题") || exercisetype.equals("判断题") || exercisetype.equals("多选题")) {
                 edit.setExerciseType(exercisetype);
             } else {
-                DeleteFile deleteFile = new DeleteFile();
-                deleteFile.delFile(upload);
                 model.addAttribute("msg", "试题分类错误");
                 return "manage/exercise/upload";
             }
@@ -248,8 +227,6 @@ public class ManagerExerciseController {
             exerciseEditDTOList.add(edit);
         }
 
-        DeleteFile deleteFile = new DeleteFile();
-        deleteFile.delFile(upload);
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         for (ExerciseEditDTO edit : exerciseEditDTOList) {
             exerciseService.insert(edit, userDetails);
